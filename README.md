@@ -99,24 +99,24 @@ curl -X POST https://your-app.test/api/pdf-templates/invoice \
 - **Response:** `application/pdf`. Optional query parameters: `?download=1` and `?filename=name`.
 - **Errors** come back as JSON:
 
-| Status | Meaning |
-|---|---|
-| `401` | wrong or missing key |
-| `403` | API disabled (no key set) |
-| `404` | unknown or inactive template |
-| `422` | invalid JSON or template syntax |
+| Status | Meaning                         |
+| ------ | ------------------------------- |
+| `401`  | wrong or missing key            |
+| `403`  | API disabled (no key set)       |
+| `404`  | unknown or inactive template    |
+| `422`  | invalid JSON or template syntax |
 
 The API is stateless: no session and no CSRF.
 
 ## Template syntax (HTML mode)
 
-| Syntax | Meaning |
-|---|---|
-| `{name}` `{client.address}` `{items.0.name}` | escaped value, dot paths |
-| `{#each items} … {else} empty {/each}` | loop; inside: `{name}`, `{this}`, `{@number}`, `{@index}`, `{@first}`, `{@last}`, `{@root.x}` |
-| `{#if paid} … {else} … {/if}`, `{#unless paid} … {/unless}` | conditions; these count as false: `null`, `""`, `0`, `"false"`, `[]` |
-| `{total\|number:2}` `{date\|date:d.m.Y}` `{name\|upper}` `{name\|lower}` | filters, which can be chained |
-| `{phone\|default:—}` `{notes\|nl2br}` `{html\|raw}` | fallback value, line breaks, unescaped HTML |
+| Syntax                                                                   | Meaning                                                                                       |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `{name}` `{client.address}` `{items.0.name}`                             | escaped value, dot paths                                                                      |
+| `{#each items} … {else} empty {/each}`                                   | loop; inside: `{name}`, `{this}`, `{@number}`, `{@index}`, `{@first}`, `{@last}`, `{@root.x}` |
+| `{#if paid} … {else} … {/if}`, `{#unless paid} … {/unless}`              | conditions; these count as false: `null`, `""`, `0`, `"false"`, `[]`                          |
+| `{total\|number:2}` `{date\|date:d.m.Y}` `{name\|upper}` `{name\|lower}` | filters, which can be chained                                                                 |
+| `{phone\|default:—}` `{notes\|nl2br}` `{html\|raw}`                      | fallback value, line breaks, unescaped HTML                                                   |
 
 Templates can't run PHP. dompdf runs with remote resources disabled, so images must be `data:` URIs or files under `public/`; same-host URLs are mapped to local files. Fonts: `DejaVu Sans` by default, and more TTF fonts can be added in `html.fonts`.
 
@@ -158,29 +158,30 @@ php artisan pdf-templates:import --force          # overwrite
 
 ## Commands
 
-| Command | Does |
-|---|---|
-| `pdf-templates:install [--examples]` | publish config, migrate, add examples |
-| `pdf-templates:examples [--force]` | add the example templates |
+| Command                                                               | Does                                        |
+| --------------------------------------------------------------------- | ------------------------------------------- |
+| `pdf-templates:install [--examples]`                                  | publish config, migrate, add examples       |
+| `pdf-templates:examples [--force]`                                    | add the example templates                   |
 | `pdf-templates:render {slug} {output?} [--data=file.json] [--fields]` | render from the console, or list the fields |
-| `pdf-templates:export {path?} [--slug=*]` | templates → files |
-| `pdf-templates:import {path?} [--force]` | files → templates |
-| `pdf-templates:renderer [--host] [--port] [--install]` | run the Node renderer |
+| `pdf-templates:export {path?} [--slug=*]`                             | templates → files                           |
+| `pdf-templates:import {path?} [--force]`                              | files → templates                           |
+| `pdf-templates:renderer [--host] [--port] [--install]`                | run the Node renderer                       |
 
 ## Configuration
 
 `config/pdf-templates.php`:
 
-| Key | Default | |
-|---|---|---|
-| `routes.prefix` / `routes.middleware` | `pdf-templates` / `['web']` | admin UI URL and middleware |
-| `gate` | `viewPdfTemplates` | `null` = no gate check |
-| `layout` / `section` | `null` / `content` | render inside your own admin layout (it must have `@stack('styles')` and `@stack('scripts')`) |
-| `back_url` | `null` | back link in the UI header |
-| `api.prefix` / `api.middleware` / `api.key` | `api/pdf-templates` / `['api', 'throttle:60,1']` / env | HTTP API |
-| `table` | `pdf_templates` | database table |
-| `pdfme.*` | | pdfme version, CDN, renderer URL and token |
-| `html.*` | | default font, extra fonts, number separators, extra dompdf `chroot` dirs |
+| Key                                         | Default                                                |                                                                                               |
+| ------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `routes.prefix` / `routes.middleware`       | `pdf-templates` / `['web']`                            | admin UI URL and middleware                                                                   |
+| `gate`                                      | `viewPdfTemplates`                                     | `null` = no gate check                                                                        |
+| `layout` / `section`                        | `null` / `content`                                     | render inside your own admin layout (it must have `@stack('styles')` and `@stack('scripts')`) |
+| `back_url`                                  | `null`                                                 | back link in the UI header                                                                    |
+| `back_label`                                | `null`                                                 | back label link UI header                                                                     |
+| `api.prefix` / `api.middleware` / `api.key` | `api/pdf-templates` / `['api', 'throttle:60,1']` / env | HTTP API                                                                                      |
+| `table`                                     | `pdf_templates`                                        | database table                                                                                |
+| `pdfme.*`                                   |                                                        | pdfme version, CDN, renderer URL and token                                                    |
+| `html.*`                                    |                                                        | default font, extra fonts, number separators, extra dompdf `chroot` dirs                      |
 
 To publish the views or translations (`en`, `ro`): `php artisan vendor:publish --tag=pdf-templates-views` or `--tag=pdf-templates-lang`.
 

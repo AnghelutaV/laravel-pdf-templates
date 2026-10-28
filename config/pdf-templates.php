@@ -31,8 +31,11 @@ return [
     'layout' => null,
     'section' => 'content',
 
-    // Optional back link shown in the package header (e.g. your admin dashboard)
-    'back_url' => null,
+    'ui' => [
+        // Optional back link shown in the package header (e.g. your admin dashboard)
+        'back_url' => null,
+        'back_label' => 'Back',
+    ],
 
     // WYSIWYG mode runs pdfme in the browser; server-side generation (API) goes through the Node renderer
     // shipped in vendor/anghelutav/laravel-pdf-templates/renderer (php artisan pdf-templates:renderer)

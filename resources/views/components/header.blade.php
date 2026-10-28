@@ -1,9 +1,11 @@
 {{-- <x-pdf-templates::header :title="..." :back="url" badge="html|wysiwyg">actions</x-pdf-templates::header> --}}
 @props(['title', 'back' => null, 'badge' => null])
 @php($back = $back ?? config('pdf-templates.back_url'))
+@php($label = config('pdf-templates.back_label') ?? __('pdf-templates::ui.back_label'))
 <div class="pt-bar">
     @if ($back)
-        <a class="pt-btn" href="{{ $back }}" title="{{ __('pdf-templates::ui.back') }}" aria-label="{{ __('pdf-templates::ui.back') }}">&larr;</a>
+        <a class="pt-btn" href="{{ $back }}" title="{{ __('pdf-templates.ui.back') }}"
+            aria-label="{{ __('pdf-templates::ui.back_label') }}">&larr; {{ $label }}</a>
     @endif
     <h1>{{ $title }}
         @if ($badge)
