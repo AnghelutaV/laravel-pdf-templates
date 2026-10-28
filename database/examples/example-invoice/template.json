@@ -1,0 +1,744 @@
+{
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "schemas": [
+    [
+      {
+        "name": "header_band",
+        "type": "rectangle",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "width": 210,
+        "height": 34,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0,
+        "borderColor": "#000000",
+        "color": "#1b3240",
+        "readOnly": true,
+        "radius": 0
+      },
+      {
+        "name": "company_name",
+        "type": "text",
+        "content": "Acme Studio",
+        "position": {
+          "x": 15,
+          "y": 10
+        },
+        "width": 110,
+        "height": 10,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 22,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#ffffff",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "company_tagline",
+        "type": "text",
+        "content": "Design & build · www.example.com",
+        "position": {
+          "x": 15,
+          "y": 21
+        },
+        "width": 110,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#d5dde3",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "doc_title",
+        "type": "text",
+        "content": "INVOICE",
+        "position": {
+          "x": 125,
+          "y": 10
+        },
+        "width": 70,
+        "height": 10,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 22,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#c8a24a",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "invoice_number",
+        "type": "text",
+        "content": "No. INV-2026-001",
+        "position": {
+          "x": 125,
+          "y": 21
+        },
+        "width": 70,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 10,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#ffffff",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "label_client",
+        "type": "text",
+        "content": "BILL TO",
+        "position": {
+          "x": 15,
+          "y": 44
+        },
+        "width": 90,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "client_name",
+        "type": "text",
+        "content": "Jane Doe",
+        "position": {
+          "x": 15,
+          "y": 50
+        },
+        "width": 100,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 13,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "client_address",
+        "type": "text",
+        "content": "1 Main Street, Springfield",
+        "position": {
+          "x": 15,
+          "y": 58
+        },
+        "width": 100,
+        "height": 12,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 10,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1.2,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "label_date",
+        "type": "text",
+        "content": "ISSUE DATE",
+        "position": {
+          "x": 135,
+          "y": 44
+        },
+        "width": 60,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "invoice_date",
+        "format": "dd.MM.yyyy",
+        "type": "date",
+        "content": "2026/10/27",
+        "position": {
+          "x": 135,
+          "y": 50
+        },
+        "width": 60,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "right",
+        "fontSize": 12,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "opacity": 1
+      },
+      {
+        "name": "label_due",
+        "type": "text",
+        "content": "DUE DATE",
+        "position": {
+          "x": 135,
+          "y": 59
+        },
+        "width": 60,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "due_date",
+        "type": "text",
+        "content": "10.11.2026",
+        "position": {
+          "x": 135,
+          "y": 65
+        },
+        "width": 60,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 11,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "items",
+        "type": "table",
+        "position": {
+          "x": 15,
+          "y": 80
+        },
+        "width": 180,
+        "height": 40,
+        "content": "[[\"Remove old flooring\",\"m²\",\"65\",\"3.00\",\"195.00\"],[\"Self-levelling screed\",\"m²\",\"65\",\"11.50\",\"747.50\"]]",
+        "showHead": true,
+        "repeatHead": false,
+        "head": [
+          "Description",
+          "Unit",
+          "Qty",
+          "Price €",
+          "Total €"
+        ],
+        "headWidthPercentages": [
+          46,
+          10,
+          12,
+          16,
+          16
+        ],
+        "tableStyles": {
+          "borderColor": "#d5dde3",
+          "borderWidth": 0.2
+        },
+        "headStyles": {
+          "alignment": "left",
+          "verticalAlignment": "middle",
+          "fontSize": 9,
+          "lineHeight": 1,
+          "characterSpacing": 0,
+          "fontColor": "#ffffff",
+          "backgroundColor": "#1b3240",
+          "borderColor": "",
+          "borderWidth": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "padding": {
+            "top": 3,
+            "right": 3,
+            "bottom": 3,
+            "left": 3
+          }
+        },
+        "bodyStyles": {
+          "alignment": "left",
+          "verticalAlignment": "middle",
+          "fontSize": 9,
+          "lineHeight": 1,
+          "characterSpacing": 0,
+          "fontColor": "#000000",
+          "backgroundColor": "",
+          "borderColor": "#d5dde3",
+          "borderWidth": {
+            "top": 0.1,
+            "right": 0.1,
+            "bottom": 0.1,
+            "left": 0.1
+          },
+          "padding": {
+            "top": 2.5,
+            "right": 3,
+            "bottom": 2.5,
+            "left": 3
+          },
+          "alternateBackgroundColor": "#f4f6f8"
+        },
+        "columnStyles": {
+          "alignment": {
+            "1": "center",
+            "2": "right",
+            "3": "right",
+            "4": "right"
+          }
+        }
+      },
+      {
+        "name": "total_line",
+        "type": "line",
+        "position": {
+          "x": 115,
+          "y": 236
+        },
+        "width": 80,
+        "height": 0.4,
+        "rotate": 0,
+        "opacity": 1,
+        "readOnly": true,
+        "color": "#c8a24a"
+      },
+      {
+        "name": "label_total",
+        "type": "text",
+        "content": "TOTAL",
+        "position": {
+          "x": 115,
+          "y": 239
+        },
+        "width": 40,
+        "height": 8,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 11,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "total",
+        "type": "text",
+        "content": "1620.00 €",
+        "position": {
+          "x": 150,
+          "y": 238
+        },
+        "width": 45,
+        "height": 9,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 16,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "label_notes",
+        "type": "text",
+        "content": "NOTES",
+        "position": {
+          "x": 15,
+          "y": 236
+        },
+        "width": 90,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "notes",
+        "type": "text",
+        "content": "Payment by bank transfer within 14 days.",
+        "position": {
+          "x": 15,
+          "y": 242
+        },
+        "width": 90,
+        "height": 20,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1.3,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "payment_link",
+        "type": "qrcode",
+        "content": "https://www.example.com",
+        "position": {
+          "x": 15,
+          "y": 262
+        },
+        "backgroundColor": "#ffffff",
+        "barColor": "#000000",
+        "width": 24,
+        "height": 24,
+        "rotate": 0,
+        "opacity": 1
+      },
+      {
+        "name": "qr_caption",
+        "type": "text",
+        "content": "Scan for details",
+        "position": {
+          "x": 42,
+          "y": 272
+        },
+        "width": 70,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      }
+    ]
+  ]
+}

@@ -1,0 +1,5 @@
+{
+    "name": "Example: Invoice (WYSIWYG)",
+    "mode": "wysiwyg",
+    "description": "Header band, client block, line-items table, total and QR code"
+}

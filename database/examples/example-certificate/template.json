@@ -1,0 +1,524 @@
+{
+  "basePdf": {
+    "width": 297,
+    "height": 210,
+    "padding": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "schemas": [
+    [
+      {
+        "name": "frame_outer",
+        "type": "rectangle",
+        "position": {
+          "x": 8,
+          "y": 8
+        },
+        "width": 281,
+        "height": 194,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 1.2,
+        "borderColor": "#1b3240",
+        "color": "",
+        "readOnly": true,
+        "radius": 0
+      },
+      {
+        "name": "frame_inner",
+        "type": "rectangle",
+        "position": {
+          "x": 12,
+          "y": 12
+        },
+        "width": 273,
+        "height": 186,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.4,
+        "borderColor": "#c8a24a",
+        "color": "",
+        "readOnly": true,
+        "radius": 0
+      },
+      {
+        "name": "brand",
+        "type": "text",
+        "content": "ACME STUDIO",
+        "position": {
+          "x": 20,
+          "y": 22
+        },
+        "width": 257,
+        "height": 8,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "fontSize": 12,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 2,
+        "fontColor": "#c8a24a",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "title",
+        "type": "text",
+        "content": "WARRANTY CERTIFICATE",
+        "position": {
+          "x": 20,
+          "y": 34
+        },
+        "width": 257,
+        "height": 16,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "fontSize": 30,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "title_line",
+        "type": "line",
+        "position": {
+          "x": 118,
+          "y": 54
+        },
+        "width": 61,
+        "height": 0.5,
+        "rotate": 0,
+        "opacity": 1,
+        "readOnly": true,
+        "color": "#c8a24a"
+      },
+      {
+        "name": "issued_to",
+        "type": "text",
+        "content": "Issued to",
+        "position": {
+          "x": 20,
+          "y": 64
+        },
+        "width": 257,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "fontSize": 11,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "client_name",
+        "type": "text",
+        "content": "Jane Doe",
+        "position": {
+          "x": 20,
+          "y": 74
+        },
+        "width": 257,
+        "height": 14,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "fontSize": 26,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "warranty_text",
+        "type": "multiVariableText",
+        "content": "{\"works\":\"Apartment renovation\",\"address\":\"1 Main Street, Springfield\",\"years\":\"2\"}",
+        "position": {
+          "x": 45,
+          "y": 96
+        },
+        "width": 207,
+        "height": 22,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "fontSize": 12,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1.4,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": false,
+        "text": "The works “{works}” carried out at {address} are covered by a warranty of {years} years from the acceptance date.",
+        "variables": [
+          "works",
+          "address",
+          "years"
+        ]
+      },
+      {
+        "name": "label_date",
+        "type": "text",
+        "content": "Issue date",
+        "position": {
+          "x": 30,
+          "y": 150
+        },
+        "width": 80,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "issue_date",
+        "type": "text",
+        "content": "27.10.2026",
+        "position": {
+          "x": 30,
+          "y": 156
+        },
+        "width": 80,
+        "height": 8,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 13,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "label_number",
+        "type": "text",
+        "content": "Certificate no.",
+        "position": {
+          "x": 30,
+          "y": 168
+        },
+        "width": 80,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "certificate_number",
+        "type": "text",
+        "content": "G-2026-001",
+        "position": {
+          "x": 30,
+          "y": 174
+        },
+        "width": 80,
+        "height": 8,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 13,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "verify_url",
+        "type": "qrcode",
+        "content": "https://www.example.com",
+        "position": {
+          "x": 134,
+          "y": 148
+        },
+        "backgroundColor": "#ffffff",
+        "barColor": "#000000",
+        "width": 29,
+        "height": 29,
+        "rotate": 0,
+        "opacity": 1
+      },
+      {
+        "name": "sign_line",
+        "type": "line",
+        "position": {
+          "x": 187,
+          "y": 168
+        },
+        "width": 80,
+        "height": 0.3,
+        "rotate": 0,
+        "opacity": 1,
+        "readOnly": true,
+        "color": "#1b3240"
+      },
+      {
+        "name": "manager_name",
+        "type": "text",
+        "content": "John Smith",
+        "position": {
+          "x": 187,
+          "y": 171
+        },
+        "width": 80,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "fontSize": 11,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false
+      },
+      {
+        "name": "manager_role",
+        "type": "text",
+        "content": "Technical director",
+        "position": {
+          "x": 187,
+          "y": 178
+        },
+        "width": 80,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "top",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      }
+    ]
+  ]
+}

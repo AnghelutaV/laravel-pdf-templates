@@ -1,0 +1,5 @@
+/vendor/
+/renderer/node_modules/
+/renderer/package-lock.json
+composer.lock
+/.phpunit.cache/

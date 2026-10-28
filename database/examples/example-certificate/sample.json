@@ -1,0 +1,12 @@
+{
+  "client_name": "Ștefania Łukasiewicz",
+  "warranty_text": {
+    "works": "Kitchen and bathroom renovation",
+    "address": "50 Elm Street, apt. 12, Springfield",
+    "years": "3"
+  },
+  "issue_date": "27.10.2026",
+  "certificate_number": "W-2026-118",
+  "verify_url": "https://www.example.com/warranty/W-2026-118",
+  "manager_name": "John Smith"
+}

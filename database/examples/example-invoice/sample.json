@@ -1,0 +1,40 @@
+{
+  "invoice_number": "No. INV-2026-042",
+  "client_name": "Müller & Søn GmbH",
+  "client_address": "27 Harbour Road, Unit 4\nVAT ID DE123456789",
+  "invoice_date": "2026/10/27",
+  "due_date": "10.11.2026",
+  "items": [
+    [
+      "Remove old flooring",
+      "m²",
+      "65",
+      "3.00",
+      "195.00"
+    ],
+    [
+      "Self-levelling screed",
+      "m²",
+      "65",
+      "11.50",
+      "747.50"
+    ],
+    [
+      "Laminate installation",
+      "m²",
+      "65",
+      "8.00",
+      "520.00"
+    ],
+    [
+      "MDF skirting",
+      "m",
+      "48",
+      "4.20",
+      "201.60"
+    ]
+  ],
+  "total": "1664.10 €",
+  "notes": "Payment by bank transfer within 14 days.\nWorkmanship warranty: 2 years.",
+  "payment_link": "https://www.example.com/pay/INV-2026-042"
+}

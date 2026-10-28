@@ -1,0 +1,5 @@
+{
+    "name": "Example: Warranty certificate (WYSIWYG)",
+    "mode": "wysiwyg",
+    "description": "A4 landscape, multi-variable text {works}/{address}/{years}, verification QR"
+}

@@ -1,0 +1,48 @@
+{
+    "name": "anghelutav/laravel-pdf-templates",
+    "description": "PDF templates for Laravel: visual designer (pdfme) or HTML/CSS with placeholders, filled with JSON. Admin UI, test page and a self-hosted API.",
+    "keywords": ["laravel", "pdf", "pdf-templates", "pdfme", "dompdf", "designer", "api"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AnghelutaV"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "barryvdh/laravel-dompdf": "^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^10.5|^11.0|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AnghelutaV\\PdfTemplates\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AnghelutaV\\PdfTemplates\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AnghelutaV\\PdfTemplates\\PdfTemplatesServiceProvider"
+            ],
+            "aliases": {
+                "PdfTemplates": "AnghelutaV\\PdfTemplates\\Facades\\PdfTemplates"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
