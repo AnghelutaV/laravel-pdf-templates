@@ -5,7 +5,7 @@
 @endpush
 
 @section(config('pdf-templates.section', 'content'))
-    <div class="pt" data-csrf="{{ csrf_token() }}">
+    <div class="pt pt-compact" data-csrf="{{ csrf_token() }}">
         <x-pdf-templates::header :title="$template->name" :back="$ptRoute('index')" badge="wysiwyg">
             <select class="pt-select" id="pt-page-size" title="{{ __('pdf-templates::ui.page_title') }}" aria-label="{{ __('pdf-templates::ui.page_title') }}">
                 <option value="">{{ __('pdf-templates::ui.page') }}</option>
@@ -29,12 +29,7 @@
             <button type="button" class="pt-btn pt-btn-primary" id="pt-save" disabled>{{ __('pdf-templates::ui.save') }} <span style="opacity: .7;">(Ctrl+S)</span></button>
         </x-pdf-templates::header>
 
-        <div class="pt-card">
-            <div class="pt-card-body">
-                @include('pdf-templates::partials.settings')
-                <p class="pt-muted" style="margin: 12px 0 0;">{!! __('pdf-templates::ui.wysiwyg_help') !!}</p>
-            </div>
-        </div>
+        @include('pdf-templates::partials.settings', ['help' => __('pdf-templates::ui.wysiwyg_help')])
 
         <div class="pt-designer" id="pt-designer">
             <div class="pt-designer-loading">{{ __('pdf-templates::ui.loading_designer') }}</div>
@@ -53,7 +48,10 @@
 @push('scripts')
     <script type="module">
         import { Designer, plugins, generatePdf } from 'pdf-templates/pdfme';
-        import { sampleFromTemplate, resizeTemplate, readFileAsDataUrl, notify, saveTemplate, showPdf, onSaveShortcut } from 'pdf-templates';
+        import { sampleFromTemplate, resizeTemplate, readFileAsDataUrl, notify, saveTemplate, showPdf, onSaveShortcut, fillViewport } from 'pdf-templates';
+
+        // The designer takes all the height below the toolbar (pdfme follows its container size)
+        fillViewport(document.getElementById('pt-designer'));
 
         const t = @json(__('pdf-templates::ui'));
         const updateUrl = @json($ptRoute('update', $template));

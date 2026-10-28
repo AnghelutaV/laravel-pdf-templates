@@ -100,6 +100,8 @@ return [
     'fields_none' => 'The template has no editable fields.',
     'fields_unavailable' => 'Fix the template syntax to see its fields.',
 
+    'settings' => 'Settings',
+
     'syntax' => [
         ['{client_name} {client.address}', 'value (HTML escaped), dot path'],
         ['{items.0.name}', 'list element by index'],

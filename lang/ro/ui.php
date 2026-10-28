@@ -96,6 +96,8 @@ return [
     'fields_none' => 'Șablonul nu are câmpuri editabile.',
     'fields_unavailable' => 'Corectează sintaxa șablonului ca să vezi câmpurile.',
 
+    'settings' => 'Setări',
+
     'syntax' => [
         ['{client_name} {client.address}', 'valoare (HTML escapat), cale cu puncte'],
         ['{items.0.name}', 'element dintr-o listă după index'],

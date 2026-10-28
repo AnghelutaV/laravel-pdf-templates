@@ -185,3 +185,21 @@ export function onSaveShortcut(callback) {
         }
     });
 }
+
+// Stretches an element down to the bottom of the window, whatever layout it sits in; re-measured on resize
+// and when a <details> (the settings bar) opens or closes. Below `minWidth` the element keeps its CSS height.
+export function fillViewport(el, { min = 420, gap = 12, minWidth = 0 } = {}) {
+    const fit = () => {
+        if (window.innerWidth < minWidth) {
+            el.style.height = '';
+            return;
+        }
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        el.style.height = Math.max(min, window.innerHeight - top - gap) + 'px';
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    document.addEventListener('toggle', fit, true);
+
+    return fit;
+}
