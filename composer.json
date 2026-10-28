@@ -1,7 +1,16 @@
 {
     "name": "anghelutav/laravel-pdf-templates",
+    "version": "0.1.3",
     "description": "PDF templates for Laravel: visual designer (pdfme) or HTML/CSS with placeholders, filled with JSON. Admin UI, test page and a self-hosted API.",
-    "keywords": ["laravel", "pdf", "pdf-templates", "pdfme", "dompdf", "designer", "api"],
+    "keywords": [
+        "laravel",
+        "pdf",
+        "pdf-templates",
+        "pdfme",
+        "dompdf",
+        "designer",
+        "api"
+    ],
     "type": "library",
     "license": "MIT",
     "authors": [
