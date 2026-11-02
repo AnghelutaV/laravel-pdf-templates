@@ -2,6 +2,7 @@
 
 namespace AnghelutaV\PdfTemplates\Http\Controllers;
 
+use AnghelutaV\PdfTemplates\Exceptions\RendererUnavailableException;
 use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\PdfTemplates;
@@ -159,7 +160,10 @@ class TemplateController extends Controller
                 report($e);
             }
 
-            return response()->json(['error' => $e->getMessage()], 422);
+            return response()->json(array_filter([
+                'error' => $e->getMessage(),
+                'code' => $e instanceof RendererUnavailableException ? 'renderer_down' : null,
+            ]), 422);
         }
     }
 

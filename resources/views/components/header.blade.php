@@ -1,37 +1,56 @@
-@props(['title', 'back' => null, 'badge' => null])
-@php($back = $back ?? config('pdf-templates.ui.back_url'))
-@php($label = config('pdf-templates.ui.back_label') ?? __('pdf-templates::ui.back'))
-
-<div class="pt-bar"
-    style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; flex-wrap: nowrap;">
-
-    <!-- Stânga: Butonul Back, Titlul și Badge-ul -->
-    <div style="display: flex; align-items: center; gap: 10px; min-width: 0; overflow: hidden;">
+{{-- <x-pdf-templates::header :title="..." :back="url" badge="html|wysiwyg" subtitle="..." :count="n">actions</x-pdf-templates::header> --}}
+@props(['title', 'back' => null, 'badge' => null, 'subtitle' => null, 'count' => null])
+@php
+    // No :back given → the link leaves the package (config back_url): confirm first
+    $exits = $back === null;
+    // url(): "admin" or "/admin" → https://host/admin (not relative to the current page); full URLs stay as they are
+    $back = ($back = $back ?? config('pdf-templates.ui.back_url')) ? url($back) : null;
+    $label = config('pdf-templates.ui.back_label') ?? __('pdf-templates::ui.back');
+@endphp
+<header class="pt-bar">
+    <div class="pt-bar-title">
         @if ($back)
-            <a class="pt-btn" href="{{ $back }}" title="{{ $label }}" aria-label="{{ $label }}"
-                style="padding: 4px 10px; font-size: 12px; white-space: nowrap;">&larr; {{ $label }}</a>
+            <a class="pt-btn pt-btn-ghost pt-btn-sm" href="{{ $back }}"
+                @if ($exits) data-pt-exit @endif>
+                <x-pdf-templates::icon name="arrow-left" />
+                <span>{{ $label }}</span>
+            </a>
+            <span class="pt-bar-sep" aria-hidden="true"></span>
         @endif
-        <h1
-            style="font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0; display: flex; align-items: center; gap: 8px;">
-            {{ $title }}
-            @if ($badge)
-                <span class="pt-badge pt-badge-{{ $badge }}"
-                    style="font-size: 10px; padding: 1px 6px;">{{ __('pdf-templates::ui.mode_' . $badge) }}</span>
+        <div class="pt-bar-text">
+            <h1>
+                <span>{{ $title }}</span>
+                @if ($count !== null)
+                    <span class="pt-badge">{{ $count }}</span>
+                @endif
+                @if ($badge)
+                    <span class="pt-badge pt-badge-{{ $badge }}">{{ __('pdf-templates::ui.mode_' . $badge) }}</span>
+                @endif
+            </h1>
+            @if ($subtitle)
+                <p class="pt-bar-sub">{{ $subtitle }}</p>
             @endif
-        </h1>
+        </div>
     </div>
-
-    <!-- Dreapta: Slotul (toate butoanele tale) + Butonul de temă -->
-    <div class="pt-actions" style="display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; margin-bottom: 0;">
+    <div class="pt-actions">
         {{ $slot }}
-        <button type="button" class="pt-btn pt-theme-toggle" data-pt-theme-toggle
-            style="padding: 3px 6px; height: 28px;">◐</button>
+        <button type="button" class="pt-btn pt-theme-toggle" data-pt-theme-toggle></button>
     </div>
-</div>
+</header>
+
+@if ($back && $exits)
+    @include('pdf-templates::partials.exit-dialog')
+@endif
 
 @if (session('pdf-templates.status'))
-    <div class="pt-alert pt-alert-success" role="status">{{ session('pdf-templates.status') }}</div>
+    <div class="pt-alert pt-alert-success pt-alert-dismissible" role="status">
+        <span>{{ session('pdf-templates.status') }}</span>
+        <button type="button" class="pt-alert-close" data-pt-dismiss aria-label="{{ __('pdf-templates::ui.close') }}"><x-pdf-templates::icon name="x" :size="14" /></button>
+    </div>
 @endif
 @if ($errors->any())
-    <div class="pt-alert pt-alert-danger" role="alert">{{ implode("\n", $errors->all()) }}</div>
+    <div class="pt-alert pt-alert-danger pt-alert-dismissible" role="alert">
+        <span>{{ implode("\n", $errors->all()) }}</span>
+        <button type="button" class="pt-alert-close" data-pt-dismiss aria-label="{{ __('pdf-templates::ui.close') }}"><x-pdf-templates::icon name="x" :size="14" /></button>
+    </div>
 @endif

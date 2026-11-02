@@ -18,6 +18,7 @@ return [
     'empty' => 'No templates yet.',
     'save' => 'Save',
     'cancel' => 'Cancel',
+    'close' => 'Close',
     'create' => 'Create',
     'back' => 'Back',
     'edit' => 'Edit',
@@ -77,6 +78,12 @@ return [
     'invalid_json' => 'Invalid JSON: :error',
     'generate_browser' => 'Generate (browser)',
     'generate_server' => 'Generate (server)',
+    'renderer_down' => "The PDF renderer is not responding at :url, so the server could not generate this WYSIWYG PDF.\n"
+        ."Server-side WYSIWYG PDFs (this button, the API, PdfTemplates::render()) go through a small Node service. Start it in the application folder and keep it running:\n"
+        ."php artisan pdf-templates:renderer\n"
+        .'"Generate (browser)" works without it.',
+    'renderer_down_short' => 'server: renderer not running',
+    'dont_show_again' => "Don't show again",
     'renderer_missing' => 'Set PDFME_RENDERER_URL and run php artisan pdf-templates:renderer',
     'result' => 'Result',
     'html_server_note' => 'Generated on the server (dompdf), identical to the API output.',
@@ -101,6 +108,37 @@ return [
     'fields_unavailable' => 'Fix the template syntax to see its fields.',
 
     'settings' => 'Settings',
+
+    // Index page
+    'subtitle' => 'Design PDF documents and fill them with JSON from the API or your code.',
+    'search_placeholder' => 'Search by name or slug…',
+    'empty_hint' => 'Create your first template to start generating PDFs.',
+    'no_results' => 'No matching templates',
+    'no_results_hint' => 'Try another search term or clear the filters.',
+    'showing' => ':from–:to of :total',
+    'page_of' => 'Page :current of :last',
+    'previous' => 'Previous',
+    'next' => 'Next',
+    'new_hint' => 'Pick how you want to build it. You can rename it later.',
+    'name_placeholder' => 'e.g. Invoice',
+    'description_placeholder' => 'A short note about what this template is for',
+    'optional' => 'optional',
+
+    // Editor menu (off-canvas)
+    'menu' => 'Menu',
+    'fullscreen' => 'Full screen',
+    'exit_fullscreen' => 'Exit full screen',
+    'unsaved' => 'Unsaved changes',
+    'leave_title' => 'Leave without saving?',
+    'leave_text' => 'This template has changes that are not saved yet. They will be lost if you leave now.',
+    'leave_discard' => 'Leave without saving',
+    'leave_save' => 'Save & leave',
+    'exit_title' => 'Leave PDF templates?',
+    'exit_text' => 'You are about to leave the PDF templates panel and go back to the application.',
+    'exit_confirm' => 'Leave',
+    'section_check' => 'Preview & test',
+    'section_page' => 'Page',
+    'section_file' => 'Template file',
 
     'syntax' => [
         ['{client_name} {client.address}', 'value (HTML escaped), dot path'],

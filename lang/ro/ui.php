@@ -18,6 +18,7 @@ return [
     'empty' => 'Nu există șabloane.',
     'save' => 'Salvează',
     'cancel' => 'Anulează',
+    'close' => 'Închide',
     'create' => 'Creează',
     'back' => 'Înapoi',
     'edit' => 'Editează',
@@ -74,6 +75,12 @@ return [
     'invalid_json' => 'JSON invalid: :error',
     'generate_browser' => 'Generează (browser)',
     'generate_server' => 'Generează (server)',
+    'renderer_down' => "Renderer-ul PDF nu răspunde la :url, așa că serverul nu a putut genera acest PDF WYSIWYG.\n"
+        ."PDF-urile WYSIWYG generate pe server (acest buton, API-ul, PdfTemplates::render()) trec printr-un mic serviciu Node. Pornește-l din folderul aplicației și lasă-l să ruleze:\n"
+        ."php artisan pdf-templates:renderer\n"
+        .'„Generează (browser)” funcționează și fără el.',
+    'renderer_down_short' => 'server: renderer-ul nu rulează',
+    'dont_show_again' => 'Nu mai afișa',
     'renderer_missing' => 'Setează PDFME_RENDERER_URL și rulează php artisan pdf-templates:renderer',
     'result' => 'Rezultat',
     'html_server_note' => 'Generat pe server (dompdf) — identic cu rezultatul din API.',
@@ -97,6 +104,37 @@ return [
     'fields_unavailable' => 'Corectează sintaxa șablonului ca să vezi câmpurile.',
 
     'settings' => 'Setări',
+
+    // Index page
+    'subtitle' => 'Creează documente PDF și completează-le cu JSON din API sau din cod.',
+    'search_placeholder' => 'Caută după denumire sau slug…',
+    'empty_hint' => 'Creează primul șablon ca să începi să generezi PDF-uri.',
+    'no_results' => 'Niciun șablon găsit',
+    'no_results_hint' => 'Încearcă alt termen sau resetează filtrele.',
+    'showing' => ':from–:to din :total',
+    'page_of' => 'Pagina :current din :last',
+    'previous' => 'Anterior',
+    'next' => 'Următor',
+    'new_hint' => 'Alege cum vrei să-l construiești. Îl poți redenumi oricând.',
+    'name_placeholder' => 'Ex: Factură fiscală',
+    'description_placeholder' => 'O scurtă descriere a șablonului',
+    'optional' => 'opțional',
+
+    // Editor menu (off-canvas)
+    'menu' => 'Meniu',
+    'fullscreen' => 'Ecran complet',
+    'exit_fullscreen' => 'Ieși din ecran complet',
+    'unsaved' => 'Modificări nesalvate',
+    'leave_title' => 'Ieși fără să salvezi?',
+    'leave_text' => 'Șablonul are modificări nesalvate. Se vor pierde dacă ieși acum.',
+    'leave_discard' => 'Ieși fără salvare',
+    'leave_save' => 'Salvează și ieși',
+    'exit_title' => 'Ieși din șabloanele PDF?',
+    'exit_text' => 'Urmează să părăsești panoul de șabloane PDF și să revii în aplicație.',
+    'exit_confirm' => 'Ieși',
+    'section_check' => 'Previzualizare și test',
+    'section_page' => 'Pagină',
+    'section_file' => 'Fișier șablon',
 
     'syntax' => [
         ['{client_name} {client.address}', 'valoare (HTML escapat), cale cu puncte'],

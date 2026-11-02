@@ -96,11 +96,13 @@ export function readFileAsDataUrl(file) {
 }
 
 export function notify(message, type = 'success') {
-    let box = document.querySelector('.pt-toasts');
+    // Inside the full screen element when there is one, otherwise the toast would be hidden behind it
+    const host = document.fullscreenElement || document.body;
+    let box = host.querySelector(':scope > .pt-toasts');
     if (!box) {
         box = document.createElement('div');
         box.className = 'pt-toasts';
-        document.body.appendChild(box);
+        host.appendChild(box);
     }
     const toast = document.createElement('div');
     toast.className = 'pt-toast' + (type === 'danger' ? ' pt-toast-danger' : '');
@@ -136,10 +138,29 @@ export async function renderOnServer(url, fields) {
     });
     if (!response.ok) {
         const json = await response.json().catch(() => ({}));
-        throw new Error(json.error || json.message || `HTTP ${response.status}`);
+        // error.code: "renderer_down" when the Node renderer is not reachable
+        throw Object.assign(new Error(json.error || json.message || `HTTP ${response.status}`), { code: json.code });
     }
 
     return response.blob();
+}
+
+// A ⛶ button (with [data-pt-fs="off"|"on"] icons) toggling full screen on `target`; hidden where the API is missing
+export function fullscreenToggle(button, target, t) {
+    if (!document.fullscreenEnabled) {
+        button.classList.add('pt-hidden');
+        return;
+    }
+    button.addEventListener('click', () => document.fullscreenElement === target
+        ? document.exitFullscreen()
+        : target.requestFullscreen().catch((err) => notify(err.message, 'danger')));
+    document.addEventListener('fullscreenchange', () => {
+        const on = document.fullscreenElement === target;
+        button.querySelector('[data-pt-fs="off"]').classList.toggle('pt-hidden', on);
+        button.querySelector('[data-pt-fs="on"]').classList.toggle('pt-hidden', !on);
+        button.dataset.ptTip = on ? t.exit_fullscreen : t.fullscreen;
+        button.setAttribute('aria-label', button.dataset.ptTip);
+    });
 }
 
 // Shows a PDF Blob in an iframe, freeing the previous object URL
@@ -174,6 +195,70 @@ export function tabs(root) {
     });
     buttons.forEach((b) => b.addEventListener('click', () => select(b)));
     select(buttons[0]);
+}
+
+// Wires components/editor.blade.php: off-canvas menu, full screen, unsaved indicator, save button + Ctrl+S,
+// and the "leave without saving?" dialog on [data-pt-leave] links. save() resolves true when it saved.
+export function editorChrome({ save, t }) {
+    const $ = (id) => document.getElementById(id);
+    const drawer = $('pt-drawer');
+    const shell = $('pt-shell');
+    const saveBtn = $('pt-save');
+    const fsButton = $('pt-fullscreen');
+    const leaveDialog = $('pt-leave-dialog');
+    let dirty = false;
+    let leaveUrl = null;
+
+    const setDirty = (value) => {
+        dirty = value;
+        saveBtn.disabled = !value;
+        $('pt-dirty').classList.toggle('pt-hidden', !value);
+    };
+    const run = async () => {
+        saveBtn.disabled = true;
+        const ok = await save();
+        if (!ok) saveBtn.disabled = !dirty;
+        return ok;
+    };
+    saveBtn.addEventListener('click', run);
+    onSaveShortcut(run);
+    $('pt-name').addEventListener('input', (e) => $('pt-strip-title').textContent = e.target.value);
+
+    const closeDrawer = () => drawer.open && drawer.close();
+    $('pt-menu').addEventListener('click', () => drawer.showModal());
+    drawer.querySelector('[data-pt-close]').addEventListener('click', closeDrawer);
+    drawer.addEventListener('click', (e) => e.target === drawer && closeDrawer());
+    if (drawer.hasAttribute('data-open')) drawer.showModal();
+    if (drawer.dataset.status) notify(drawer.dataset.status);
+
+    // Full screen on the whole editor (strip + workspace)
+    fullscreenToggle(fsButton, shell, t);
+
+    window.addEventListener('beforeunload', (e) => {
+        if (dirty) e.preventDefault();
+    });
+    const leave = () => {
+        dirty = false;
+        location.href = leaveUrl;
+    };
+    document.querySelectorAll('[data-pt-leave]').forEach((link) => link.addEventListener('click', (e) => {
+        if (!dirty) return;
+        e.preventDefault();
+        leaveUrl = link.href;
+        closeDrawer();
+        leaveDialog.showModal();
+    }));
+    leaveDialog.querySelector('[data-pt-leave-cancel]').addEventListener('click', () => leaveDialog.close());
+    leaveDialog.querySelector('[data-pt-leave-discard]').addEventListener('click', leave);
+    const saveAndLeave = leaveDialog.querySelector('[data-pt-leave-save]');
+    saveAndLeave.addEventListener('click', async () => {
+        saveAndLeave.disabled = true;
+        if (await run()) leave();
+        else leaveDialog.close();
+        saveAndLeave.disabled = false;
+    });
+
+    return { setDirty, isDirty: () => dirty, closeDrawer };
 }
 
 // Ctrl/Cmd+S

@@ -5,14 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ __('pdf-templates::ui.title') }}</title>
-    <style>
-        body { margin: 0; background: #f4f6f8; }
-        @media (prefers-color-scheme: dark) { html:not([data-pt-theme="light"]) body { background: #0f1419; } }
-        html[data-pt-theme="dark"] body { background: #0f1419; }
-    </style>
+    <style>body { margin: 0; min-height: 100vh; }</style>
     @stack('styles')
 </head>
-<body>
+<body class="pt-body">
     @yield('content')
     @stack('scripts')
 </body>

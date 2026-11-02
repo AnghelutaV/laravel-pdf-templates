@@ -121,4 +121,20 @@ class RenderingTest extends TestCase
         $this->expectExceptionMessage('bad template');
         PdfTemplates::render('designer', []);
     }
+
+    public function test_renderer_not_running_says_how_to_start_it(): void
+    {
+        config(['pdf-templates.pdfme.renderer_url' => 'http://127.0.0.1:3311']);
+        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('cURL error 7: Failed to connect'));
+        $this->wysiwygTemplate();
+
+        try {
+            PdfTemplates::render('designer', []);
+            $this->fail('RenderException expected');
+        } catch (RenderException $e) {
+            $this->assertStringContainsString('http://127.0.0.1:3311', $e->getMessage());
+            $this->assertStringContainsString('php artisan pdf-templates:renderer', $e->getMessage());
+            $this->assertStringNotContainsString('cURL', $e->getMessage());
+        }
+    }
 }

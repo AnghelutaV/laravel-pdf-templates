@@ -176,7 +176,7 @@ php artisan pdf-templates:import --force          # overwrite
 | `routes.prefix` / `routes.middleware`       | `pdf-templates` / `['web']`                            | admin UI URL and middleware                                                                   |
 | `gate`                                      | `viewPdfTemplates`                                     | `null` = no gate check                                                                        |
 | `layout` / `section`                        | `null` / `content`                                     | render inside your own admin layout (it must have `@stack('styles')` and `@stack('scripts')`) |
-| `back_url`                                  | `null`                                                 | back link in the UI header                                                                    |
+| `back_url`                                  | `null`                                                 | back link in the UI header: path (`admin`, `/admin`) or full URL                              |
 | `back_label`                                | `null`                                                 | back label link UI header                                                                     |
 | `api.prefix` / `api.middleware` / `api.key` | `api/pdf-templates` / `['api', 'throttle:60,1']` / env | HTTP API                                                                                      |
 | `table`                                     | `pdf_templates`                                        | database table                                                                                |

@@ -5,43 +5,55 @@
 @endpush
 
 @section(config('pdf-templates.section', 'content'))
-    <div class="pt pt-compact" data-csrf="{{ csrf_token() }}">
-        <x-pdf-templates::header :title="$template->name" :back="$ptRoute('index')" badge="wysiwyg">
-            <select class="pt-select" id="pt-page-size" title="{{ __('pdf-templates::ui.page_title') }}"
-                style="padding: 3px 6px; font-size: 11px; height: 28px;">
-                <option value="">Page...</option>
-                <option value="210x297">A4 Portret</option>
-                <option value="297x210">A4 Peisaj</option>
-                <option value="148x210">A5 Portret</option>
-                <option value="210x148">A5 Peisaj</option>
-                <option value="216x279">Letter</option>
-            </select>
+    @php($portrait = __('pdf-templates::ui.portrait'))
+    @php($landscape = __('pdf-templates::ui.landscape'))
+    {{-- Editor first: a slim strip + the designer; everything else lives in the off-canvas menu --}}
+    <div class="pt pt-compact pt-focus" id="pt-shell" data-csrf="{{ csrf_token() }}">
+        <x-pdf-templates::editor :template="$template" :help="__('pdf-templates::ui.wysiwyg_help')">
+            <section class="pt-drawer-section">
+                <h3>{{ __('pdf-templates::ui.section_check') }}</h3>
+                <div class="pt-stack">
+                    <button type="button" class="pt-btn pt-btn-block" id="pt-preview">
+                        <x-pdf-templates::icon name="eye" :size="15" /> {{ __('pdf-templates::ui.preview') }}
+                    </button>
+                    <a class="pt-btn pt-btn-block" href="{{ $ptRoute('test', $template) }}" data-pt-leave>
+                        <x-pdf-templates::icon name="flask" :size="15" /> {{ __('pdf-templates::ui.test') }}
+                    </a>
+                </div>
+            </section>
 
-            <label class="pt-btn pt-file" title="{{ __('pdf-templates::ui.background_pdf_title') }}"
-                style="padding: 3px 8px; font-size: 11px; height: 28px; line-height: 20px;">
-                PDF BG
-                <input type="file" id="pt-base-pdf" accept="application/pdf">
-            </label>
+            <section class="pt-drawer-section">
+                <h3>{{ __('pdf-templates::ui.section_page') }}</h3>
+                <div class="pt-stack">
+                    <select class="pt-select pt-btn-block" id="pt-page-size" aria-label="{{ __('pdf-templates::ui.page_title') }}">
+                        <option value="">{{ __('pdf-templates::ui.page_title') }}</option>
+                        <option value="210x297">A4 · {{ $portrait }}</option>
+                        <option value="297x210">A4 · {{ $landscape }}</option>
+                        <option value="148x210">A5 · {{ $portrait }}</option>
+                        <option value="210x148">A5 · {{ $landscape }}</option>
+                        <option value="216x279">Letter</option>
+                    </select>
+                    <label class="pt-btn pt-btn-block pt-file" data-pt-tip="{{ __('pdf-templates::ui.background_pdf_title') }}">
+                        <x-pdf-templates::icon name="layers" :size="15" /> {{ __('pdf-templates::ui.background_pdf') }}
+                        <input type="file" id="pt-base-pdf" accept="application/pdf">
+                    </label>
+                    <p class="pt-muted pt-hint">{{ __('pdf-templates::ui.background_pdf_title') }}</p>
+                </div>
+            </section>
 
-            <label class="pt-btn pt-file" title="{{ __('pdf-templates::ui.import_title') }}"
-                style="padding: 3px 8px; font-size: 11px; height: 28px; line-height: 20px;">
-                Import
-                <input type="file" id="pt-import" accept="application/json,.json">
-            </label>
-
-            <a class="pt-btn" href="{{ $ptRoute('export', $template) }}"
-                style="padding: 3px 8px; font-size: 11px; height: 28px; line-height: 20px; display: inline-flex; align-items: center;">Export</a>
-            <button type="button" class="pt-btn" id="pt-preview"
-                style="padding: 3px 8px; font-size: 11px; height: 28px;">Preview</button>
-            <a class="pt-btn" href="{{ $ptRoute('test', $template) }}"
-                style="padding: 3px 8px; font-size: 11px; height: 28px; line-height: 20px; display: inline-flex; align-items: center;">Test</a>
-
-            <button type="button" class="pt-btn pt-btn-primary" id="pt-save" disabled
-                style="padding: 3px 10px; font-size: 11px; height: 28px;">
-                Save <span style="opacity: .7; font-size: 10px;">(Ctrl+S)</span>
-            </button>
-        </x-pdf-templates::header>
-        @include('pdf-templates::partials.settings', ['help' => __('pdf-templates::ui.wysiwyg_help')])
+            <section class="pt-drawer-section">
+                <h3>{{ __('pdf-templates::ui.section_file') }}</h3>
+                <div class="pt-stack pt-stack-2">
+                    <label class="pt-btn pt-file" data-pt-tip="{{ __('pdf-templates::ui.import_title') }}">
+                        <x-pdf-templates::icon name="upload" :size="15" /> {{ __('pdf-templates::ui.import') }}
+                        <input type="file" id="pt-import" accept="application/json,.json">
+                    </label>
+                    <a class="pt-btn" href="{{ $ptRoute('export', $template) }}">
+                        <x-pdf-templates::icon name="download" :size="15" /> {{ __('pdf-templates::ui.export') }}
+                    </a>
+                </div>
+            </section>
+        </x-pdf-templates::editor>
 
         <div class="pt-designer" id="pt-designer">
             <div class="pt-designer-loading">{{ __('pdf-templates::ui.loading_designer') }}</div>
@@ -50,8 +62,8 @@
         <dialog class="pt-dialog" id="pt-preview-dialog">
             <div class="pt-card-head">
                 <h2>{{ __('pdf-templates::ui.preview_title') }}</h2>
-                <button type="button" class="pt-btn" onclick="this.closest('dialog').close()"
-                    aria-label="{{ __('pdf-templates::ui.cancel') }}">&times;</button>
+                <button type="button" class="pt-btn pt-btn-ghost pt-btn-icon" onclick="this.closest('dialog').close()"
+                    data-pt-tip="{{ __('pdf-templates::ui.close') }}" aria-label="{{ __('pdf-templates::ui.close') }}"><x-pdf-templates::icon name="x" /></button>
             </div>
             <iframe class="pt-frame" id="pt-preview-frame" title="{{ __('pdf-templates::ui.preview') }}"></iframe>
         </dialog>
@@ -60,11 +72,7 @@
 
 @push('scripts')
     <script type="module">
-        import {
-            Designer,
-            plugins,
-            generatePdf
-        } from 'pdf-templates/pdfme';
+        import { Designer, plugins, generatePdf } from 'pdf-templates/pdfme';
         import {
             sampleFromTemplate,
             resizeTemplate,
@@ -72,19 +80,17 @@
             notify,
             saveTemplate,
             showPdf,
-            onSaveShortcut,
-            fillViewport
+            fillViewport,
+            editorChrome
         } from 'pdf-templates';
 
-        fillViewport(document.getElementById('pt-designer'));
+        fillViewport(document.getElementById('pt-designer'), { gap: 0 });
 
         const t = @json(__('pdf-templates::ui'));
         const updateUrl = @json($ptRoute('update', $template));
         const sampleRaw = @json($template->sample_data);
         const template = JSON.parse(@json($template->schema ?: \AnghelutaV\PdfTemplates\Models\PdfTemplate::BLANK_SCHEMA));
         const fields = ['pt-name', 'pt-slug', 'pt-description', 'pt-active'].map((id) => document.getElementById(id));
-        const saveBtn = document.getElementById('pt-save');
-        let dirty = false;
 
         const container = document.getElementById('pt-designer');
         container.innerHTML = '';
@@ -99,15 +105,7 @@
             },
         });
 
-        const markDirty = (value) => {
-            dirty = value;
-            saveBtn.disabled = !value;
-        };
-        designer.onChangeTemplate(() => markDirty(true));
-        fields.forEach((el) => el.addEventListener('input', () => markDirty(true)));
-
         async function save() {
-            saveBtn.disabled = true;
             const [name, slug, description, active] = fields;
             try {
                 const res = await saveTemplate(updateUrl, {
@@ -117,23 +115,24 @@
                     description: description.value,
                     active: active.checked ? 1 : 0,
                 });
-                markDirty(false);
+                chrome.setDirty(false);
                 notify(t.saved_at.replace(':time', res.updated_at));
+                return true;
             } catch (e) {
-                saveBtn.disabled = false;
                 notify(t.save_error.replace(':error', e.message), 'danger');
+                return false;
             }
         }
-        saveBtn.addEventListener('click', save);
-        designer.onSaveTemplate(save);
-        onSaveShortcut(save);
-        window.addEventListener('beforeunload', (e) => {
-            if (dirty) e.preventDefault();
-        });
+
+        const chrome = editorChrome({ save, t });
+        designer.onChangeTemplate(() => chrome.setDirty(true));
+        designer.onSaveTemplate(() => document.getElementById('pt-save').click());
+        fields.forEach((el) => el.addEventListener('input', () => chrome.setDirty(true)));
 
         const replaceTemplate = (next) => {
             designer.updateTemplate(next);
-            markDirty(true);
+            chrome.setDirty(true);
+            chrome.closeDrawer();
         };
 
         document.getElementById('pt-page-size').addEventListener('change', (e) => {
@@ -170,6 +169,7 @@
         });
 
         document.getElementById('pt-preview').addEventListener('click', async () => {
+            chrome.closeDrawer();
             const current = designer.getTemplate();
             let data;
             try {

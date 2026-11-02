@@ -3,7 +3,9 @@
 namespace AnghelutaV\PdfTemplates\Renderers;
 
 use AnghelutaV\PdfTemplates\Exceptions\RenderException;
+use AnghelutaV\PdfTemplates\Exceptions\RendererUnavailableException;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 // WYSIWYG mode: pdfme only runs in JS, so server-side generation goes through the Node renderer
@@ -25,10 +27,15 @@ class WysiwygRenderer
         $inputs = is_string($data) && trim($data) !== '' ? $data : json_encode($data ?: new \stdClass, JSON_UNESCAPED_UNICODE);
         $body = '{"template":'.($template->schema ?: PdfTemplate::BLANK_SCHEMA).',"inputs":'.$inputs.'}';
 
-        $response = Http::withHeaders(['X-Renderer-Token' => (string) config('pdf-templates.pdfme.renderer_token')])
-            ->timeout((int) config('pdf-templates.pdfme.timeout', 60))
-            ->withBody($body, 'application/json')
-            ->post(rtrim($url, '/').'/render');
+        try {
+            $response = Http::withHeaders(['X-Renderer-Token' => (string) config('pdf-templates.pdfme.renderer_token')])
+                ->timeout((int) config('pdf-templates.pdfme.timeout', 60))
+                ->withBody($body, 'application/json')
+                ->post(rtrim($url, '/').'/render');
+        } catch (ConnectionException) {
+            // Nothing listening (renderer not started) or a timeout: say what to do instead of the raw cURL error
+            throw new RendererUnavailableException(__('pdf-templates::ui.renderer_down', ['url' => $url]));
+        }
 
         if ($response->failed()) {
             throw new RenderException('pdfme renderer: '.($response->json('error') ?? 'HTTP '.$response->status()));
