@@ -4,6 +4,8 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-02
+
 ### Added
 
 - New admin UI design: zinc/indigo light theme, matte green dark theme with grain, inline Lucide icons, tooltips (`data-pt-tip`), dismissible alerts, theme toggle with icons.
@@ -60,7 +62,8 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 - Initial release: WYSIWYG (pdfme) and HTML/CSS templates filled with JSON, admin UI, test page, HTTP API, Node renderer, export / import commands.
 
-[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.4...v0.2.0
 [0.1.4]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.0...v0.1.1
