@@ -6,9 +6,11 @@ use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\Renderers\HtmlRenderer;
 use AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer;
+use Composer\InstalledVersions;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
+use OutOfBoundsException;
 
 /**
  * PdfTemplates::make('invoice', $data)->save('invoices/1.pdf')   fluent, see PendingPdf
@@ -110,6 +112,16 @@ class PdfTemplates
         }
 
         return $this->engine->fields((string) $template->html);
+    }
+
+    // Installed version as Composer sees it ("v0.2.0", "dev-main" for a path / git checkout), null when unknown
+    public static function version(): ?string
+    {
+        try {
+            return InstalledVersions::getPrettyVersion('anghelutav/laravel-pdf-templates');
+        } catch (OutOfBoundsException) {
+            return null;
+        }
     }
 
     public function wysiwygOnServer(): bool

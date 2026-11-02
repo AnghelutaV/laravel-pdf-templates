@@ -614,6 +614,65 @@ body.pt-body,
   color: var(--pt-primary);
   box-shadow: none;
 }
+/* joined buttons: <div class="pt-btn-group"><a class="pt-btn">…</a><a class="pt-btn">…</a></div> */
+.pt-btn-group {
+  display: inline-flex;
+}
+.pt-btn-group > .pt-btn + .pt-btn {
+  margin-left: -1px;
+}
+.pt-btn-group > .pt-btn:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.pt-btn-group > .pt-btn:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.pt-btn-group > .pt-btn:only-child {
+  border-radius: var(--pt-radius-sm);
+}
+/* list page footer: package name + installed version */
+.pt-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--pt-muted);
+}
+.pt .pt-footer a {
+  color: var(--pt-muted);
+}
+.pt .pt-footer a:hover {
+  color: var(--pt-primary);
+}
+.pt-footer code {
+  font-size: 11.5px;
+}
+/* icon button that may grow (GitHub icon + star count) */
+.pt-btn-icon-text {
+  min-width: 34px;
+  padding: 0 9px;
+}
+.pt-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 2px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--pt-code-bg);
+  color: var(--pt-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.pt-stars svg {
+  color: #e3a008;
+  fill: currentColor;
+}
 .pt-btn-ghost {
   border-color: transparent;
   background: transparent;

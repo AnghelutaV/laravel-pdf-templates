@@ -31,7 +31,26 @@ class TemplateController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('pdf-templates::index', compact('templates'));
+        return view('pdf-templates::index', ['templates' => $templates, 'version' => $this->version()]);
+    }
+
+    // Footer: installed version, linked to its release (tag) or to the changelog (dev checkout)
+    protected function version(): ?array
+    {
+        $version = PdfTemplates::version();
+        if (! $version) {
+            return null;
+        }
+
+        $repo = config('pdf-templates.ui.repository', 'https://github.com/AnghelutaV/laravel-pdf-templates');
+        $released = (bool) preg_match('/^v?\d+\.\d+\.\d+$/', $version);
+        $label = $released ? 'v'.ltrim($version, 'v') : $version;
+
+        return [
+            'label' => $label,
+            'url' => $repo ? ($released ? "{$repo}/releases/tag/{$label}" : "{$repo}/blob/main/CHANGELOG.md") : null,
+            'changelog' => $repo ? "{$repo}/blob/main/CHANGELOG.md" : null,
+        ];
     }
 
     public function store(Request $request)

@@ -8,6 +8,20 @@
     @php($filtered = request('q') || request('mode'))
     <div class="pt" data-csrf="{{ csrf_token() }}">
         <x-pdf-templates::header :title="__('pdf-templates::ui.title')" :count="$templates->total()">
+            {{-- Default here too: a config published before this key existed has no ui.repository (explicit null hides it) --}}
+            @if ($repo = config('pdf-templates.ui.repository', 'https://github.com/AnghelutaV/laravel-pdf-templates'))
+                <div class="pt-btn-group">
+                    <a class="pt-btn pt-btn-icon-text" href="{{ $repo }}" target="_blank" rel="noopener"
+                        data-pt-tip="{{ __('pdf-templates::ui.star_on_github') }}" aria-label="GitHub">
+                        <x-pdf-templates::icon name="github" :size="16" />
+                        <span class="pt-stars pt-hidden" data-pt-stars="{{ $repo }}"><x-pdf-templates::icon name="star" :size="12" /> <span></span></span>
+                    </a>
+                    <a class="pt-btn pt-btn-icon-text" href="{{ $repo }}#readme" target="_blank" rel="noopener"
+                        data-pt-tip="{{ __('pdf-templates::ui.docs') }}" aria-label="{{ __('pdf-templates::ui.docs') }}">
+                        <x-pdf-templates::icon name="book" :size="15" />
+                    </a>
+                </div>
+            @endif
             <button type="button" class="pt-btn pt-btn-primary" id="pt-new">
                 <x-pdf-templates::icon name="plus" />
                 {{ __('pdf-templates::ui.new') }}
@@ -151,6 +165,19 @@
             @endif
         </div>
 
+        <footer class="pt-footer">
+            <span>laravel-pdf-templates</span>
+            @if ($version)
+                @if ($version['url'])
+                    <a href="{{ $version['url'] }}" target="_blank" rel="noopener"
+                        data-pt-tip="{{ __('pdf-templates::ui.installed_version') }}"><code>{{ $version['label'] }}</code></a>
+                    · <a href="{{ $version['changelog'] }}" target="_blank" rel="noopener">{{ __('pdf-templates::ui.changelog') }}</a>
+                @else
+                    <code data-pt-tip="{{ __('pdf-templates::ui.installed_version') }}">{{ $version['label'] }}</code>
+                @endif
+            @endif
+        </footer>
+
         <dialog class="pt-dialog pt-dialog-sm" id="pt-new-dialog">
             <form method="post" action="{{ $ptRoute('store') }}">
                 @csrf
@@ -203,5 +230,29 @@
     <script>
         document.querySelectorAll('#pt-new, [data-pt-new]').forEach((button) => button.addEventListener('click',
             () => document.getElementById('pt-new-dialog').showModal()));
+
+        // GitHub star count: public API from the browser, cached 6 h in localStorage; silent when offline / rate-limited
+        (() => {
+            const badge = document.querySelector('[data-pt-stars]');
+            const repo = badge && new URL(badge.dataset.ptStars).pathname.replace(/^\/|\/$/g, '');
+            if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return;
+            const key = 'pt-stars:' + repo;
+            const show = (count) => {
+                badge.lastElementChild.textContent = Intl.NumberFormat(undefined, { notation: 'compact' }).format(count);
+                badge.classList.remove('pt-hidden');
+            };
+            let cached = null;
+            try { cached = JSON.parse(localStorage.getItem(key)); } catch {}
+            if (cached && Date.now() - cached.at < 6 * 3600e3) return show(cached.count);
+
+            fetch('https://api.github.com/repos/' + repo, { headers: { Accept: 'application/vnd.github+json' } })
+                .then((response) => response.ok ? response.json() : null)
+                .then((json) => {
+                    if (!json || typeof json.stargazers_count !== 'number') return cached && show(cached.count);
+                    try { localStorage.setItem(key, JSON.stringify({ count: json.stargazers_count, at: Date.now() })); } catch {}
+                    show(json.stargazers_count);
+                })
+                .catch(() => cached && show(cached.count));
+        })();
     </script>
 @endpush

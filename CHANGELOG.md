@@ -4,6 +4,17 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-11-02
+
+### Added
+
+- GitHub (with the repository's star count) and documentation icon links in the list header; `ui.repository` sets the URL, `null` hides them. The star count is read from the GitHub API in the browser and cached for 6 hours.
+- Installed version (from Composer) in the list page footer, linked to its release and to the changelog; `PdfTemplates::version()`.
+
+## [0.2.1] - 2026-11-02
+
+Same code as 0.2.0 (tagged on the same commit).
+
 ## [0.2.0] - 2026-11-02
 
 ### Added
@@ -62,7 +73,9 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 - Initial release: WYSIWYG (pdfme) and HTML/CSS templates filled with JSON, admin UI, test page, HTTP API, Node renderer, export / import commands.
 
-[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.4...v0.2.0
 [0.1.4]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.1...v0.1.2

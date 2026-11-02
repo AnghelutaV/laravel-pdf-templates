@@ -44,6 +44,8 @@ return [
         // Optional back link shown in the package header (e.g. your admin dashboard)
         'back_url' => null,
         'back_label' => 'Back',
+        // GitHub + documentation links (with the star count) in the list header. null = hidden
+        'repository' => 'https://github.com/AnghelutaV/laravel-pdf-templates',
     ],
 
     // WYSIWYG mode runs pdfme in the browser; server-side generation (API) goes through the Node renderer
