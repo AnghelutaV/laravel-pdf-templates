@@ -6,6 +6,9 @@ use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Facades\PdfTemplates;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\PendingPdf;
+use AnghelutaV\PdfTemplates\Renderers\HtmlRenderer;
+use AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Mail\Attachment;
 use Illuminate\Support\Facades\Http;
@@ -25,7 +28,7 @@ class RenderingTest extends TestCase
     public function test_html_document_is_filled_and_lists_become_several_documents(): void
     {
         $template = $this->htmlTemplate();
-        $html = app(\AnghelutaV\PdfTemplates\Renderers\HtmlRenderer::class)->document($template, [
+        $html = app(HtmlRenderer::class)->document($template, [
             ['title' => 'First', 'items' => [['name' => 'a']]],
             ['title' => 'Second', 'items' => []],
         ]);
@@ -149,16 +152,16 @@ class RenderingTest extends TestCase
     {
         config(['pdf-templates.pdfme.renderer_url' => 'http://renderer.test']);
         Http::fake(['renderer.test/health' => Http::response(['ok' => true])]);
-        $this->assertTrue(\AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer::reachable());
+        $this->assertTrue(WysiwygRenderer::reachable());
 
-        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('refused'));
-        $this->assertFalse(\AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer::reachable());
+        Http::fake(fn () => throw new ConnectionException('refused'));
+        $this->assertFalse(WysiwygRenderer::reachable());
     }
 
     public function test_renderer_not_running_says_how_to_start_it(): void
     {
         config(['pdf-templates.pdfme.renderer_url' => 'http://127.0.0.1:3311']);
-        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('cURL error 7: Failed to connect'));
+        Http::fake(fn () => throw new ConnectionException('cURL error 7: Failed to connect'));
         $this->wysiwygTemplate();
 
         try {

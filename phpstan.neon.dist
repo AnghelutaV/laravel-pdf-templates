@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+# The package boots inside Orchestra Testbench (testbench.yaml registers the provider),
+# so Larastan knows the pdf-templates:: view namespace.
+parameters:
+    level: 5
+    paths:
+        - src
+        - routes
+        - database

@@ -4,10 +4,13 @@ namespace AnghelutaV\PdfTemplates\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
+ * @property int $id
  * @property string $name
+ * @property ?string $description
  * @property string $slug
  * @property string $mode wysiwyg|html
  * @property ?string $schema pdfme template JSON (WYSIWYG)
@@ -17,6 +20,8 @@ use Illuminate\Support\Str;
  * @property string $orientation
  * @property ?string $sample_data JSON
  * @property bool $active
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  */
 class PdfTemplate extends Model
 {
@@ -110,7 +115,7 @@ JSON;
     // New template with the starter content of its mode
     public static function makeStarter(string $name, string $mode, ?string $description = null): self
     {
-        return new static([
+        return new self([
             'name' => $name,
             'mode' => $mode,
             'description' => $description,

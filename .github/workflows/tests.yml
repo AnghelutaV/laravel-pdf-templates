@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4']
+        php: ['8.2', '8.3', '8.4', '8.5']
         laravel: ['11.*', '12.*', '13.*']
         include:
           - laravel: '11.*'
@@ -23,6 +23,9 @@ jobs:
         exclude:
           - php: '8.2'
             laravel: '13.*'
+          # Laravel 11 is past its support window and was never released for PHP 8.5
+          - php: '8.5'
+            laravel: '11.*'
 
     name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}
 
@@ -47,3 +50,26 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
+
+  # Code style (Pint) and static analysis (Larastan), once on the newest stack
+  quality:
+    runs-on: ubuntu-latest
+    name: Pint / Larastan
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php: '8.4'
+          extensions: dom, mbstring, gd, pdo_sqlite
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Code style
+        run: vendor/bin/pint --test
+
+      - name: Static analysis
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G

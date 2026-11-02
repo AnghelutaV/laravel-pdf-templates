@@ -2,8 +2,8 @@
 
 namespace AnghelutaV\PdfTemplates\Renderers;
 
-use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Exceptions\RendererUnavailableException;
+use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;

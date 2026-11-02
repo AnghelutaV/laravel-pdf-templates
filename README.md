@@ -1,6 +1,8 @@
 # Laravel PDF Templates
 
 [![tests](https://github.com/AnghelutaV/laravel-pdf-templates/actions/workflows/tests.yml/badge.svg)](https://github.com/AnghelutaV/laravel-pdf-templates/actions/workflows/tests.yml)
+[![Latest version](https://img.shields.io/packagist/v/anghelutav/laravel-pdf-templates.svg)](https://packagist.org/packages/anghelutav/laravel-pdf-templates)
+[![License](https://img.shields.io/packagist/l/anghelutav/laravel-pdf-templates.svg)](LICENSE)
 
 PDF templates for Laravel, stored in the database, filled with JSON and rendered from your code or over HTTP. You can use it instead of a hosted service such as apitemplate.io.
 
@@ -10,6 +12,20 @@ There are two template modes:
 - **HTML + CSS**: code with `{placeholders}`, loops, conditions and filters, rendered by dompdf.
 
 It comes with a standalone admin UI (like log-viewer or Telescope) in light and dark themes. The UI has a template list, the designer, an HTML editor with live preview, and a JSON test page that shows the fields each template expects.
+
+![Template list](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/index.png)
+
+<details>
+<summary><strong>More screenshots</strong>: editors, test page, light theme</summary>
+
+| | |
+| --- | --- |
+| ![New template](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/create.png) New template | ![Light theme](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/light_theme.png) Light theme |
+| ![WYSIWYG designer](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/edit_mode_1.png) WYSIWYG designer (pdfme) | ![Editor menu](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/side_edit_mode.png) Editor menu: preview, page, import / export, settings |
+| ![HTML editor](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/test_mode.png) HTML + CSS editor with live preview | ![Test page](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/test_mode_2.png) Test page: JSON in, PDF out |
+| ![Editor menu, light](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/light_side.png) Editor menu, light theme | |
+
+</details>
 
 ## Requirements
 
