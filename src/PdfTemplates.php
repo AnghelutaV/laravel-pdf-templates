@@ -7,6 +7,7 @@ use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\Renderers\HtmlRenderer;
 use AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 
 /**
@@ -44,10 +45,30 @@ class PdfTemplates
     public function render(PdfTemplate|string $template, string|array|null $data = []): string
     {
         $template = $this->find($template);
+        $ttl = (int) config('pdf-templates.cache.ttl', 0);
 
+        if ($ttl <= 0) {
+            return $this->generate($template, $data);
+        }
+
+        return Cache::store(config('pdf-templates.cache.store'))
+            ->remember($this->cacheKey($template, $data), $ttl, fn () => $this->generate($template, $data));
+    }
+
+    protected function generate(PdfTemplate $template, string|array|null $data): string
+    {
         return $template->isHtml()
             ? $this->html->pdf($template, $this->decode($data))
             : $this->wysiwyg->pdf($template, $data);
+    }
+
+    // Content, not id/updated_at: unsaved previews render a modified copy of the template
+    protected function cacheKey(PdfTemplate $template, string|array|null $data): string
+    {
+        return 'pdf-templates:'.sha1(implode("\0", [
+            $template->mode, $template->schema, $template->html, $template->css, $template->paper, $template->orientation,
+            is_string($data) ? $data : json_encode($data),
+        ]));
     }
 
     public function download(PdfTemplate|string $template, string|array|null $data = [], ?string $filename = null): Response

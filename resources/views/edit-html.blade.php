@@ -162,26 +162,32 @@
         [...fields, html, css, sample, paper, orientation].forEach((el) => el.addEventListener('input', () => chrome.setDirty(true)));
         [paper, orientation].forEach((el) => el.addEventListener('change', () => chrome.setDirty(true)));
 
-        async function preview() {
+        // Auto preview skips a render when nothing changed since the last one (typing then undoing, arrow keys…)
+        let lastRendered = null;
+        async function preview(force = false) {
+            const fields = { html: html.value, css: css.value, data: sample.value, paper: paper.value, orientation: orientation.value };
+            const key = JSON.stringify(fields);
+            if (!force && key === lastRendered) return;
+            lastRendered = key;
+
             const current = ++seq;
             status.textContent = t.generating;
             try {
-                const blob = await renderOnServer(renderUrl, {
-                    html: html.value, css: css.value, data: sample.value, paper: paper.value, orientation: orientation.value,
-                });
+                const blob = await renderOnServer(renderUrl, fields);
                 if (current !== seq) return;
                 showPdf(document.getElementById('pt-frame'), blob);
                 errorBox.classList.add('pt-hidden');
                 status.textContent = new Date().toLocaleTimeString();
             } catch (e) {
                 if (current !== seq) return;
+                lastRendered = null; // a failed render may be retried with the same content
                 errorBox.querySelector('[data-pt-alert-text]').textContent = e.message;
                 errorBox.classList.remove('pt-hidden');
                 status.textContent = '';
             }
         }
 
-        document.getElementById('pt-preview').addEventListener('click', preview);
+        document.getElementById('pt-preview').addEventListener('click', () => preview(true));
 
         // Full screen on the PDF preview alone
         fullscreenToggle(document.getElementById('pt-preview-fs'), document.getElementById('pt-preview-card'), t);

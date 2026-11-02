@@ -82,6 +82,8 @@ return [
         ."Server-side WYSIWYG PDFs (this button, the API, PdfTemplates::render()) go through a small Node service. Start it in the application folder and keep it running:\n"
         ."php artisan pdf-templates:renderer\n"
         .'"Generate (browser)" works without it.',
+    'not_running' => 'configured, but not running',
+    'renderer_start' => 'The renderer is not running. Start it with: php artisan pdf-templates:renderer',
     'renderer_down_short' => 'server: renderer not running',
     'dont_show_again' => "Don't show again",
     'renderer_missing' => 'Set PDFME_RENDERER_URL and run php artisan pdf-templates:renderer',

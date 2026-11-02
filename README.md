@@ -163,6 +163,7 @@ php artisan pdf-templates:import --force          # overwrite
 | `pdf-templates:install [--examples]`                                  | publish config, migrate, add examples       |
 | `pdf-templates:examples [--force]`                                    | add the example templates                   |
 | `pdf-templates:render {slug} {output?} [--data=file.json] [--fields]` | render from the console, or list the fields |
+| `pdf-templates:benchmark {slug?*} [--runs] [--docs] [--data] [--cache]` | time / memory / size per template         |
 | `pdf-templates:export {path?} [--slug=*]`                             | templates → files                           |
 | `pdf-templates:import {path?} [--force]`                              | files → templates                           |
 | `pdf-templates:renderer [--host] [--port] [--install]`                | run the Node renderer                       |
@@ -179,11 +180,46 @@ php artisan pdf-templates:import --force          # overwrite
 | `back_url`                                  | `null`                                                 | back link in the UI header: path (`admin`, `/admin`) or full URL                              |
 | `back_label`                                | `null`                                                 | back label link UI header                                                                     |
 | `api.prefix` / `api.middleware` / `api.key` | `api/pdf-templates` / `['api', 'throttle:60,1']` / env | HTTP API                                                                                      |
+| `routes.render_throttle`                    | `120,1`                                                | admin preview / test renders per user per minute                                              |
+| `cache.ttl` / `cache.store`                 | `0` (off) / default store                              | reuse generated PDFs for identical template + data (see Production)                           |
 | `table`                                     | `pdf_templates`                                        | database table                                                                                |
 | `pdfme.*`                                   |                                                        | pdfme version, CDN, renderer URL and token                                                    |
 | `html.*`                                    |                                                        | default font, extra fonts, number separators, extra dompdf `chroot` dirs                      |
 
 To publish the views or translations (`en`, `ro`): `php artisan vendor:publish --tag=pdf-templates-views` or `--tag=pdf-templates-lang`.
+
+## Production
+
+**Keep the Node renderer running** (only needed for WYSIWYG on the server: API, `PdfTemplates::render()`, "Generate (server)"). It answers `GET /health`; the test page uses it to show whether it is up. Supervisor:
+
+```ini
+[program:pdf-templates-renderer]
+command=php /var/www/app/artisan pdf-templates:renderer --host=127.0.0.1 --port=3311
+autostart=true
+autorestart=true
+user=www-data
+stdout_logfile=/var/www/app/storage/logs/pdf-renderer.log
+redirect_stderr=true
+```
+
+Or pm2 from the renderer folder: `pm2 start server.mjs --name pdf-renderer && pm2 save`. Keep it on `127.0.0.1` (or set `PDFME_RENDERER_TOKEN` when it listens on a network).
+
+**Cache repeated PDFs.** The same template content with the same data gives the same PDF; with a cache the second request skips the generation (dompdf / renderer):
+
+```bash
+PDF_TEMPLATES_CACHE_TTL=3600     # seconds, 0 = off
+PDF_TEMPLATES_CACHE_STORE=redis  # or file; not "database" (binary PDF bytes)
+```
+
+Editing a template changes its content, so old entries are never served for it. Changing fonts or number separators in the config is not part of the key: clear the cache after that.
+
+**Many PDFs at once** (mass mailing, exports): generate them in queued jobs, not in the request, e.g. `PdfTemplates::make('invoice', $data)->save("invoices/{$id}.pdf")` inside a job.
+
+**Limits.** The API is throttled by `api.middleware` (`throttle:60,1`), admin renders by `routes.render_throttle`. Each render is a full PDF generation, so keep them sized to your server.
+
+**`{value|raw}` prints unescaped HTML from the data.** Use it only for HTML you produce yourself, never for text typed by end users (it could inject markup or CSS into the document; dompdf runs no JavaScript and has remote resources disabled).
+
+**pdfme comes from a CDN** (`pdfme.cdn`, esm.sh) when the WYSIWYG editor opens. Offline or locked-down environments can point `pdfme.cdn` to a mirror that serves the same module paths.
 
 ## Testing
 

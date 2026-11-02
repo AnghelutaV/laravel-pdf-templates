@@ -6,6 +6,7 @@ use AnghelutaV\PdfTemplates\Exceptions\RendererUnavailableException;
 use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\PdfTemplates;
+use AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Validation\Rule;
@@ -21,7 +22,9 @@ class TemplateController extends Controller
             'mode' => ['nullable', Rule::in(PdfTemplate::MODES)],
         ]);
 
+        // Only the list columns: schema can hold a base64 background PDF (MBs), html/css/sample_data are big too
         $templates = PdfTemplate::query()
+            ->select(['id', 'name', 'slug', 'mode', 'description', 'active', 'updated_at'])
             ->search($request->input('q'))
             ->when($request->input('mode'), fn ($q, $mode) => $q->where('mode', $mode))
             ->orderBy('name')
@@ -103,9 +106,13 @@ class TemplateController extends Controller
 
     public function test(PdfTemplate $template, PdfTemplates $pdf)
     {
+        $configured = $pdf->wysiwygOnServer();
+
         return view('pdf-templates::test', [
             'template' => $template,
-            'rendererConfigured' => $pdf->wysiwygOnServer(),
+            'rendererConfigured' => $configured,
+            // Only pinged when it matters (WYSIWYG + URL set)
+            'rendererUp' => $configured && ! $template->isHtml() ? WysiwygRenderer::reachable() : null,
             'apiEnabled' => config('pdf-templates.api.enabled', true) && config('pdf-templates.api.key'),
             'fields' => $this->safeFields($pdf, $template),
         ]);

@@ -122,6 +122,39 @@ class RenderingTest extends TestCase
         PdfTemplates::render('designer', []);
     }
 
+    public function test_cache_reuses_the_pdf_for_the_same_content_and_data(): void
+    {
+        config([
+            'pdf-templates.pdfme.renderer_url' => 'http://renderer.test',
+            'pdf-templates.cache.ttl' => 60,
+            'pdf-templates.cache.store' => 'array',
+        ]);
+        Http::fake(['renderer.test/render' => Http::response('%PDF-fake', 200)]);
+        $template = $this->wysiwygTemplate();
+
+        PdfTemplates::render('designer', '{"client":"Ana"}');
+        PdfTemplates::render('designer', '{"client":"Ana"}');
+        Http::assertSentCount(1);
+
+        PdfTemplates::render('designer', '{"client":"Ion"}');
+        Http::assertSentCount(2);
+
+        // Edited template = new content = new PDF
+        $template->update(['schema' => str_replace('210', '211', $template->schema)]);
+        PdfTemplates::render('designer', '{"client":"Ana"}');
+        Http::assertSentCount(3);
+    }
+
+    public function test_renderer_health_check(): void
+    {
+        config(['pdf-templates.pdfme.renderer_url' => 'http://renderer.test']);
+        Http::fake(['renderer.test/health' => Http::response(['ok' => true])]);
+        $this->assertTrue(\AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer::reachable());
+
+        Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('refused'));
+        $this->assertFalse(\AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer::reachable());
+    }
+
     public function test_renderer_not_running_says_how_to_start_it(): void
     {
         config(['pdf-templates.pdfme.renderer_url' => 'http://127.0.0.1:3311']);

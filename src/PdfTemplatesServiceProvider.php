@@ -2,6 +2,7 @@
 
 namespace AnghelutaV\PdfTemplates;
 
+use AnghelutaV\PdfTemplates\Console\BenchmarkCommand;
 use AnghelutaV\PdfTemplates\Console\ExamplesCommand;
 use AnghelutaV\PdfTemplates\Console\ExportCommand;
 use AnghelutaV\PdfTemplates\Console\ImportCommand;
@@ -58,6 +59,7 @@ class PdfTemplatesServiceProvider extends ServiceProvider
                 ExamplesCommand::class,
                 RendererCommand::class,
                 RenderCommand::class,
+                BenchmarkCommand::class,
                 ExportCommand::class,
                 ImportCommand::class,
             ]);

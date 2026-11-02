@@ -79,6 +79,8 @@ return [
         ."PDF-urile WYSIWYG generate pe server (acest buton, API-ul, PdfTemplates::render()) trec printr-un mic serviciu Node. Pornește-l din folderul aplicației și lasă-l să ruleze:\n"
         ."php artisan pdf-templates:renderer\n"
         .'„Generează (browser)” funcționează și fără el.',
+    'not_running' => 'configurat, dar nu rulează',
+    'renderer_start' => 'Renderer-ul nu rulează. Pornește-l cu: php artisan pdf-templates:renderer',
     'renderer_down_short' => 'server: renderer-ul nu rulează',
     'dont_show_again' => 'Nu mai afișa',
     'renderer_missing' => 'Setează PDFME_RENDERER_URL și rulează php artisan pdf-templates:renderer',

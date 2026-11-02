@@ -34,6 +34,17 @@ class CommandsTest extends TestCase
         $this->assertSame('Example: Simple document (HTML)', PdfTemplate::where('slug', 'example-html')->value('name'));
     }
 
+    public function test_benchmark_times_html_and_skips_wysiwyg_without_renderer(): void
+    {
+        $this->htmlTemplate();
+        $this->wysiwygTemplate();
+
+        $this->artisan('pdf-templates:benchmark', ['--runs' => 2, '--docs' => 3, '--cache' => true])
+            ->expectsOutputToContain('PDF/s')
+            ->expectsOutputToContain('skipped: PDFME_RENDERER_URL not set')
+            ->assertSuccessful();
+    }
+
     public function test_export_then_import_round_trip(): void
     {
         $html = $this->htmlTemplate(['description' => 'Desc', 'active' => false]);

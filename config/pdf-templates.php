@@ -11,6 +11,15 @@ return [
         'prefix' => 'pdf-templates',
         'name' => 'pdf-templates.',
         'middleware' => ['web'],
+        // Live preview / test renders per user (or IP) per minute; each one is a full PDF generation
+        'render_throttle' => '120,1',
+    ],
+
+    // Cache generated PDFs: same template content + same data → the stored bytes, no new generation.
+    // ttl in seconds, 0 = off. Use a store that keeps binary data as is (file, redis), not "database".
+    'cache' => [
+        'ttl' => (int) env('PDF_TEMPLATES_CACHE_TTL', 0),
+        'store' => env('PDF_TEMPLATES_CACHE_STORE'),
     ],
 
     // Who may open the admin UI (checked after the route middleware). Define it in a service provider:

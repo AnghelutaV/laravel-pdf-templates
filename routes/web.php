@@ -18,5 +18,6 @@ Route::middleware([...config('pdf-templates.routes.middleware', ['web']), Author
         Route::post('/{template}/duplicate', [TemplateController::class, 'duplicate'])->name('duplicate');
         Route::get('/{template}/test', [TemplateController::class, 'test'])->name('test');
         Route::get('/{template}/export', [TemplateController::class, 'export'])->name('export');
-        Route::post('/{template}/render', [TemplateController::class, 'render'])->name('render');
+        Route::post('/{template}/render', [TemplateController::class, 'render'])->name('render')
+            ->middleware('throttle:'.config('pdf-templates.routes.render_throttle', '120,1'));
     });

@@ -16,6 +16,18 @@ class WysiwygRenderer
         return (bool) config('pdf-templates.pdfme.renderer_url');
     }
 
+    // GET /health with a short timeout: lets the test page say "not running" before anyone clicks
+    public static function reachable(): bool
+    {
+        try {
+            return Http::connectTimeout(1)->timeout(2)
+                ->get(rtrim((string) config('pdf-templates.pdfme.renderer_url'), '/').'/health')
+                ->successful();
+        } catch (ConnectionException) {
+            return false;
+        }
+    }
+
     // $data as a raw JSON string is passed through untouched, so {} stays an object (PHP would turn it into [])
     public function pdf(PdfTemplate $template, string|array|null $data): string
     {

@@ -8,7 +8,9 @@
     @php
         $isHtml = $template->isHtml();
         $apiUrl = $ptRoute('api', $template->slug);
-        $serverReady = $isHtml || $rendererConfigured;
+        // WYSIWYG on the server: URL set and /health answering (rendererUp is null for HTML templates)
+        $serverReady = $isHtml || ($rendererConfigured && $rendererUp);
+        $rendererState = !$rendererConfigured ? 'not_configured' : ($rendererUp === false ? 'not_running' : 'configured');
     @endphp
     <div class="pt" data-csrf="{{ csrf_token() }}">
         <x-pdf-templates::header :title="__('pdf-templates::ui.test_title', ['name' => $template->name])" :back="$ptRoute('edit', $template)" :badge="$template->mode">
@@ -37,7 +39,7 @@
                                 <button type="button" class="pt-btn pt-btn-primary" id="pt-browser"><x-pdf-templates::icon name="monitor" :size="14" /> {{ __('pdf-templates::ui.generate_browser') }}</button>
                             @endunless
                             <button type="button" class="pt-btn {{ $isHtml ? 'pt-btn-primary' : '' }}" id="pt-server"
-                                @disabled(!$serverReady) @if (!$serverReady) title="{{ __('pdf-templates::ui.renderer_missing') }}" @endif>
+                                @disabled(!$serverReady) @if (!$serverReady) title="{{ __('pdf-templates::ui.' . ($rendererConfigured ? 'renderer_start' : 'renderer_missing')) }}" @endif>
                                 <x-pdf-templates::icon name="server" :size="14" /> {{ __('pdf-templates::ui.generate_server') }}
                             </button>
                             <button type="button" class="pt-btn" id="pt-download" disabled><x-pdf-templates::icon name="download" :size="14" /> {{ __('pdf-templates::ui.download') }}</button>
@@ -45,7 +47,10 @@
                         <p class="pt-muted" style="margin-top: 12px;">
                             {!! $isHtml
                                 ? e(__('pdf-templates::ui.html_server_note'))
-                                : __('pdf-templates::ui.wysiwyg_server_note', ['state' => __('pdf-templates::ui.' . ($rendererConfigured ? 'configured' : 'not_configured'))]) !!}
+                                : __('pdf-templates::ui.wysiwyg_server_note', ['state' => __('pdf-templates::ui.' . $rendererState)]) !!}
+                            @if ($rendererState === 'not_running')
+                                <br><code>php artisan pdf-templates:renderer</code>
+                            @endif
                             {!! __('pdf-templates::ui.multi_note') !!}
                         </p>
                     </div>
