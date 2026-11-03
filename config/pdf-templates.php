@@ -58,6 +58,28 @@ return [
         'timeout' => 60,
     ],
 
+    // AI assistant (laravel/ai): chat panel in the editors and "Generate with AI" in the list.
+    // The provider key lives in config/ai.php (e.g. ANTHROPIC_API_KEY). Template content and
+    // attached files are sent to that provider.
+    'ai' => [
+        'enabled' => (bool) env('PDF_TEMPLATES_AI', true),
+        'provider' => env('PDF_TEMPLATES_AI_PROVIDER', 'anthropic'),
+        // null = the provider's default text model
+        'model' => env('PDF_TEMPLATES_AI_MODEL', 'claude-sonnet-5-5'),
+        // "structured" = JSON output + check tools (Claude, GPT, Gemini…)
+        // "text"       = plain text sections, no tools: small / free models (Groq, Ollama…) that fail on structured output
+        'format' => env('PDF_TEMPLATES_AI_FORMAT', 'structured'),
+        'timeout' => 120,
+        // Requests per user (or IP) per minute
+        'throttle' => '20,1',
+        // When the answer has errors (template syntax, invalid JSON / fields), ask the model again this many times
+        'retries' => 1,
+        // Previous chat messages sent with each request
+        'history' => 20,
+        // Attached image / PDF (a document to copy), in KB
+        'max_upload_kb' => 10240,
+    ],
+
     // HTML mode (dompdf)
     'html' => [
         'default_font' => 'DejaVu Sans',

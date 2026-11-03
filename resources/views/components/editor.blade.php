@@ -1,6 +1,7 @@
 {{--
     Editor chrome shared by both editors: slim strip (back to list, menu, name, unsaved dot, save, full screen),
-    off-canvas menu (back link, the slot's sections, settings, theme) and the "leave without saving?" dialog.
+    off-canvas menu (back link, the slot's sections, settings, theme), the "leave without saving?" dialog
+    and, when the AI assistant is on, its toggle + panel (ai.js).
     Wired by editorChrome() from helpers.js. The page wraps it in <div class="pt pt-compact pt-focus" id="pt-shell">.
     <x-pdf-templates::editor :template="$template" :help="...">drawer sections</x-pdf-templates::editor>
 --}}
@@ -25,6 +26,12 @@
     <span class="pt-badge pt-badge-{{ $template->mode }}">{{ $mode }}</span>
     <span class="pt-dirty pt-hidden" id="pt-dirty">{{ __('pdf-templates::ui.unsaved') }}</span>
     <span class="pt-strip-spacer"></span>
+    @if ($aiEnabled)
+        <button type="button" class="pt-btn pt-btn-ghost pt-btn-sm pt-ai-toggle" id="pt-ai-toggle" aria-pressed="false"
+            data-pt-tip="{{ __('pdf-templates::ui.ai_title') }} (Ctrl+I)" aria-label="{{ __('pdf-templates::ui.ai_title') }}">
+            <x-pdf-templates::icon name="sparkles" :size="14" /> {{ __('pdf-templates::ui.ai_short') }}
+        </button>
+    @endif
     <button type="button" class="pt-btn pt-btn-primary pt-btn-sm" id="pt-save" disabled data-pt-tip="Ctrl+S">
         <x-pdf-templates::icon name="save" :size="14" /> {{ __('pdf-templates::ui.save') }}
     </button>
@@ -98,4 +105,8 @@
 
 @if ($exit)
     @include('pdf-templates::partials.exit-dialog')
+@endif
+
+@if ($aiEnabled)
+    <x-pdf-templates::ai-panel :mode="$template->mode" />
 @endif

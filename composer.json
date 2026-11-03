@@ -26,20 +26,21 @@
         "security": "https://github.com/AnghelutaV/laravel-pdf-templates/security/policy"
     },
     "require": {
-        "php": "^8.2",
-        "illuminate/support": "^11.0|^12.0|^13.0",
-        "illuminate/database": "^11.0|^12.0|^13.0",
-        "illuminate/http": "^11.0|^12.0|^13.0",
-        "illuminate/routing": "^11.0|^12.0|^13.0",
-        "illuminate/view": "^11.0|^12.0|^13.0",
-        "illuminate/console": "^11.0|^12.0|^13.0",
-        "illuminate/validation": "^11.0|^12.0|^13.0",
-        "illuminate/cache": "^11.0|^12.0|^13.0",
+        "php": "^8.3",
+        "illuminate/support": "^12.0|^13.0",
+        "illuminate/database": "^12.0|^13.0",
+        "illuminate/http": "^12.0|^13.0",
+        "illuminate/routing": "^12.0|^13.0",
+        "illuminate/view": "^12.0|^13.0",
+        "illuminate/console": "^12.0|^13.0",
+        "illuminate/validation": "^12.0|^13.0",
+        "illuminate/cache": "^12.0|^13.0",
         "guzzlehttp/guzzle": "^7.8|^8.0",
-        "barryvdh/laravel-dompdf": "^3.0"
+        "barryvdh/laravel-dompdf": "^3.0",
+        "laravel/ai": "^1.3"
     },
     "require-dev": {
-        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "orchestra/testbench": "^10.0|^11.0",
         "phpunit/phpunit": "^10.5|^11.0|^12.0",
         "laravel/pint": "^1.32",
         "larastan/larastan": "^3.13"

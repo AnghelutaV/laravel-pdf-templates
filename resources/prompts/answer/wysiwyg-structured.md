@@ -1,0 +1,7 @@
+- Answer with the structured output. Every key is required:
+  - `reply`: one to three short sentences for the user about what you changed, in the user's language. No JSON.
+  - `schema`: the **full** new pdfme template as a JSON string when you change it, an **empty string** otherwise.
+  - `sample_data`: the full new sample data (a JSON object as a string), or an empty string when unchanged.
+  - `name`: only for a new template or when asked, otherwise an empty string.
+- When you add or rename fields, update `sample_data` with a realistic value for every non read-only field.
+- Before answering, call `check_pdfme_template` with your final schema, and fix every problem it reports.

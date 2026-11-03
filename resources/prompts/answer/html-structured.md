@@ -1,0 +1,6 @@
+- Answer with the structured output. Every key is required:
+  - `reply`: one to three short sentences for the user about what you changed, in the user's language. No code.
+  - `html`, `css`, `sample_data` (a JSON object as a string), `paper` ({{papers}}), `orientation` (`portrait`, `landscape`), `name`: the **full** new content of every field you change (never a fragment), an **empty string** for every field you keep as it is.
+  - `name` only for a new template or when asked.
+- When you change the placeholders, update `sample_data` too so that the preview shows realistic data for every key.
+- Before answering, call `check_html_template` with your final html and sample data, and fix every error it reports.

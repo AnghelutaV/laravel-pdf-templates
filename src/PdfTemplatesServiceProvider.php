@@ -2,6 +2,7 @@
 
 namespace AnghelutaV\PdfTemplates;
 
+use AnghelutaV\PdfTemplates\Ai\Assistant;
 use AnghelutaV\PdfTemplates\Console\BenchmarkCommand;
 use AnghelutaV\PdfTemplates\Console\ExamplesCommand;
 use AnghelutaV\PdfTemplates\Console\ExportCommand;
@@ -35,10 +36,11 @@ class PdfTemplatesServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'pdf-templates');
         // $ptRoute('edit', $template): route names follow the configurable prefix
-        View::composer('pdf-templates::*', fn ($view) => $view->with(
-            'ptRoute',
-            fn (string $name, mixed $parameters = []) => route(config('pdf-templates.routes.name', 'pdf-templates.').$name, $parameters),
-        ));
+        View::composer('pdf-templates::*', fn ($view) => $view->with([
+            'ptRoute' => fn (string $name, mixed $parameters = []) => route(config('pdf-templates.routes.name', 'pdf-templates.').$name, $parameters),
+            // AI assistant: on and the provider key set
+            'aiEnabled' => Assistant::enabled(),
+        ]));
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'pdf-templates');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 

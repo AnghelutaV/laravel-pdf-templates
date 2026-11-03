@@ -4,6 +4,23 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-02
+
+### Added
+
+- AI assistant ([laravel/ai](https://github.com/laravel/ai)): a Copilot-like chat panel in both editors (Ctrl+I) that writes and edits the HTML, CSS, test data or the pdfme fields. Answers go into the editor as unsaved changes and can be undone; an image or PDF can be attached as a reference.
+- "Generate with AI" in the new template dialog: a description (and an optional image / PDF) becomes the first version of the template.
+- `ai` config block (`enabled`, `provider`, `model`, `timeout`, `throttle`, `history`, `max_upload_kb`); env `PDF_TEMPLATES_AI`, `PDF_TEMPLATES_AI_PROVIDER`, `PDF_TEMPLATES_AI_MODEL`. The assistant is shown only when the provider has a key.
+- The WYSIWYG editor saves the test data with the template.
+
+### Changed
+
+- **Breaking:** requires PHP 8.3+ and Laravel 12 or 13 (`laravel/ai`). Stay on 0.2.x for Laravel 11.
+
+### Upgrade notes
+
+- If you published the views, re-publish them or compare: `components/editor.blade.php`, both editors, `index.blade.php` and `partials/head.blade.php` (import map entry `pdf-templates/ai`) changed, `components/ai-panel.blade.php` is new.
+
 ## [0.2.2] - 2026-11-02
 
 ### Added
@@ -73,7 +90,8 @@ Same code as 0.2.0 (tagged on the same commit).
 
 - Initial release: WYSIWYG (pdfme) and HTML/CSS templates filled with JSON, admin UI, test page, HTTP API, Node renderer, export / import commands.
 
-[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.1.4...v0.2.0

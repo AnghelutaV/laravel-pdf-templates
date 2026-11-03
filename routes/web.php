@@ -1,6 +1,7 @@
 <?php
 
 use AnghelutaV\PdfTemplates\Http\Controllers\AssetController;
+use AnghelutaV\PdfTemplates\Http\Controllers\AssistantController;
 use AnghelutaV\PdfTemplates\Http\Controllers\TemplateController;
 use AnghelutaV\PdfTemplates\Http\Middleware\Authorize;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,8 @@ Route::middleware([...config('pdf-templates.routes.middleware', ['web']), Author
     ->group(function () {
         Route::get('/', [TemplateController::class, 'index'])->name('index');
         Route::post('/', [TemplateController::class, 'store'])->name('store');
+        Route::post('/assistant', [AssistantController::class, 'create'])->name('assistant.create')
+            ->middleware('throttle:'.config('pdf-templates.ai.throttle', '20,1'));
         Route::get('/assets/{file}', AssetController::class)->where('file', '[a-z0-9.-]+')->name('asset');
         Route::get('/{template}/edit', [TemplateController::class, 'edit'])->name('edit');
         Route::put('/{template}', [TemplateController::class, 'update'])->name('update');
@@ -20,4 +23,6 @@ Route::middleware([...config('pdf-templates.routes.middleware', ['web']), Author
         Route::get('/{template}/export', [TemplateController::class, 'export'])->name('export');
         Route::post('/{template}/render', [TemplateController::class, 'render'])->name('render')
             ->middleware('throttle:'.config('pdf-templates.routes.render_throttle', '120,1'));
+        Route::post('/{template}/assistant', [AssistantController::class, 'edit'])->name('assistant')
+            ->middleware('throttle:'.config('pdf-templates.ai.throttle', '20,1'));
     });

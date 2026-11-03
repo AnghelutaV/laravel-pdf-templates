@@ -13,6 +13,8 @@ There are two template modes:
 
 It comes with a standalone admin UI (like log-viewer or Telescope) in light and dark themes. The UI has a template list, the designer, an HTML editor with live preview, and a JSON test page that shows the fields each template expects.
 
+An **AI assistant** ([laravel/ai](https://github.com/laravel/ai): Anthropic, OpenAI, Gemini, Ollama…) writes and edits templates from a chat panel in both editors, or creates a new template from a description or a picture of an existing document.
+
 ![Template list](https://raw.githubusercontent.com/AnghelutaV/laravel-pdf-templates/main/docs/screenshots/index.png)
 
 <details>
@@ -29,7 +31,7 @@ It comes with a standalone admin UI (like log-viewer or Telescope) in light and 
 
 ## Requirements
 
-- PHP 8.2+ and Laravel 11, 12 or 13. Laravel 13 needs PHP 8.3+.
+- PHP 8.3+ and Laravel 12 or 13. For Laravel 11 / PHP 8.2 use version 0.2.x (no AI assistant).
 - Node.js 18+, only to render **WYSIWYG** templates on the server (in code or through the API). The browser designer and the HTML mode don't need Node.
 
 ## Installation
@@ -162,6 +164,32 @@ PDFME_RENDERER_TOKEN=optional-shared-secret
 
 In production, run it under supervisor or systemd. You can also copy `vendor/anghelutav/laravel-pdf-templates/renderer` anywhere and run `npm install && npm start` (env: `HOST`, `PORT`, `PDFME_RENDERER_TOKEN`).
 
+## AI assistant
+
+The editors have an **AI** button (Ctrl+I) that opens a chat panel on the right. Ask for a change ("add a footer with page numbers", "a QR code in the bottom right corner") or attach an image / PDF of a document to copy. The answer goes into the editor as **unsaved** changes: the preview refreshes, every answer can be undone, and nothing is stored until you press Save. In the list, the "New template" dialog can also **Generate with AI** from a description.
+
+It runs on [laravel/ai](https://laravel.com/docs/ai-sdk) (installed with the package) and is shown once the provider has a key:
+
+```dotenv
+ANTHROPIC_API_KEY=sk-ant-...
+# optional
+PDF_TEMPLATES_AI_PROVIDER=anthropic       # any laravel/ai text provider: openai, gemini, mistral, ollama, ...
+PDF_TEMPLATES_AI_MODEL=claude-sonnet-5-5  # empty = the provider's default model
+PDF_TEMPLATES_AI_FORMAT=structured        # "text" for small / free models (see below)
+PDF_TEMPLATES_AI=false                    # hide the assistant
+```
+
+Keys for the other providers (`OPENAI_API_KEY`, `GEMINI_API_KEY`, `GROQ_API_KEY`, …) are read by `config/ai.php` (`php artisan vendor:publish --provider="Laravel\Ai\AiServiceProvider"`).
+
+Two answer formats:
+
+- `structured` (default) for strong models (Claude, GPT, Gemini): structured JSON output, and the model calls check tools (template syntax and data keys, pdfme fields) before it answers.
+- `text` for small or free models (Groq, Ollama…) that fail with `Failed to generate JSON` or `tool_use_failed`: the model writes plain `<pt:html>…</pt:html>` sections, no tools.
+
+In both, the answer is also checked on the server (template syntax; JSON, field types, names and page bounds in WYSIWYG mode) and, when it has problems, sent back to the model once (`ai.retries`) to fix. Embedded files (background PDF, data-URL images) are replaced by placeholders before the request and put back in the answer, so large templates stay cheap.
+
+**Privacy:** the current template (with its test data), the chat history of the browser tab and the attached file are sent to the AI provider. Use sample data, not real customer data.
+
 ## Templates in git: export and import
 
 Templates live in the database. To keep them in version control and ship them with deploys:
@@ -199,6 +227,10 @@ php artisan pdf-templates:import --force          # overwrite
 | `api.prefix` / `api.middleware` / `api.key` | `api/pdf-templates` / `['api', 'throttle:60,1']` / env | HTTP API                                                                                      |
 | `routes.render_throttle`                    | `120,1`                                                | admin preview / test renders per user per minute                                              |
 | `cache.ttl` / `cache.store`                 | `0` (off) / default store                              | reuse generated PDFs for identical template + data (see Production)                           |
+| `ai.enabled` / `ai.provider` / `ai.model`   | env / `anthropic` / `claude-sonnet-5-5`                | AI assistant (see AI assistant)                                                               |
+| `ai.format`                                 | `structured`                                           | `text` for small / free models                                                                |
+| `ai.throttle` / `ai.history` / `ai.retries` | `20,1` / `20` / `1`                                    | AI requests per user per minute, previous chat messages sent, re-asks for an invalid answer    |
+| `ai.max_upload_kb` / `ai.timeout`           | `10240` / `120`                                        | attached image / PDF size, seconds per AI request                                             |
 | `table`                                     | `pdf_templates`                                        | database table                                                                                |
 | `pdfme.*`                                   |                                                        | pdfme version, CDN, renderer URL and token                                                    |
 | `html.*`                                    |                                                        | default font, extra fonts, number separators, extra dompdf `chroot` dirs                      |

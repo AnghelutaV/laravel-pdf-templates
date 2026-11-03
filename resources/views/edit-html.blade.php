@@ -197,5 +197,31 @@
             timer = setTimeout(preview, 900);
         }));
         preview();
+
+        @if ($aiEnabled)
+            // AI assistant: answers land in the editor as unsaved changes
+            const { assistant } = await import('pdf-templates/ai');
+            const name = document.getElementById('pt-name');
+            const editors = { html, css, sample_data: sample, paper, orientation, name };
+            const tabOf = { html: 'pt-tab-html', css: 'pt-tab-css', sample_data: 'pt-tab-data' };
+            assistant({
+                url: @json($ptRoute('assistant', $template)),
+                t,
+                key: {{ $template->id }},
+                initial: @json(session('pdf-templates.ai_history', [])),
+                getDraft: () => Object.fromEntries(Object.entries(editors).map(([k, el]) => [k, el.value])),
+                applyDraft(patch) {
+                    Object.entries(patch).forEach(([k, value]) => {
+                        if (!editors[k]) return;
+                        editors[k].value = value;
+                        editors[k].dispatchEvent(new Event('input'));
+                    });
+                    const tab = Object.keys(tabOf).find((k) => k in patch);
+                    if (tab) document.querySelector(`[data-tab="${tabOf[tab]}"]`).click();
+                    chrome.setDirty(true);
+                    preview(true);
+                },
+            });
+        @endif
     </script>
 @endpush

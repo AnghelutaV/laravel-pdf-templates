@@ -6,6 +6,7 @@ use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\PdfTemplatesServiceProvider;
 use Barryvdh\DomPDF\ServiceProvider as DomPdfServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Ai\AiServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -14,7 +15,7 @@ abstract class TestCase extends Orchestra
 
     protected function getPackageProviders($app): array
     {
-        return [DomPdfServiceProvider::class, PdfTemplatesServiceProvider::class];
+        return [DomPdfServiceProvider::class, AiServiceProvider::class, PdfTemplatesServiceProvider::class];
     }
 
     protected function defineEnvironment($app): void
@@ -23,6 +24,8 @@ abstract class TestCase extends Orchestra
         $app['config']->set('pdf-templates.api.key', 'test-key');
         // Most tests are about behaviour, not access: the Authorize middleware has its own tests
         $app['config']->set('pdf-templates.gate', null);
+        // AI assistant on (agents are faked in the tests)
+        $app['config']->set('ai.providers.anthropic.key', 'test-key');
     }
 
     protected function htmlTemplate(array $attributes = []): PdfTemplate

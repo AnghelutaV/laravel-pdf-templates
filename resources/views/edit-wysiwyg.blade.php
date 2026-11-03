@@ -88,7 +88,8 @@
 
         const t = @json(__('pdf-templates::ui'));
         const updateUrl = @json($ptRoute('update', $template));
-        const sampleRaw = @json($template->sample_data);
+        // Test data: saved with the template, can be changed by the AI assistant
+        let sampleRaw = @json($template->sample_data);
         const template = JSON.parse(@json($template->schema ?: \AnghelutaV\PdfTemplates\Models\PdfTemplate::BLANK_SCHEMA));
         const fields = ['pt-name', 'pt-slug', 'pt-description', 'pt-active'].map((id) => document.getElementById(id));
 
@@ -114,6 +115,7 @@
                     slug: slug.value,
                     description: description.value,
                     active: active.checked ? 1 : 0,
+                    sample_data: sampleRaw,
                 });
                 chrome.setDirty(false);
                 notify(t.saved_at.replace(':time', res.updated_at));
@@ -186,5 +188,27 @@
                 notify(t.render_error.replace(':error', err.message), 'danger');
             }
         });
+
+        @if ($aiEnabled)
+            // AI assistant: the new pdfme template goes into the designer as unsaved changes
+            const { assistant } = await import('pdf-templates/ai');
+            const name = document.getElementById('pt-name');
+            assistant({
+                url: @json($ptRoute('assistant', $template)),
+                t,
+                key: {{ $template->id }},
+                initial: @json(session('pdf-templates.ai_history', [])),
+                getDraft: () => ({ schema: JSON.stringify(designer.getTemplate()), sample_data: sampleRaw ?? '', name: name.value }),
+                applyDraft(patch) {
+                    if ('schema' in patch) designer.updateTemplate(JSON.parse(patch.schema));
+                    if ('sample_data' in patch) sampleRaw = patch.sample_data;
+                    if ('name' in patch) {
+                        name.value = patch.name;
+                        name.dispatchEvent(new Event('input'));
+                    }
+                    chrome.setDirty(true);
+                },
+            });
+        @endif
     </script>
 @endpush

@@ -178,8 +178,8 @@
             @endif
         </footer>
 
-        <dialog class="pt-dialog pt-dialog-sm" id="pt-new-dialog">
-            <form method="post" action="{{ $ptRoute('store') }}">
+        <dialog class="pt-dialog pt-dialog-sm" id="pt-new-dialog" @if ($aiEnabled && $errors->ai->has('message')) data-open @endif>
+            <form method="post" action="{{ $ptRoute('store') }}" enctype="multipart/form-data" id="pt-new-form">
                 @csrf
                 <div class="pt-dialog-body">
                     <h2>{{ __('pdf-templates::ui.new') }}</h2>
@@ -187,7 +187,7 @@
 
                     <div class="pt-field">
                         <label class="pt-label" for="pt-name">{{ __('pdf-templates::ui.name') }}</label>
-                        <input type="text" class="pt-input" id="pt-name" name="name" required autofocus
+                        <input type="text" class="pt-input" id="pt-name" name="name" required autofocus value="{{ old('name') }}"
                             placeholder="{{ __('pdf-templates::ui.name_placeholder') }}">
                     </div>
 
@@ -196,7 +196,7 @@
                         <div class="pt-choices">
                             @foreach (\AnghelutaV\PdfTemplates\Models\PdfTemplate::MODES as $mode)
                                 <label class="pt-choice">
-                                    <input type="radio" name="mode" value="{{ $mode }}" @checked($loop->first)>
+                                    <input type="radio" name="mode" value="{{ $mode }}" @checked(old('mode') ? old('mode') === $mode : $loop->first)>
                                     <span class="pt-choice-icon">
                                         <x-pdf-templates::icon :name="$mode === 'html' ? 'code' : 'layout'" :size="18" />
                                     </span>
@@ -213,12 +213,36 @@
                         <label class="pt-label" for="pt-description">
                             {{ __('pdf-templates::ui.description') }} <span class="pt-muted">({{ __('pdf-templates::ui.optional') }})</span>
                         </label>
-                        <input type="text" class="pt-input" id="pt-description" name="description"
+                        <input type="text" class="pt-input" id="pt-description" name="description" value="{{ old('description') }}"
                             placeholder="{{ __('pdf-templates::ui.description_placeholder') }}">
                     </div>
+
+                    @if ($aiEnabled)
+                        {{-- Optional: describe it (and/or attach an example) → the AI writes the first version --}}
+                        <div class="pt-ai-new">
+                            <label class="pt-label" for="pt-ai-message">
+                                <x-pdf-templates::icon name="sparkles" :size="14" /> {{ __('pdf-templates::ui.ai_describe') }}
+                                <span class="pt-muted">({{ __('pdf-templates::ui.optional') }})</span>
+                            </label>
+                            @error('message', 'ai')
+                                <div class="pt-alert pt-alert-danger" role="alert">{{ $message }}</div>
+                            @enderror
+                            <textarea class="pt-textarea" id="pt-ai-message" name="message" rows="3"
+                                placeholder="{{ __('pdf-templates::ui.ai_describe_placeholder') }}">{{ old('message') }}</textarea>
+                            <label class="pt-ai-new-file pt-muted">
+                                <x-pdf-templates::icon name="paperclip" :size="13" /> {{ __('pdf-templates::ui.ai_attach') }}
+                                <input type="file" name="file" accept="image/png,image/jpeg,image/webp,image/gif,application/pdf">
+                            </label>
+                        </div>
+                    @endif
                 </div>
                 <div class="pt-dialog-foot">
                     <button type="button" class="pt-btn" onclick="this.closest('dialog').close()">{{ __('pdf-templates::ui.cancel') }}</button>
+                    @if ($aiEnabled)
+                        <button type="submit" class="pt-btn" id="pt-ai-generate" formaction="{{ $ptRoute('assistant.create') }}">
+                            <x-pdf-templates::icon name="sparkles" :size="14" /> <span>{{ __('pdf-templates::ui.ai_generate') }}</span>
+                        </button>
+                    @endif
                     <button type="submit" class="pt-btn pt-btn-primary">{{ __('pdf-templates::ui.create') }}</button>
                 </div>
             </form>
@@ -230,6 +254,26 @@
     <script>
         document.querySelectorAll('#pt-new, [data-pt-new]').forEach((button) => button.addEventListener('click',
             () => document.getElementById('pt-new-dialog').showModal()));
+        if (document.getElementById('pt-new-dialog').hasAttribute('data-open')) document.getElementById('pt-new-dialog').showModal();
+
+        // "Generate with AI" needs a description; then it takes a while (the model writes the whole template)
+        document.getElementById('pt-new-form').addEventListener('submit', (e) => {
+            const generate = document.getElementById('pt-ai-generate');
+            if (!generate || e.submitter !== generate) return;
+            const message = document.getElementById('pt-ai-message');
+            if (!message.value.trim()) {
+                e.preventDefault();
+                message.required = true;
+                message.reportValidity();
+                message.required = false;
+                return;
+            }
+            setTimeout(() => {
+                e.target.querySelectorAll('button').forEach((b) => b.disabled = true);
+                generate.classList.add('pt-ai-busy');
+                generate.querySelector('span').textContent = @json(__('pdf-templates::ui.ai_generating'));
+            });
+        });
 
         // GitHub star count: public API from the browser, cached 6 h in localStorage; silent when offline / rate-limited
         (() => {
