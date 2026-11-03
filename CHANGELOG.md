@@ -4,6 +4,15 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-03
+
+### Added
+
+- Image library (editor menu → Images): upload PNG / JPG / SVG once (drag & drop), click to insert into a template. Templates and data use `pdf-asset:name.png`, replaced by the image at render time (server, API, browser), so templates stay small. Stored on any Laravel disk: `images.disk` (env `PDF_TEMPLATES_IMAGES_DISK`, default `local`), `images.path`, `images.max_kb`.
+- The WYSIWYG editor saves library images as references (the designer still shows them).
+- The AI assistant gets the list of uploaded images and can place them ("put our logo top left").
+- `PdfTemplates::auth(fn ($request) => ...)`: admin UI access with a callback, like `LogViewer::auth()`; it decides before the gate.
+
 ## [0.3.0] - 2026-11-03
 
 ### Added
@@ -93,7 +102,8 @@ Same code as 0.2.0 (tagged on the same commit).
 
 - Initial release: WYSIWYG (pdfme) and HTML/CSS templates filled with JSON, admin UI, test page, HTTP API, Node renderer, export / import commands.
 
-[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.0...v0.2.1

@@ -146,6 +146,18 @@ return [
     'section_page' => 'Page',
     'section_file' => 'Template file',
 
+    // Image library
+    'images' => 'Images',
+    'images_upload' => 'Upload images',
+    'images_empty' => 'No images yet: upload a logo, a stamp or a signature (PNG, JPG, SVG).',
+    'images_hint' => 'Click an image to put it in the template. In the JSON data or the API use <code>pdf-asset:name.png</code>.',
+    'images_uploaded' => 'Uploaded: :count',
+    'image_insert' => 'Insert',
+    'image_inserted' => 'Image ":name" added.',
+    'image_copy' => 'Copy the reference for the JSON data',
+    'image_copied' => 'Copied: :ref',
+    'image_delete_confirm' => 'Delete image ":name"? Templates that use it will show nothing in its place.',
+
     // AI assistant
     'ai_title' => 'AI assistant',
     'ai_short' => 'AI',

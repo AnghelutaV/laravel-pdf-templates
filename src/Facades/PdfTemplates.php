@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array options(?string $mode = null)
  * @method static array fields(\AnghelutaV\PdfTemplates\Models\PdfTemplate|string $template)
  * @method static bool wysiwygOnServer()
+ * @method static void auth(?\Closure $callback)
  *
  * @see \AnghelutaV\PdfTemplates\PdfTemplates
  */

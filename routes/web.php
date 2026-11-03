@@ -2,6 +2,7 @@
 
 use AnghelutaV\PdfTemplates\Http\Controllers\AssetController;
 use AnghelutaV\PdfTemplates\Http\Controllers\AssistantController;
+use AnghelutaV\PdfTemplates\Http\Controllers\ImageController;
 use AnghelutaV\PdfTemplates\Http\Controllers\TemplateController;
 use AnghelutaV\PdfTemplates\Http\Middleware\Authorize;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,10 @@ Route::middleware([...config('pdf-templates.routes.middleware', ['web']), Author
         Route::post('/', [TemplateController::class, 'store'])->name('store');
         Route::post('/assistant', [AssistantController::class, 'create'])->name('assistant.create')
             ->middleware('throttle:'.config('pdf-templates.ai.throttle', '20,1'));
+        Route::get('/images', [ImageController::class, 'index'])->name('images.index');
+        Route::post('/images', [ImageController::class, 'store'])->name('images.store');
+        Route::get('/images/{name}', [ImageController::class, 'show'])->where('name', '[A-Za-z0-9._-]+')->name('images.show');
+        Route::delete('/images/{name}', [ImageController::class, 'destroy'])->where('name', '[A-Za-z0-9._-]+')->name('images.destroy');
         Route::get('/assets/{file}', AssetController::class)->where('file', '[a-z0-9.-]+')->name('asset');
         Route::get('/{template}/edit', [TemplateController::class, 'edit'])->name('edit');
         Route::put('/{template}', [TemplateController::class, 'update'])->name('update');

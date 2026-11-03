@@ -43,11 +43,21 @@ php artisan pdf-templates:install --examples
 
 This publishes `config/pdf-templates.php`, creates the `pdf_templates` table and adds three example templates.
 
-Open **`/pdf-templates`**. In the `local` environment it's open to everyone. Everywhere else, define who may use it, for example in `AppServiceProvider::boot()`:
+Open **`/pdf-templates`**. In the `local` environment it's open to everyone. Everywhere else, define who may use it in `AppServiceProvider::boot()`, either with a callback (like `LogViewer::auth()`):
+
+```php
+use AnghelutaV\PdfTemplates\Facades\PdfTemplates;
+
+PdfTemplates::auth(fn ($request) => auth('web')->check());
+```
+
+or with a gate:
 
 ```php
 Gate::define('viewPdfTemplates', fn ($user = null) => $user?->is_admin);
 ```
+
+When both are set, `PdfTemplates::auth()` decides.
 
 ## Usage in code
 
@@ -164,6 +174,20 @@ PDFME_RENDERER_TOKEN=optional-shared-secret
 
 In production, run it under supervisor or systemd. You can also copy `vendor/anghelutav/laravel-pdf-templates/renderer` anywhere and run `npm install && npm start` (env: `HOST`, `PORT`, `PDFME_RENDERER_TOKEN`).
 
+## Images
+
+Logos, stamps and signatures are uploaded once (editor menu → **Images**, drag & drop, PNG / JPG / SVG) and used in any template:
+
+- **HTML:** a click inserts `<img src="pdf-asset:logo.png">` at the cursor.
+- **WYSIWYG:** a click places a fixed image field on the page (SVG goes into an SVG field).
+- **Data / API:** send `"logo": "pdf-asset:logo.png"` instead of a long base64 string.
+
+The reference is replaced by the image when the PDF is generated (server, API and browser), so templates stay small. The files live on a Laravel disk, `local` (private, served to the admin UI through the package's routes) by default:
+
+```dotenv
+PDF_TEMPLATES_IMAGES_DISK=s3   # any disk from config/filesystems.php
+```
+
 ## AI assistant
 
 The editors have an **AI** button (Ctrl+I) that opens a chat panel on the right. Ask for a change ("add a footer with page numbers", "a QR code in the bottom right corner") or attach an image / PDF of a document to copy. The answer goes into the editor as **unsaved** changes: the preview refreshes, every answer can be undone, and nothing is stored until you press Save. In the list, the "New template" dialog can also **Generate with AI** from a description.
@@ -227,6 +251,7 @@ php artisan pdf-templates:import --force          # overwrite
 | `api.prefix` / `api.middleware` / `api.key` | `api/pdf-templates` / `['api', 'throttle:60,1']` / env | HTTP API                                                                                      |
 | `routes.render_throttle`                    | `120,1`                                                | admin preview / test renders per user per minute                                              |
 | `cache.ttl` / `cache.store`                 | `0` (off) / default store                              | reuse generated PDFs for identical template + data (see Production)                           |
+| `images.disk` / `images.path` / `images.max_kb` | `local` (env) / `pdf-templates/images` / `4096`    | image library storage and upload limit                                                        |
 | `ai.enabled` / `ai.provider` / `ai.model`   | env / `anthropic` / `claude-sonnet-5-5`                | AI assistant (see AI assistant)                                                               |
 | `ai.format`                                 | `structured`                                           | `text` for small / free models                                                                |
 | `ai.throttle` / `ai.history` / `ai.retries` | `20,1` / `20` / `1`                                    | AI requests per user per minute, previous chat messages sent, re-asks for an invalid answer    |

@@ -5,7 +5,7 @@ import { generate } from '@pdfme/generator';
 import {
     text, multiVariableText, image, svg, table, line, rectangle, ellipse, barcodes, date, checkbox, list,
 } from '@pdfme/schemas';
-import { toInputs } from 'pdf-templates';
+import { toInputs, resolveImages } from 'pdf-templates';
 
 export { Designer };
 
@@ -28,6 +28,8 @@ export const plugins = {
 };
 
 export async function generatePdf(template, data) {
+    // pdf-asset:… references (image library) → data URLs
+    [template, data] = await Promise.all([resolveImages(template), resolveImages(data)]);
     const pdf = await generate({ template, inputs: toInputs(data), plugins });
 
     return new Blob([pdf], { type: 'application/pdf' });

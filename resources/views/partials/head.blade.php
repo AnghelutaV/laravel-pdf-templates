@@ -102,7 +102,8 @@
             "@pdfme/ui": "{{ $esm('ui') }}",
             "pdf-templates": "{{ $asset('helpers.js') }}",
             "pdf-templates/pdfme": "{{ $asset('pdfme.js') }}",
-            "pdf-templates/ai": "{{ $asset('ai.js') }}"
+            "pdf-templates/ai": "{{ $asset('ai.js') }}",
+            "pdf-templates/images": "{{ $asset('images.js') }}"
         }
     }
 </script>

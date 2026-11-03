@@ -58,6 +58,15 @@ return [
         'timeout' => 60,
     ],
 
+    // Image library (editor menu → Images): logos, stamps, signatures uploaded once and used in any template
+    // as "pdf-asset:logo.png" (also in the JSON data / API). Any Laravel disk: local (private), public, s3…
+    'images' => [
+        'disk' => env('PDF_TEMPLATES_IMAGES_DISK', 'local'),
+        'path' => 'pdf-templates/images',
+        // Upload size limit per image, in KB
+        'max_kb' => 4096,
+    ],
+
     // AI assistant (laravel/ai): chat panel in the editors and "Generate with AI" in the list.
     // The provider key lives in config/ai.php (e.g. ANTHROPIC_API_KEY). Template content and
     // attached files are sent to that provider.

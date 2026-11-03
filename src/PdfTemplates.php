@@ -6,7 +6,9 @@ use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\Renderers\HtmlRenderer;
 use AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer;
+use Closure;
 use Composer\InstalledVersions;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
@@ -18,11 +20,33 @@ use OutOfBoundsException;
  * PdfTemplates::download('invoice', $data, 'invoice-1')          download response
  * PdfTemplates::options()                                        ['slug' => 'name'] for a <select>
  * PdfTemplates::fields('invoice')                                JSON keys the template uses
+ * PdfTemplates::auth(fn ($request) => ...)                       who may open the admin UI
  *
  * $data: array, or a raw JSON string (an array of objects = several documents in one PDF)
  */
 class PdfTemplates
 {
+    /** @var (Closure(Request): bool)|null */
+    protected static ?Closure $authUsing = null;
+
+    /**
+     * Admin UI access, like LogViewer::auth() / Telescope::auth(). In a service provider's boot():
+     *   PdfTemplates::auth(fn ($request) => auth('web')->check());
+     * When set, it decides instead of the gate (config gate); null removes it.
+     *
+     * @param  (Closure(Request): bool)|null  $callback
+     */
+    public static function auth(?Closure $callback): void
+    {
+        static::$authUsing = $callback;
+    }
+
+    // null = no auth() callback: the gate / environment rules apply (Authorize middleware)
+    public static function check(Request $request): ?bool
+    {
+        return static::$authUsing ? (bool) (static::$authUsing)($request) : null;
+    }
+
     public function __construct(
         protected HtmlRenderer $html,
         protected WysiwygRenderer $wysiwyg,

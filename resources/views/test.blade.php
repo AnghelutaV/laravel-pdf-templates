@@ -12,7 +12,7 @@
         $serverReady = $isHtml || ($rendererConfigured && $rendererUp);
         $rendererState = !$rendererConfigured ? 'not_configured' : ($rendererUp === false ? 'not_running' : 'configured');
     @endphp
-    <div class="pt" data-csrf="{{ csrf_token() }}">
+    <div class="pt" data-csrf="{{ csrf_token() }}" data-pt-images="{{ $ptRoute('images.index') }}">
         <x-pdf-templates::header :title="__('pdf-templates::ui.test_title', ['name' => $template->name])" :back="$ptRoute('edit', $template)" :badge="$template->mode">
             <code>{{ $template->slug }}</code>
             <a class="pt-btn" href="{{ $ptRoute('edit', $template) }}"><x-pdf-templates::icon name="pencil" :size="14" /> {{ __('pdf-templates::ui.edit') }}</a>

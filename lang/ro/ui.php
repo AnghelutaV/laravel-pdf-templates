@@ -142,6 +142,18 @@ return [
     'section_page' => 'Pagină',
     'section_file' => 'Fișier șablon',
 
+    // Bibliotecă de imagini
+    'images' => 'Imagini',
+    'images_upload' => 'Încarcă imagini',
+    'images_empty' => 'Nicio imagine încă: încarcă un logo, o ștampilă sau o semnătură (PNG, JPG, SVG).',
+    'images_hint' => 'Click pe o imagine ca s-o pui în șablon. În datele JSON sau în API folosește <code>pdf-asset:nume.png</code>.',
+    'images_uploaded' => 'Încărcate: :count',
+    'image_insert' => 'Inserează',
+    'image_inserted' => 'Imaginea „:name” a fost adăugată.',
+    'image_copy' => 'Copiază referința pentru datele JSON',
+    'image_copied' => 'Copiat: :ref',
+    'image_delete_confirm' => 'Ștergi imaginea „:name”? Șabloanele care o folosesc nu vor mai afișa nimic în locul ei.',
+
     // Asistent AI
     'ai_title' => 'Asistent AI',
     'ai_short' => 'AI',

@@ -8,7 +8,7 @@
     @php($portrait = __('pdf-templates::ui.portrait'))
     @php($landscape = __('pdf-templates::ui.landscape'))
     {{-- Editor first: a slim strip + the designer; everything else lives in the off-canvas menu --}}
-    <div class="pt pt-compact pt-focus" id="pt-shell" data-csrf="{{ csrf_token() }}">
+    <div class="pt pt-compact pt-focus" id="pt-shell" data-csrf="{{ csrf_token() }}" data-pt-images="{{ $ptRoute('images.index') }}">
         <x-pdf-templates::editor :template="$template" :help="__('pdf-templates::ui.wysiwyg_help')">
             <section class="pt-drawer-section">
                 <h3>{{ __('pdf-templates::ui.section_check') }}</h3>
@@ -40,6 +40,8 @@
                     <p class="pt-muted pt-hint">{{ __('pdf-templates::ui.background_pdf_title') }}</p>
                 </div>
             </section>
+
+            @include('pdf-templates::partials.images')
 
             <section class="pt-drawer-section">
                 <h3>{{ __('pdf-templates::ui.section_file') }}</h3>
@@ -81,8 +83,11 @@
             saveTemplate,
             showPdf,
             fillViewport,
-            editorChrome
+            editorChrome,
+            resolveImages,
+            unresolveImages
         } from 'pdf-templates';
+        import { imageLibrary, imageSize } from 'pdf-templates/images';
 
         fillViewport(document.getElementById('pt-designer'), { gap: 0 });
 
@@ -90,7 +95,10 @@
         const updateUrl = @json($ptRoute('update', $template));
         // Test data: saved with the template, can be changed by the AI assistant
         let sampleRaw = @json($template->sample_data);
-        const template = JSON.parse(@json($template->schema ?: \AnghelutaV\PdfTemplates\Models\PdfTemplate::BLANK_SCHEMA));
+        // Library images are stored as pdf-asset:… references; the designer needs the images themselves
+        const template = await resolveImages(JSON.parse(@json($template->schema ?: \AnghelutaV\PdfTemplates\Models\PdfTemplate::BLANK_SCHEMA)));
+        // The template as it is saved (and sent to the AI): library images back to references
+        const storedTemplate = () => unresolveImages(designer.getTemplate());
         const fields = ['pt-name', 'pt-slug', 'pt-description', 'pt-active'].map((id) => document.getElementById(id));
 
         const container = document.getElementById('pt-designer');
@@ -110,7 +118,7 @@
             const [name, slug, description, active] = fields;
             try {
                 const res = await saveTemplate(updateUrl, {
-                    schema: JSON.stringify(designer.getTemplate()),
+                    schema: JSON.stringify(storedTemplate()),
                     name: name.value,
                     slug: slug.value,
                     description: description.value,
@@ -163,7 +171,7 @@
                 const imported = JSON.parse(await file.text());
                 if (!imported.basePdf || !Array.isArray(imported.schemas)) throw new Error(
                     'basePdf / schemas missing');
-                replaceTemplate(imported);
+                replaceTemplate(await resolveImages(imported));
             } catch (err) {
                 notify(t.invalid_file.replace(':error', err.message), 'danger');
             }
@@ -189,6 +197,36 @@
             }
         });
 
+        // Image library: a click places the image on the first page (fixed image, 40 mm wide, aspect kept);
+        // it is saved as a pdf-asset:… reference. SVG goes into pdfme's SVG field as markup.
+        imageLibrary({
+            t,
+            async insert(image) {
+                const current = designer.getTemplate();
+                const page = current.basePdf?.padding ? current.basePdf : { padding: [10, 10, 10, 10] };
+                const names = new Set(current.schemas.flat().map((field) => field.name));
+                const base = image.name.replace(/\.[^.]+$/, '').replace(/[^A-Za-z0-9_]+/g, '_') || 'image';
+                let fieldName = base;
+                for (let i = 2; names.has(fieldName); i++) fieldName = `${base}_${i}`;
+
+                const svg = /\.svg$/i.test(image.name);
+                const content = svg ? await (await fetch(image.url)).text() : (await resolveImages({ c: image.ref })).c;
+                const { width, height } = await imageSize(image.url);
+                const w = 40;
+                current.schemas[0].push({
+                    name: fieldName,
+                    type: svg ? 'svg' : 'image',
+                    readOnly: true,
+                    content,
+                    position: { x: page.padding[3] ?? 10, y: page.padding[0] ?? 10 },
+                    width: w,
+                    height: Math.round(w * height / width * 10) / 10,
+                });
+                replaceTemplate(current);
+                notify(t.image_inserted.replace(':name', image.name));
+            },
+        });
+
         @if ($aiEnabled)
             // AI assistant: the new pdfme template goes into the designer as unsaved changes
             const { assistant } = await import('pdf-templates/ai');
@@ -198,9 +236,9 @@
                 t,
                 key: {{ $template->id }},
                 initial: @json(session('pdf-templates.ai_history', [])),
-                getDraft: () => ({ schema: JSON.stringify(designer.getTemplate()), sample_data: sampleRaw ?? '', name: name.value }),
-                applyDraft(patch) {
-                    if ('schema' in patch) designer.updateTemplate(JSON.parse(patch.schema));
+                getDraft: () => ({ schema: JSON.stringify(storedTemplate()), sample_data: sampleRaw ?? '', name: name.value }),
+                async applyDraft(patch) {
+                    if ('schema' in patch) designer.updateTemplate(await resolveImages(JSON.parse(patch.schema)));
                     if ('sample_data' in patch) sampleRaw = patch.sample_data;
                     if ('name' in patch) {
                         name.value = patch.name;

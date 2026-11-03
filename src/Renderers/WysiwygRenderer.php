@@ -4,6 +4,7 @@ namespace AnghelutaV\PdfTemplates\Renderers;
 
 use AnghelutaV\PdfTemplates\Exceptions\RendererUnavailableException;
 use AnghelutaV\PdfTemplates\Exceptions\RenderException;
+use AnghelutaV\PdfTemplates\ImageLibrary;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -37,7 +38,8 @@ class WysiwygRenderer
         }
 
         $inputs = is_string($data) && trim($data) !== '' ? $data : json_encode($data ?: new \stdClass, JSON_UNESCAPED_UNICODE);
-        $body = '{"template":'.($template->schema ?: PdfTemplate::BLANK_SCHEMA).',"inputs":'.$inputs.'}';
+        // pdf-asset:… (uploaded images) in the template and the data → data URLs (pdfme only takes those)
+        $body = app(ImageLibrary::class)->resolve('{"template":'.($template->schema ?: PdfTemplate::BLANK_SCHEMA).',"inputs":'.$inputs.'}');
 
         try {
             $response = Http::withHeaders(['X-Renderer-Token' => (string) config('pdf-templates.pdfme.renderer_token')])

@@ -2,6 +2,7 @@
 
 namespace AnghelutaV\PdfTemplates\Tests;
 
+use AnghelutaV\PdfTemplates\Facades\PdfTemplates as PdfTemplatesFacade;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Gate;
@@ -109,6 +110,26 @@ class AdminTest extends TestCase
         $this->get('/pdf-templates')->assertForbidden();
 
         Gate::define('viewPdfTemplates', fn ($user = null) => true);
+        $this->get('/pdf-templates')->assertOk();
+    }
+
+    public function test_auth_callback_decides_before_the_gate(): void
+    {
+        config(['pdf-templates.gate' => 'viewPdfTemplates']);
+        $this->app['env'] = 'production';
+        Gate::define('viewPdfTemplates', fn ($user = null) => true);
+
+        try {
+            PdfTemplatesFacade::auth(fn ($request) => $request->hasHeader('X-Admin'));
+            $this->get('/pdf-templates')->assertForbidden();
+            $this->get('/pdf-templates', ['X-Admin' => '1'])->assertOk();
+
+            // Applies to every admin route, the AI and image routes too
+            $this->getJson('/pdf-templates/images')->assertForbidden();
+        } finally {
+            PdfTemplatesFacade::auth(null);
+        }
+
         $this->get('/pdf-templates')->assertOk();
     }
 

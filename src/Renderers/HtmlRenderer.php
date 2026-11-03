@@ -2,6 +2,7 @@
 
 namespace AnghelutaV\PdfTemplates\Renderers;
 
+use AnghelutaV\PdfTemplates\ImageLibrary;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use AnghelutaV\PdfTemplates\TemplateEngine;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -35,12 +36,15 @@ class HtmlRenderer
             ->map(fn ($doc) => $this->engine->render((string) $template->html, $doc))
             ->implode('<div style="page-break-after: always;"></div>');
 
-        return view('pdf-templates::pdf.document', [
+        // pdf-asset:… (uploaded images) in the HTML, the data and the CSS → data URLs
+        $images = app(ImageLibrary::class);
+
+        return $images->resolve(view('pdf-templates::pdf.document', [
             'template' => $template,
-            'body' => $this->localizeImages($body),
+            'body' => $this->localizeImages($images->resolve($body)),
             'fonts' => config('pdf-templates.html.fonts', []),
             'defaultFont' => config('pdf-templates.html.default_font', 'DejaVu Sans'),
-        ])->render();
+        ])->render());
     }
 
     // dompdf runs with remote access off: point same-site image URLs to local files in public/

@@ -95,6 +95,40 @@ export function readFileAsDataUrl(file) {
     });
 }
 
+// Uploaded images (ImageLibrary): "pdf-asset:logo.png" in a template / data → data URL, for pdfme in the browser.
+// The server does the same for the API and server renders. Unknown names stay as they are.
+const imageCache = new Map();
+const imageRefs = new Map(); // data URL → "pdf-asset:name", for unresolveImages()
+export async function resolveImages(value) {
+    const base = document.querySelector('[data-pt-images]')?.dataset.ptImages;
+    let json = JSON.stringify(value);
+    const names = [...new Set([...json.matchAll(/pdf-asset:([A-Za-z0-9][A-Za-z0-9._-]*\.(?:png|jpe?g|svg))/gi)].map((m) => m[1]))];
+    if (!base || !names.length) return value;
+
+    await Promise.all(names.map(async (name) => {
+        if (!imageCache.has(name)) {
+            imageCache.set(name, fetch(`${base}/${encodeURIComponent(name)}`)
+                .then((response) => response.ok ? response.blob().then(readFileAsDataUrl) : null)
+                .catch(() => null));
+        }
+        const url = await imageCache.get(name);
+        if (url) {
+            imageRefs.set(url, `pdf-asset:${name}`);
+            json = json.split(`pdf-asset:${name}`).join(url);
+        }
+    }));
+
+    return JSON.parse(json);
+}
+
+// The reverse, before saving: images that came from the library are stored as references again (small templates)
+export function unresolveImages(value) {
+    let json = JSON.stringify(value);
+    imageRefs.forEach((ref, url) => json = json.split(url).join(ref));
+
+    return JSON.parse(json);
+}
+
 export function notify(message, type = 'success') {
     // Inside the full screen element when there is one, otherwise the toast would be hidden behind it
     const host = document.fullscreenElement || document.body;

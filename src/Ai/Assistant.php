@@ -2,12 +2,14 @@
 
 namespace AnghelutaV\PdfTemplates\Ai;
 
+use AnghelutaV\PdfTemplates\ImageLibrary;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
 use Illuminate\Http\UploadedFile;
 use InvalidArgumentException;
 use Laravel\Ai\Files\Document;
 use Laravel\Ai\Files\Image;
 use Laravel\Ai\Responses\StructuredAgentResponse;
+use Throwable;
 
 // Sends the editor draft + the user's message to the agent and returns only what it changed
 class Assistant
@@ -53,6 +55,7 @@ class Assistant
                 return "<pt:{$field}>\n{$value}\n</pt:{$field}>";
             })->implode("\n")
             ."\n\n"
+            .$this->imageList($mode)
             .($file ? "Attached: a reference document ({$file->getClientOriginalName()}). Reproduce its layout and content as a template.\n\n" : '')
             ."Request:\n".$message;
 
@@ -102,6 +105,25 @@ class Assistant
             $prompt = "Your answer has these problems:\n- ".implode("\n- ", $problems)
                 ."\nAnswer again with the corrected full content, in the same format.";
         }
+    }
+
+    // Uploaded images (image library) the model may place: "put our logo top left"
+    protected function imageList(string $mode): string
+    {
+        try {
+            $names = array_slice(array_column(app(ImageLibrary::class)->all(), 'name'), 0, 30);
+        } catch (Throwable) {
+            return ''; // disk not reachable: the assistant still works without the list
+        }
+        if (! $names) {
+            return '';
+        }
+
+        $use = $mode === PdfTemplate::MODE_HTML
+            ? 'use them as <img src="pdf-asset:NAME">'
+            : 'use them as a read-only "image" field with "content": "pdf-asset:NAME" (SVG files: not available as image fields)';
+
+        return 'Uploaded images ('.$use."):\n- ".implode("\n- ", array_map(fn ($n) => ImageLibrary::PREFIX.$n, $names))."\n\n";
     }
 
     /**

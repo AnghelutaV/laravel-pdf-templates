@@ -14,7 +14,7 @@
     <form method="post" action="{{ $ptRoute('update', $template) }}" id="pt-form">
         @csrf
         @method('PUT')
-        <div class="pt pt-compact pt-focus" id="pt-shell" data-csrf="{{ csrf_token() }}">
+        <div class="pt pt-compact pt-focus" id="pt-shell" data-csrf="{{ csrf_token() }}" data-pt-images="{{ $ptRoute('images.index') }}">
             <x-pdf-templates::editor :template="$template">
                 <section class="pt-drawer-section">
                     <h3>{{ __('pdf-templates::ui.section_check') }}</h3>
@@ -45,6 +45,8 @@
                     </div>
                     <p class="pt-muted pt-hint" style="margin-top: 10px;">{!! __('pdf-templates::ui.fonts_hint', ['fonts' => $fonts]) !!}</p>
                 </section>
+
+                @include('pdf-templates::partials.images')
 
                 <section class="pt-drawer-section">
                     <h3>{{ __('pdf-templates::ui.section_file') }}</h3>
@@ -197,6 +199,22 @@
             timer = setTimeout(preview, 900);
         }));
         preview();
+
+        // Image library: a click inserts <img src="pdf-asset:…"> at the cursor in the HTML (resolved on render)
+        const { imageLibrary } = await import('pdf-templates/images');
+        imageLibrary({
+            t,
+            insert(image) {
+                const tag = `<img src="${image.ref}" alt="" style="width: 40mm;">`;
+                document.querySelector('[data-tab="pt-tab-html"]').click();
+                const at = html.selectionStart ?? html.value.length;
+                html.setRangeText(tag, at, html.selectionEnd ?? at, 'end');
+                html.dispatchEvent(new Event('input'));
+                chrome.closeDrawer();
+                html.focus();
+                notify(t.image_inserted.replace(':name', image.name));
+            },
+        });
 
         @if ($aiEnabled)
             // AI assistant: answers land in the editor as unsaved changes
