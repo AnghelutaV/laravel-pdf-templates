@@ -4,13 +4,16 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-11-02
+## [0.3.0] - 2026-11-03
 
 ### Added
 
 - AI assistant ([laravel/ai](https://github.com/laravel/ai)): a Copilot-like chat panel in both editors (Ctrl+I) that writes and edits the HTML, CSS, test data or the pdfme fields. Answers go into the editor as unsaved changes and can be undone; an image or PDF can be attached as a reference.
-- "Generate with AI" in the new template dialog: a description (and an optional image / PDF) becomes the first version of the template.
-- `ai` config block (`enabled`, `provider`, `model`, `timeout`, `throttle`, `history`, `max_upload_kb`); env `PDF_TEMPLATES_AI`, `PDF_TEMPLATES_AI_PROVIDER`, `PDF_TEMPLATES_AI_MODEL`. The assistant is shown only when the provider has a key.
+- "Generate with AI" in the new template dialog: a description (and an optional image / PDF) becomes the first version of the template; the editor opens with that exchange in the chat.
+- Two answer formats (`ai.format`): `structured` (default; JSON output + check tools, for Claude / GPT / Gemini) and `text` (plain `<pt:…>` sections, no tools, for small and free models such as Groq or OpenRouter `:free`).
+- Every answer is checked on the server (template syntax, JSON, pdfme field types, names, page bounds); problems are sent back to the model once (`ai.retries`). Cut-off answers and "request too large" / rate-limit errors get a clear message.
+- Embedded files (background PDF, data-URL images) are replaced by placeholders before the request and restored in the answer; the draft is sent as compact sections.
+- `ai` config block (`enabled`, `provider`, `model`, `format`, `timeout`, `throttle`, `retries`, `history`, `max_upload_kb`); env `PDF_TEMPLATES_AI`, `PDF_TEMPLATES_AI_PROVIDER`, `PDF_TEMPLATES_AI_MODEL`, `PDF_TEMPLATES_AI_FORMAT`. The assistant is shown only when the provider has a key. AI requests raise PHP's time limit to fit `ai.timeout`.
 - The WYSIWYG editor saves the test data with the template.
 
 ### Changed
