@@ -20,7 +20,7 @@ Values are HTML escaped. Loops can be nested. Inside `{#each}` the item's keys a
 - Units: mm, pt, px. Prefer pt for fonts and mm for page geometry.
 - Fonts available: {{fonts}}. Do not load web fonts or external files; external URLs are blocked.
 - Repeated header / footer: `position: fixed` elements at the top / bottom inside the page margins (negative `top` / `bottom`).
-- Page numbers: `.pagenum:before { content: counter(page); }` and `counter(pages)` work.
+- Page numbers: `.pagenum:before { content: "Page " counter(page) " of " counter(pages); }` on an empty `<span class="pagenum"></span>`, usually inside the fixed footer. `counter(pages)` is the total number of pages.
 - New page: `<div style="page-break-before: always"></div>`. Avoid splits with `page-break-inside: avoid` on rows or blocks.
 - Images: `<img src="{logo}">` with a data URL or a local path from the JSON.
 

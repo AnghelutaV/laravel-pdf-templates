@@ -1,0 +1,765 @@
+{
+    "basePdf": {
+        "width": 148,
+        "height": 210,
+        "padding": [
+            0,
+            0,
+            16,
+            0
+        ],
+        "staticSchema": [
+            {
+                "name": "footer",
+                "type": "text",
+                "content": "{{ store.name }} · {{ store.website }} · {currentPage} / {totalPages}",
+                "position": {
+                    "x": 12,
+                    "y": 200
+                },
+                "width": 124,
+                "height": 5,
+                "rotate": 0,
+                "alignment": "center",
+                "verticalAlignment": "top",
+                "fontSize": 7,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#71717a",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            }
+        ]
+    },
+    "schemas": [
+        [
+            {
+                "name": "band",
+                "type": "rectangle",
+                "position": {
+                    "x": 0,
+                    "y": 0
+                },
+                "width": 148,
+                "height": 30,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#000000",
+                "color": "#4f46e5",
+                "readOnly": true,
+                "radius": 0,
+                "content": ""
+            },
+            {
+                "name": "store_name",
+                "type": "text",
+                "content": "{{ store.name }}",
+                "position": {
+                    "x": 12,
+                    "y": 9
+                },
+                "width": 80,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 16,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "store_address",
+                "type": "text",
+                "content": "{{ store.address }}",
+                "position": {
+                    "x": 12,
+                    "y": 18
+                },
+                "width": 80,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 7.5,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#e0e7ff",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "title",
+                "type": "text",
+                "content": "RECEIPT",
+                "position": {
+                    "x": 92,
+                    "y": 9
+                },
+                "width": 44,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "top",
+                "fontSize": 14,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "number",
+                "type": "text",
+                "content": "No. {{ number }}",
+                "position": {
+                    "x": 92,
+                    "y": 18
+                },
+                "width": 44,
+                "height": 5,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "top",
+                "fontSize": 8,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#e0e7ff",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "label_customer",
+                "type": "text",
+                "content": "BILLED TO",
+                "position": {
+                    "x": 12,
+                    "y": 38
+                },
+                "width": 60,
+                "height": 4,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 6.5,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0.5,
+                "fontColor": "#71717a",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "customer",
+                "type": "text",
+                "content": "{{ customer.name }}\n{{ customer.email }}",
+                "position": {
+                    "x": 12,
+                    "y": 43
+                },
+                "width": 70,
+                "height": 10,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 9,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#18181b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "label_date",
+                "type": "text",
+                "content": "DATE",
+                "position": {
+                    "x": 96,
+                    "y": 38
+                },
+                "width": 40,
+                "height": 4,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "top",
+                "fontSize": 6.5,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0.5,
+                "fontColor": "#71717a",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "date",
+                "type": "text",
+                "content": "{{ date }}",
+                "position": {
+                    "x": 96,
+                    "y": 43
+                },
+                "width": 40,
+                "height": 5,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "top",
+                "fontSize": 9,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#18181b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "items",
+                "type": "table",
+                "position": {
+                    "x": 12,
+                    "y": 60
+                },
+                "width": 124,
+                "height": 30,
+                "content": "[[\"Espresso\",\"2\",\"3.20\",\"6.40\"],[\"Croissant\",\"1\",\"2.80\",\"2.80\"]]",
+                "showHead": true,
+                "repeatHead": true,
+                "head": [
+                    "Item",
+                    "Qty",
+                    "Price",
+                    "Total"
+                ],
+                "headWidthPercentages": [
+                    52,
+                    12,
+                    18,
+                    18
+                ],
+                "dataColumns": [
+                    "name",
+                    "qty",
+                    "price|number:2",
+                    "qty * price|number:2"
+                ],
+                "tableStyles": {
+                    "borderColor": "#e4e4e7",
+                    "borderWidth": 0
+                },
+                "headStyles": {
+                    "alignment": "left",
+                    "verticalAlignment": "middle",
+                    "fontSize": 8,
+                    "lineHeight": 1,
+                    "characterSpacing": 0,
+                    "fontColor": "#71717a",
+                    "backgroundColor": "",
+                    "borderColor": "#a1a1aa",
+                    "borderWidth": {
+                        "top": 0,
+                        "right": 0,
+                        "bottom": 0.3,
+                        "left": 0
+                    },
+                    "padding": {
+                        "top": 2.5,
+                        "right": 2,
+                        "bottom": 2.5,
+                        "left": 2
+                    }
+                },
+                "bodyStyles": {
+                    "alignment": "left",
+                    "verticalAlignment": "middle",
+                    "fontSize": 9,
+                    "lineHeight": 1,
+                    "characterSpacing": 0,
+                    "fontColor": "#18181b",
+                    "backgroundColor": "",
+                    "borderColor": "#e4e4e7",
+                    "borderWidth": {
+                        "top": 0,
+                        "right": 0,
+                        "bottom": 0.1,
+                        "left": 0
+                    },
+                    "padding": {
+                        "top": 2.5,
+                        "right": 2,
+                        "bottom": 2.5,
+                        "left": 2
+                    },
+                    "alternateBackgroundColor": ""
+                },
+                "columnStyles": {
+                    "alignment": {
+                        "1": "right",
+                        "2": "right",
+                        "3": "right"
+                    }
+                }
+            },
+            {
+                "name": "subtotal",
+                "type": "text",
+                "content": "Subtotal  {{ sum(items, \"qty * price\")|number:2 }} {{ currency }}",
+                "position": {
+                    "x": 60,
+                    "y": 96
+                },
+                "width": 76,
+                "height": 5,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "top",
+                "fontSize": 9,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#18181b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "vat",
+                "type": "text",
+                "content": "VAT {{ vat_rate }}%  {{ sum(items, \"qty * price\") * vat_rate / 100|number:2 }} {{ currency }}",
+                "position": {
+                    "x": 60,
+                    "y": 102
+                },
+                "width": 76,
+                "height": 5,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "top",
+                "fontSize": 9,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#52525b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "total_line",
+                "type": "line",
+                "position": {
+                    "x": 60,
+                    "y": 109
+                },
+                "width": 76,
+                "height": 0.3,
+                "rotate": 0,
+                "opacity": 1,
+                "color": "#18181b",
+                "readOnly": true,
+                "content": ""
+            },
+            {
+                "name": "total",
+                "type": "text",
+                "content": "Total  {{ sum(items, \"qty * price\") * (1 + vat_rate / 100)|number:2 }} {{ currency }}",
+                "position": {
+                    "x": 60,
+                    "y": 111
+                },
+                "width": 76,
+                "height": 7,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "top",
+                "fontSize": 12,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#18181b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "paid_stamp",
+                "type": "text",
+                "content": "PAID",
+                "position": {
+                    "x": 14,
+                    "y": 98
+                },
+                "width": 34,
+                "height": 12,
+                "rotate": -8,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 18,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 2,
+                "fontColor": "#16a34a",
+                "backgroundColor": "",
+                "borderColor": "#16a34a",
+                "borderWidth": {
+                    "top": 0.8,
+                    "right": 0.8,
+                    "bottom": 0.8,
+                    "left": 0.8
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true,
+                "showIf": "paid"
+            },
+            {
+                "name": "due",
+                "type": "text",
+                "content": "Payment due by {{ due_date|default:on receipt }}",
+                "position": {
+                    "x": 12,
+                    "y": 98
+                },
+                "width": 48,
+                "height": 10,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 8,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#b45309",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true,
+                "showIf": "not paid"
+            },
+            {
+                "name": "note",
+                "type": "text",
+                "content": "{{ note }}",
+                "position": {
+                    "x": 12,
+                    "y": 124
+                },
+                "width": 124,
+                "height": 12,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 8,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#52525b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true,
+                "showIf": "note"
+            },
+            {
+                "name": "thanks",
+                "type": "text",
+                "content": "Thank you for your purchase!",
+                "position": {
+                    "x": 12,
+                    "y": 140
+                },
+                "width": 124,
+                "height": 6,
+                "rotate": 0,
+                "alignment": "center",
+                "verticalAlignment": "top",
+                "fontSize": 9,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#4f46e5",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            }
+        ]
+    ]
+}

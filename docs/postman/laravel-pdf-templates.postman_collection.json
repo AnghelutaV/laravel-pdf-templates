@@ -1,0 +1,590 @@
+{
+    "info": {
+        "name": "Laravel PDF Templates API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": "Set the collection variables: api_url (…/api/pdf-templates), api_key (a key from the admin UI → API, or PDF_TEMPLATES_API_KEY) and template (a template slug).\n\nPDF / image responses: use \"Send and Download\" to save the file, or open the Preview tab."
+    },
+    "auth": {
+        "type": "apikey",
+        "apikey": [
+            {
+                "key": "key",
+                "value": "X-API-KEY",
+                "type": "string"
+            },
+            {
+                "key": "value",
+                "value": "{{api_key}}",
+                "type": "string"
+            },
+            {
+                "key": "in",
+                "value": "header",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "api_url",
+            "value": "https://your-app.test/api/pdf-templates"
+        },
+        {
+            "key": "api_key",
+            "value": ""
+        },
+        {
+            "key": "template",
+            "value": "invoice"
+        },
+        {
+            "key": "render_id",
+            "value": ""
+        },
+        {
+            "key": "webhook_url",
+            "value": "https://webhook.site/your-id"
+        }
+    ],
+    "item": [
+        {
+            "name": "Templates",
+            "item": [
+                {
+                    "name": "List templates",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/templates",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "templates"
+                            ],
+                            "query": []
+                        },
+                        "description": "Active templates with the data keys (fields) each one uses."
+                    }
+                },
+                {
+                    "name": "Template details + example data",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/templates/{{template}}",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "templates",
+                                "{{template}}"
+                            ],
+                            "query": []
+                        },
+                        "description": "One template; `example` is its test data, a ready request body."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Render",
+            "item": [
+                {
+                    "name": "PDF (inline)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": []
+                        },
+                        "description": "The PDF itself. Body = the data. Use \"Send and Download\" to save it.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "PDF (download, file name)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}?download=1&filename=invoice-42",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "download",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "filename",
+                                    "value": "invoice-42"
+                                }
+                            ]
+                        },
+                        "description": "Content-Disposition: attachment; filename=\"invoice-42.pdf\".",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "PDF as base64 (JSON)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}?output=base64",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "output",
+                                    "value": "base64"
+                                }
+                            ]
+                        },
+                        "description": "{ id, filename, mime, bytes, data } with the file base64-encoded.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "try { const r = pm.response.json(); if (r.id) pm.collectionVariables.set(\"render_id\", r.id); } catch (e) {}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "PDF as a download link (JSON)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}?output=url",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "output",
+                                    "value": "url"
+                                }
+                            ]
+                        },
+                        "description": "{ id, status, url, expires_at… }. The url is signed, needs no key and expires after api.files_ttl minutes.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "try { const r = pm.response.json(); if (r.id) pm.collectionVariables.set(\"render_id\", r.id); } catch (e) {}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Several documents in one PDF",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": []
+                        },
+                        "description": "A JSON array: one document per item, all in one PDF.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[\n    {\n        \"client\": {\n            \"name\": \"Jane Doe\"\n        },\n        \"items\": [\n            {\n                \"name\": \"Tile\",\n                \"qty\": 2,\n                \"price\": 10\n            }\n        ],\n        \"total\": 20\n    },\n    {\n        \"client\": {\n            \"name\": \"Jane Doe\"\n        },\n        \"items\": [\n            {\n                \"name\": \"Tile\",\n                \"qty\": 2,\n                \"price\": 10\n            }\n        ],\n        \"total\": 20\n    }\n]",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "PNG image (page 1)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}?format=png&page=1",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "format",
+                                    "value": "png"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "description": "One page as PNG. Needs the Node renderer (php artisan pdf-templates:renderer).",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "JPG image",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}?format=jpg",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "format",
+                                    "value": "jpg"
+                                }
+                            ]
+                        },
+                        "description": "One page as JPG (white background). Needs the Node renderer and PHP GD.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "PDF with a watermark",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}?watermark=DRAFT&watermark_color=#dc2626&watermark_opacity=0.2",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "watermark",
+                                    "value": "DRAFT"
+                                },
+                                {
+                                    "key": "watermark_color",
+                                    "value": "#dc2626"
+                                },
+                                {
+                                    "key": "watermark_opacity",
+                                    "value": "0.2"
+                                }
+                            ]
+                        },
+                        "description": "A diagonal see-through text on every page.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Batch (ZIP)",
+            "item": [
+                {
+                    "name": "Several PDFs in one ZIP",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/batch",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "batch"
+                            ],
+                            "query": []
+                        },
+                        "description": "One template for all items; each item is the data of one PDF. The file names may use the item's data.\nOr one template per item: {\"items\": [{\"template\": \"invoice\", \"data\": {…}, \"filename\": \"a\"}, …]}. At most api.batch_max items.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"template\": \"{{template}}\",\n    \"items\": [\n        {\n            \"client\": {\n                \"name\": \"Jane Doe\"\n            },\n            \"items\": [\n                {\n                    \"name\": \"Tile\",\n                    \"qty\": 2,\n                    \"price\": 10\n                }\n            ],\n            \"total\": 20\n        },\n        {\n            \"client\": {\n                \"name\": \"Jane Doe\"\n            },\n            \"items\": [\n                {\n                    \"name\": \"Tile\",\n                    \"qty\": 2,\n                    \"price\": 10\n                }\n            ],\n            \"total\": 20\n        }\n    ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Async + webhook",
+            "item": [
+                {
+                    "name": "Render in the background",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/{{template}}?async=1&webhook={{webhook_url}}",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "{{template}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "async",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "webhook",
+                                    "value": "{{webhook_url}}"
+                                }
+                            ]
+                        },
+                        "description": "202 at once with { id, status: queued, status_url }. A queue worker renders it (php artisan queue:work), keeps the file and POSTs the result (id, status, url…) to the webhook.\nWith api.webhook_secret set, X-Signature is the HMAC-SHA256 of the body.",
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"client\": {\n        \"name\": \"Jane Doe\"\n    },\n    \"items\": [\n        {\n            \"name\": \"Tile\",\n            \"qty\": 2,\n            \"price\": 10\n        }\n    ],\n    \"total\": 20\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "try { const r = pm.response.json(); if (r.id) pm.collectionVariables.set(\"render_id\", r.id); } catch (e) {}"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Render status",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json, application/pdf, image/*"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{api_url}}/renders/{{render_id}}",
+                            "host": [
+                                "{{api_url}}"
+                            ],
+                            "path": [
+                                "renders",
+                                "{{render_id}}"
+                            ],
+                            "query": []
+                        },
+                        "description": "queued → processing → done (with url) or failed (with error). render_id is set by the requests above."
+                    }
+                }
+            ]
+        }
+    ]
+}

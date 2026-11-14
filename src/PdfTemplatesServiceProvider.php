@@ -3,11 +3,13 @@
 namespace AnghelutaV\PdfTemplates;
 
 use AnghelutaV\PdfTemplates\Ai\Assistant;
+use AnghelutaV\PdfTemplates\Console\ApiKeyCommand;
 use AnghelutaV\PdfTemplates\Console\BenchmarkCommand;
 use AnghelutaV\PdfTemplates\Console\ExamplesCommand;
 use AnghelutaV\PdfTemplates\Console\ExportCommand;
 use AnghelutaV\PdfTemplates\Console\ImportCommand;
 use AnghelutaV\PdfTemplates\Console\InstallCommand;
+use AnghelutaV\PdfTemplates\Console\PruneCommand;
 use AnghelutaV\PdfTemplates\Console\RenderCommand;
 use AnghelutaV\PdfTemplates\Console\RendererCommand;
 use Illuminate\Support\Facades\View;
@@ -64,6 +66,8 @@ class PdfTemplatesServiceProvider extends ServiceProvider
                 BenchmarkCommand::class,
                 ExportCommand::class,
                 ImportCommand::class,
+                ApiKeyCommand::class,
+                PruneCommand::class,
             ]);
         }
     }

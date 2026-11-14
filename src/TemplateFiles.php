@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\File;
  */
 class TemplateFiles
 {
-    const META = ['name', 'mode', 'description', 'paper', 'orientation', 'active'];
+    const META = ['name', 'mode', 'description', 'category', 'paper', 'orientation', 'settings', 'active'];
 
     // Relative paths (console arguments) are taken from the project root
     public static function path(string $path): string
@@ -55,6 +55,8 @@ class TemplateFiles
                 'name' => $meta['name'] ?? basename($path),
                 'mode' => $meta['mode'] ?? PdfTemplate::MODE_WYSIWYG,
                 'description' => $meta['description'] ?? null,
+                'category' => $meta['category'] ?? null,
+                'settings' => isset($meta['settings']) && is_array($meta['settings']) ? $meta['settings'] : null,
                 'paper' => $meta['paper'] ?? 'a4',
                 'orientation' => $meta['orientation'] ?? 'portrait',
                 'active' => $meta['active'] ?? true,

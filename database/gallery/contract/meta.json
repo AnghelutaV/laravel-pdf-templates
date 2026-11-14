@@ -1,0 +1,21 @@
+{
+    "name": "Service contract",
+    "mode": "html",
+    "category": "Legal",
+    "description": "Multi-page contract: numbered clauses from the data, parties, signatures, header and \"Page 1 of 3\" footer",
+    "paper": "a4",
+    "orientation": "portrait",
+    "settings": {
+        "margins": [24, 20, 20, 20],
+        "header": {
+            "left": "Service contract No. {number}",
+            "right": "{provider.name}",
+            "font_size": 8
+        },
+        "footer": {
+            "left": "Initials: ________ / ________",
+            "right": "Page {currentPage} of {totalPages}",
+            "font_size": 8
+        }
+    }
+}

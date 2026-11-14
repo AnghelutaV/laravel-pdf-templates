@@ -5,7 +5,7 @@
     Wired by editorChrome() from helpers.js. The page wraps it in <div class="pt pt-compact pt-focus" id="pt-shell">.
     <x-pdf-templates::editor :template="$template" :help="...">drawer sections</x-pdf-templates::editor>
 --}}
-@props(['template', 'help' => null])
+@props(['template', 'help' => null, 'versions' => null])
 @php
     $mode = __('pdf-templates::ui.mode_' . $template->mode);
     // Leave the package for the host app (config back_url); url(): "adminer" → https://host/adminer
@@ -66,12 +66,17 @@
                 <div class="pt-alert pt-alert-danger" role="alert">{{ implode("\n", $errors->all()) }}</div>
             @endif
 
-            {{ $slot }}
-
-            <section class="pt-drawer-section">
+            {{-- Blocks: the template itself, then the editor's own (test, page, header / footer, images, file), history last --}}
+            <section class="pt-drawer-section" id="pt-section-settings">
                 <h3>{{ __('pdf-templates::ui.settings') }}</h3>
                 @include('pdf-templates::partials.settings', ['stacked' => true, 'help' => $help])
             </section>
+
+            {{ $slot }}
+
+            @if ($versions !== null)
+                @include('pdf-templates::partials.history', ['versions' => $versions, 'template' => $template])
+            @endif
         </div>
 
         <div class="pt-drawer-foot">

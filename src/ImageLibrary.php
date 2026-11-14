@@ -3,7 +3,10 @@
 namespace AnghelutaV\PdfTemplates;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -78,6 +81,101 @@ class ImageLibrary
         $this->disk()->putFileAs($this->path(), $file, $name);
 
         return $name;
+    }
+
+    // Same naming as store(), for downloaded files
+    public function storeContents(string $filename, string $contents): string
+    {
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $base = Str::slug(pathinfo($filename, PATHINFO_FILENAME)) ?: 'image';
+        $name = "{$base}.{$extension}";
+
+        for ($i = 2; $this->disk()->exists($this->path($name)); $i++) {
+            $name = "{$base}-{$i}.{$extension}";
+        }
+        $this->disk()->put($this->path($name), $contents);
+
+        return $name;
+    }
+
+    /**
+     * Downloads an image from the internet into the library (moving a template from a service that loads
+     * remote images). Public http(s) hosts only, no redirects, PNG / JPEG / SVG within images.max_kb.
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function download(string $url): string
+    {
+        [$contents, $extension] = $this->fetch($url);
+        $base = pathinfo((string) (parse_url($url, PHP_URL_PATH) ?? ''), PATHINFO_FILENAME) ?: 'image';
+
+        return $this->storeContents("{$base}.{$extension}", $contents);
+    }
+
+    /**
+     * A remote image as a data URL, for rendering (dompdf itself never goes online): an image URL in the template or
+     * in the data. Same rules as download(); kept in the cache for html.remote_images_ttl minutes. Null when it
+     * cannot be used (private host, not an image, too big, unreachable).
+     */
+    public function remoteDataUrl(string $url): ?string
+    {
+        if (array_key_exists($url, $this->dataUrls)) {
+            return $this->dataUrls[$url];
+        }
+        $ttl = (int) config('pdf-templates.html.remote_images_ttl', 60) * 60;
+        $load = function () use ($url): ?string {
+            try {
+                [$contents, $extension] = $this->fetch($url, 10);
+            } catch (\InvalidArgumentException) {
+                return null;
+            }
+
+            return 'data:'.self::MIME[$extension].';base64,'.base64_encode($contents);
+        };
+
+        return $this->dataUrls[$url] = $ttl > 0 ? Cache::remember('pdf-templates:remote-image:'.sha1($url), $ttl, $load) : $load();
+    }
+
+    /**
+     * Downloads a public image: [contents, png|jpg|svg].
+     *
+     * @return array{0: string, 1: string}
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function fetch(string $url, int $timeout = 15): array
+    {
+        $parts = parse_url($url);
+        $host = $parts['host'] ?? '';
+        if (! in_array(strtolower($parts['scheme'] ?? ''), ['http', 'https'], true) || $host === '') {
+            throw new \InvalidArgumentException('Only http(s) URLs can be imported.');
+        }
+        // Not this server, not the local network (the request is made by the server)
+        PublicUrl::assert($url, 'image URL');
+
+        $maxBytes = (int) config('pdf-templates.images.max_kb', 4096) * 1024;
+        try {
+            $response = Http::timeout($timeout)->withOptions(['allow_redirects' => false])->get($url);
+        } catch (ConnectionException) {
+            throw new \InvalidArgumentException("{$host} could not be reached.");
+        }
+        if (! $response->successful()) {
+            throw new \InvalidArgumentException("HTTP {$response->status()} for {$url}");
+        }
+        $contents = $response->body();
+        if (strlen($contents) > $maxBytes) {
+            throw new \InvalidArgumentException('The image is larger than '.($maxBytes / 1024).' KB.');
+        }
+
+        $type = strtolower(trim(explode(';', (string) $response->header('Content-Type'))[0]));
+        $extension = match (true) {
+            str_starts_with($contents, "\x89PNG") => 'png',
+            str_starts_with($contents, "\xFF\xD8\xFF") => 'jpg',
+            $type === 'image/svg+xml' || (bool) preg_match('/^\s*(<\?xml[^>]*>\s*)?(<!--.*?-->\s*)*<svg[\s>]/is', $contents) => 'svg',
+            default => throw new \InvalidArgumentException('Not a PNG, JPEG or SVG image.'),
+        };
+
+        return [$contents, $extension];
     }
 
     public function delete(string $name): bool

@@ -1,0 +1,5 @@
+{
+    "name": "Example: Report with header & footer (WYSIWYG)",
+    "mode": "wysiwyg",
+    "description": "Header, footer and \"Page 1 of 3\" repeated on every page (bordered), long table over several pages"
+}

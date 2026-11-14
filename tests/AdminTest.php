@@ -3,7 +3,9 @@
 namespace AnghelutaV\PdfTemplates\Tests;
 
 use AnghelutaV\PdfTemplates\Facades\PdfTemplates as PdfTemplatesFacade;
+use AnghelutaV\PdfTemplates\Gallery;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
+use AnghelutaV\PdfTemplates\PdfTemplates;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Gate;
 
@@ -31,6 +33,60 @@ class AdminTest extends TestCase
 
         // pdfme version is built in PHP: Blade's "@{{" escape must not leak into the import map
         $this->get("/pdf-templates/{$designer->id}/edit")->assertSee('https://esm.sh/@pdfme/ui@6.2.8', false);
+    }
+
+    public function test_html_editor_offers_the_visual_editor_unless_disabled(): void
+    {
+        $html = $this->htmlTemplate();
+        $designer = $this->wysiwygTemplate();
+
+        $this->get("/pdf-templates/{$html->id}/edit")->assertOk()
+            ->assertSee('id="pt-mode-visual"', false)
+            ->assertSee('ckeditor5@', false)
+            ->assertSee('pdf-templates/visual', false);
+        $this->get('/pdf-templates/assets/visual.js')->assertOk();
+        $this->get('/pdf-templates/assets/visual-menu.js')->assertOk();
+        // The designer has its own editor
+        $this->get("/pdf-templates/{$designer->id}/edit")->assertOk()->assertDontSee('id="pt-mode-visual"', false);
+
+        // A config published before html.editor existed: the `html` block has no editor key, defaults apply
+        config(['pdf-templates.html' => ['default_font' => 'DejaVu Sans']]);
+        $this->get("/pdf-templates/{$html->id}/edit")->assertOk()
+            ->assertSee('id="pt-mode-visual"', false)
+            ->assertSee('ckeditor5@49.1.0', false);
+
+        config(['pdf-templates.html.editor.enabled' => false]);
+        $this->get("/pdf-templates/{$html->id}/edit")->assertOk()->assertDontSee('id="pt-mode-visual"', false);
+    }
+
+    public function test_list_sorts_and_filters_by_category(): void
+    {
+        $old = $this->htmlTemplate(['name' => 'Beta', 'category' => 'Contracts']);
+        $new = $this->htmlTemplate(['name' => 'Gamma', 'category' => 'Invoices']);
+        $plain = $this->htmlTemplate(['name' => 'Alpha']);
+        // Timestamps set apart: created in the order above, "Beta" edited last
+        PdfTemplate::whereKey($old->id)->update(['created_at' => now()->subDays(3), 'updated_at' => now()]);
+        PdfTemplate::whereKey($new->id)->update(['created_at' => now()->subDays(2), 'updated_at' => now()->subDays(2)]);
+        PdfTemplate::whereKey($plain->id)->update(['created_at' => now()->subDay(), 'updated_at' => now()->subDay()]);
+
+        $this->assertSame(['Contracts', 'Invoices'], PdfTemplate::categories());
+
+        $this->get('/pdf-templates')->assertOk()->assertSeeInOrder(['Alpha', 'Beta', 'Gamma']);
+        $this->get('/pdf-templates?sort=updated')->assertOk()->assertSeeInOrder(['Beta', 'Alpha', 'Gamma']);
+        $this->get('/pdf-templates?sort=created')->assertOk()->assertSeeInOrder(['Alpha', 'Gamma', 'Beta']);
+        $this->get('/pdf-templates?sort=slug')->assertSessionHasErrors('sort');
+
+        $this->get('/pdf-templates?category=Invoices')->assertOk()
+            ->assertSee("/pdf-templates/{$new->id}/edit")
+            ->assertDontSee("/pdf-templates/{$old->id}/edit")
+            ->assertDontSee("/pdf-templates/{$plain->id}/edit");
+
+        // Optional: saved from the editor, cleared with an empty value
+        $this->putJson("/pdf-templates/{$plain->id}", ['category' => 'Offers'])->assertOk();
+        $this->assertSame('Offers', $plain->refresh()->category);
+        $this->putJson("/pdf-templates/{$plain->id}", ['category' => ''])->assertOk();
+        $this->assertNull($plain->refresh()->category);
+        $this->get("/pdf-templates/{$new->id}/edit")->assertOk()->assertSee('value="Invoices"', false);
     }
 
     public function test_test_page_lists_fields_and_survives_broken_syntax(): void
@@ -137,5 +193,51 @@ class AdminTest extends TestCase
     {
         $this->assertSame(url('pdf-templates'), route('pdf-templates.index'));
         $this->assertSame(url('api/pdf-templates/x'), route('pdf-templates.api', 'x'));
+    }
+
+    public function test_new_template_from_the_gallery(): void
+    {
+        $this->get('/pdf-templates')->assertOk()->assertSee('Shipping label')->assertSee('Quote / offer')->assertSee('Warranty certificate');
+
+        // Name from the starter when none is typed; mode, settings and test data come with it
+        $this->post('/pdf-templates', ['starter' => 'quote'])->assertRedirect();
+        $quote = PdfTemplate::where('name', 'Quote / offer')->sole();
+        $this->assertSame(['html', 'Sales', 16.0], [$quote->mode, $quote->category, (float) $quote->settings['margins'][0]]);
+        $this->assertStringContainsString('{% for item in items %}', $quote->html);
+        $this->assertStringContainsString('Northwind', $quote->sample_data);
+
+        $this->post('/pdf-templates', ['starter' => 'receipt', 'name' => 'Café receipt'])->assertRedirect();
+        $receipt = PdfTemplate::where('name', 'Café receipt')->sole();
+        $this->assertSame('wysiwyg', $receipt->mode);
+        $this->assertStringContainsString('dataColumns', $receipt->schema);
+
+        $this->post('/pdf-templates', ['starter' => 'nope'])->assertSessionHasErrors('starter');
+        $this->post('/pdf-templates', ['name' => 'No mode'])->assertSessionHasErrors('mode');
+    }
+
+    public function test_gallery_starters_render(): void
+    {
+        foreach (['quote', 'contract'] as $key) {
+            $template = app(Gallery::class)->make($key);
+            $template->save();
+            $this->assertIsPdf(app(PdfTemplates::class)->render($template, $template->sample_data));
+        }
+    }
+
+    public function test_gallery_takes_folders_from_the_config(): void
+    {
+        $dir = sys_get_temp_dir().'/pt-gallery-'.uniqid();
+        mkdir("{$dir}/house-letter", 0777, true);
+        file_put_contents("{$dir}/house-letter/meta.json", '{"name": "House letter", "mode": "html", "category": "Ours"}');
+        file_put_contents("{$dir}/house-letter/template.html", '<p>{name}</p>');
+        config(['pdf-templates.gallery.paths' => [$dir]]);
+
+        $this->get('/pdf-templates')->assertSee('House letter');
+        $this->post('/pdf-templates', ['starter' => 'house-letter'])->assertRedirect();
+        $this->assertSame('<p>{name}</p>', PdfTemplate::where('name', 'House letter')->sole()->html);
+
+        array_map('unlink', glob("{$dir}/house-letter/*"));
+        rmdir("{$dir}/house-letter");
+        rmdir($dir);
     }
 }

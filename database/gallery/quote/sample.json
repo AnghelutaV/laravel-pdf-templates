@@ -1,0 +1,26 @@
+{
+    "company": { "name": "Northwind Interiors", "address": "8 Elm Street, Springfield", "phone": "+1 555 0100", "email": "hello@northwind.example" },
+    "number": "Q-2026-031",
+    "date": "2026-11-14",
+    "valid_until": "2026-12-14",
+    "client": { "name": "Müller & Søn GmbH", "contact": "Anna Müller", "address": "27 Harbour Road, Unit 4\n20457 Hamburg" },
+    "intro": "Thank you for your enquiry. As discussed on site, here is our offer for the renovation of the ground floor.",
+    "currency": "€",
+    "items": [
+        { "name": "Remove old flooring", "details": "Including disposal", "qty": 65, "unit": "m²", "price": 3, "amount": 195 },
+        { "name": "Self-levelling screed", "details": "Up to 10 mm", "qty": 65, "unit": "m²", "price": 11.5, "amount": 747.5 },
+        { "name": "Oak laminate, installed", "qty": 65, "unit": "m²", "price": 24, "amount": 1560 },
+        { "name": "MDF skirting", "qty": 48, "unit": "m", "price": 4.2, "amount": 201.6 }
+    ],
+    "subtotal": 2704.1,
+    "discount": 135.2,
+    "discount_label": "(5%)",
+    "vat_rate": 19,
+    "vat": 488.09,
+    "total": 3056.99,
+    "status": "sent",
+    "accepted_on": "",
+    "delivery_weeks": 3,
+    "terms": ["Prices are net of VAT unless stated otherwise.", "30% deposit on order, the rest on completion.", "Materials stay our property until fully paid."],
+    "author": { "name": "Tom Baker", "role": "Project manager" }
+}

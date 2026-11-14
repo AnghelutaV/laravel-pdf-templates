@@ -39,6 +39,9 @@ class RendererCommand extends Command
             'HOST' => $host,
             'PORT' => $port,
             'PDFME_RENDERER_TOKEN' => (string) config('pdf-templates.pdfme.renderer_token'),
+            // {{ total|number:2 }} in WYSIWYG texts formats like the HTML mode
+            'PDFME_DECIMAL_SEPARATOR' => (string) config('pdf-templates.html.decimal_separator', ','),
+            'PDFME_THOUSANDS_SEPARATOR' => (string) config('pdf-templates.html.thousands_separator', ' '),
         ]) ? self::SUCCESS : self::FAILURE;
     }
 

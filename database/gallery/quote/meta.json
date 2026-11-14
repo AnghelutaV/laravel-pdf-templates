@@ -1,0 +1,16 @@
+{
+    "name": "Quote / offer",
+    "mode": "html",
+    "category": "Sales",
+    "description": "Price offer in Jinja syntax: line items, optional discount, validity, conditions shown only when they apply",
+    "paper": "a4",
+    "orientation": "portrait",
+    "settings": {
+        "margins": [16, 16, 18, 16],
+        "footer": {
+            "left": "{company.name} · {company.email}",
+            "right": "Page {currentPage} of {totalPages}",
+            "font_size": 8
+        }
+    }
+}

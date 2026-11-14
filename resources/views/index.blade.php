@@ -5,7 +5,7 @@
 @endpush
 
 @section(config('pdf-templates.section', 'content'))
-    @php($filtered = request('q') || request('mode'))
+    @php($filtered = request('q') || request('mode') || request('category'))
     <div class="pt" data-csrf="{{ csrf_token() }}">
         <x-pdf-templates::header :title="__('pdf-templates::ui.title')" :count="$templates->total()">
             {{-- Default here too: a config published before this key existed has no ui.repository (explicit null hides it) --}}
@@ -22,6 +22,9 @@
                     </a>
                 </div>
             @endif
+            <a class="pt-btn" href="{{ $ptRoute('api.index') }}" data-pt-tip="{{ __('pdf-templates::ui.api_subtitle') }}">
+                <x-pdf-templates::icon name="server" :size="15" /> {{ __('pdf-templates::ui.api_menu') }}
+            </a>
             <button type="button" class="pt-btn pt-btn-primary" id="pt-new">
                 <x-pdf-templates::icon name="plus" />
                 {{ __('pdf-templates::ui.new') }}
@@ -30,7 +33,7 @@
 
         <div class="pt-card">
             <form method="get" action="{{ $ptRoute('index') }}" class="pt-card-head">
-                <div class="pt-actions" style="flex: 1; max-width: 640px;">
+                <div class="pt-actions" style="flex: 1; max-width: 900px;">
                     <label class="pt-input-icon">
                         <x-pdf-templates::icon name="search" />
                         <input type="search" class="pt-input" name="q" value="{{ request('q') }}"
@@ -42,6 +45,21 @@
                         <option value="">{{ __('pdf-templates::ui.all') }}</option>
                         @foreach (\AnghelutaV\PdfTemplates\Models\PdfTemplate::MODES as $mode)
                             <option value="{{ $mode }}" @selected(request('mode') === $mode)>{{ __('pdf-templates::ui.mode_' . $mode) }}</option>
+                        @endforeach
+                    </select>
+                    @if ($categories)
+                        <select class="pt-select" name="category" aria-label="{{ __('pdf-templates::ui.category') }}"
+                            onchange="this.form.requestSubmit()">
+                            <option value="">{{ __('pdf-templates::ui.all_categories') }}</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category }}" @selected(request('category') === $category)>{{ $category }}</option>
+                            @endforeach
+                        </select>
+                    @endif
+                    <select class="pt-select" name="sort" aria-label="{{ __('pdf-templates::ui.sort') }}"
+                        data-pt-tip="{{ __('pdf-templates::ui.sort') }}" onchange="this.form.requestSubmit()">
+                        @foreach ($sorts as $sort)
+                            <option value="{{ $loop->first ? '' : $sort }}" @selected(request('sort') === $sort)>{{ __('pdf-templates::ui.sort_' . $sort) }}</option>
                         @endforeach
                     </select>
                     <button type="submit" class="pt-btn">{{ __('pdf-templates::ui.search') }}</button>
@@ -80,6 +98,7 @@
                                 <th>{{ __('pdf-templates::ui.slug') }}</th>
                                 <th>{{ __('pdf-templates::ui.mode') }}</th>
                                 <th>{{ __('pdf-templates::ui.status') }}</th>
+                                <th>{{ __('pdf-templates::ui.updated_at') }} / {{ __('pdf-templates::ui.created_at') }}</th>
                                 <th class="pt-end"><span class="pt-hidden">{{ __('pdf-templates::ui.actions') }}</span></th>
                             </tr>
                         </thead>
@@ -100,7 +119,12 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td><code>{{ $template->slug }}</code></td>
+                                    <td>
+                                        <code>{{ $template->slug }}</code>
+                                        @if ($template->category)
+                                            <div><a class="pt-category" href="{{ $ptRoute('index', ['category' => $template->category]) }}">{{ $template->category }}</a></div>
+                                        @endif
+                                    </td>
                                     <td>
                                         <span class="pt-badge pt-badge-{{ $template->mode }}">{{ __('pdf-templates::ui.mode_' . $template->mode) }}</span>
                                     </td>
@@ -108,6 +132,14 @@
                                         <span class="pt-badge pt-dot {{ $template->active ? 'pt-badge-on' : '' }}">
                                             {{ $template->active ? __('pdf-templates::ui.active') : __('pdf-templates::ui.inactive') }}
                                         </span>
+                                    </td>
+                                    {{-- One column, two lines: updated on top, created under it --}}
+                                    <td class="pt-col-date">
+                                        @foreach (['updated_at' => $template->updated_at, 'created_at' => $template->created_at] as $label => $date)
+                                            <div @if ($date) data-pt-tip="{{ __('pdf-templates::ui.' . $label) }} {{ $date->diffForHumans() }}" @endif>
+                                                <span>{{ __('pdf-templates::ui.' . $label) }}</span> {{ $date?->format('d.m.Y H:i') ?? '—' }}
+                                            </div>
+                                        @endforeach
                                     </td>
                                     <td class="pt-end">
                                         <div class="pt-row-actions">
@@ -185,13 +217,48 @@
                     <h2>{{ __('pdf-templates::ui.new') }}</h2>
                     <p class="pt-muted" style="margin-bottom: 20px;">{{ __('pdf-templates::ui.new_hint') }}</p>
 
+                    @if ($gallery)
+                        {{-- Blank, or a starter from the gallery (its mode, layout and test data) --}}
+                        <div class="pt-field">
+                            <span class="pt-label">{{ __('pdf-templates::ui.gallery_start') }}</span>
+                            <div class="pt-gallery" role="radiogroup">
+                                <label class="pt-gallery-item">
+                                    <input type="radio" name="starter" value="" @checked(! old('starter'))>
+                                    <span class="pt-gallery-icon"><x-pdf-templates::icon name="plus" :size="18" /></span>
+                                    <span class="pt-gallery-text">
+                                        <strong>{{ __('pdf-templates::ui.gallery_blank') }}</strong>
+                                        <span class="pt-muted">{{ __('pdf-templates::ui.gallery_blank_hint') }}</span>
+                                    </span>
+                                </label>
+                                @foreach ($gallery as $key => $starter)
+                                    <label class="pt-gallery-item">
+                                        <input type="radio" name="starter" value="{{ $key }}" data-name="{{ $starter['name'] }}" @checked(old('starter') === $key)>
+                                        <span class="pt-gallery-icon pt-mode-{{ $starter['mode'] }}">
+                                            <x-pdf-templates::icon :name="$starter['mode'] === 'html' ? 'code' : 'layout'" :size="18" />
+                                        </span>
+                                        <span class="pt-gallery-text">
+                                            <strong>{{ $starter['name'] }}</strong>
+                                            <span class="pt-muted">{{ $starter['description'] }}</span>
+                                            <span class="pt-gallery-tags">
+                                                <span class="pt-badge pt-badge-{{ $starter['mode'] }}">{{ __('pdf-templates::ui.mode_' . $starter['mode']) }}</span>
+                                                @if (! empty($starter['category']))
+                                                    <span class="pt-badge">{{ $starter['category'] }}</span>
+                                                @endif
+                                            </span>
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="pt-field">
                         <label class="pt-label" for="pt-name">{{ __('pdf-templates::ui.name') }}</label>
                         <input type="text" class="pt-input" id="pt-name" name="name" required autofocus value="{{ old('name') }}"
                             placeholder="{{ __('pdf-templates::ui.name_placeholder') }}">
                     </div>
 
-                    <div class="pt-field">
+                    <div class="pt-field" id="pt-mode-field">
                         <span class="pt-label">{{ __('pdf-templates::ui.mode') }}</span>
                         <div class="pt-choices">
                             @foreach (\AnghelutaV\PdfTemplates\Models\PdfTemplate::MODES as $mode)
@@ -255,6 +322,19 @@
         document.querySelectorAll('#pt-new, [data-pt-new]').forEach((button) => button.addEventListener('click',
             () => document.getElementById('pt-new-dialog').showModal()));
         if (document.getElementById('pt-new-dialog').hasAttribute('data-open')) document.getElementById('pt-new-dialog').showModal();
+
+        // A starter from the gallery gives the mode and a name (unless one was typed)
+        const nameInput = document.getElementById('pt-name');
+        let suggested = '';
+        const pickStarter = () => {
+            const picked = document.querySelector('input[name="starter"]:checked');
+            const starter = picked?.value ?? '';
+            document.getElementById('pt-mode-field').classList.toggle('pt-hidden', !!starter);
+            nameInput.required = !starter;
+            if (!nameInput.value || nameInput.value === suggested) nameInput.value = suggested = starter ? picked.dataset.name : '';
+        };
+        document.querySelectorAll('input[name="starter"]').forEach((radio) => radio.addEventListener('change', pickStarter));
+        pickStarter();
 
         // "Generate with AI" needs a description; then it takes a while (the model writes the whole template)
         document.getElementById('pt-new-form').addEventListener('submit', (e) => {

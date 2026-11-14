@@ -304,6 +304,22 @@ class AssistantTest extends TestCase
         $this->assertSame(['Page 1 field a: outside the page', 'Page 1 field a: duplicate name'], $problems);
     }
 
+    public function test_pdfme_check_covers_the_header_and_footer(): void
+    {
+        $field = fn (string $name, int $y = 285, string $type = 'text') => ['name' => $name, 'type' => $type, 'position' => ['x' => 10, 'y' => $y], 'width' => 50, 'height' => 6];
+        $template = fn (array $static) => json_encode([
+            'basePdf' => ['width' => 210, 'height' => 297, 'padding' => [20, 10, 20, 10], 'staticSchema' => $static],
+            'schemas' => [[$field('client', 30)]],
+        ]);
+
+        $this->assertSame([], Checks::pdfme($template([$field('page_no')])));
+        $this->assertSame([
+            'Header/footer (staticSchema) field client: duplicate name',
+            'Header/footer (staticSchema) field low: outside the page',
+            'Header/footer (staticSchema) field odd: unknown type "pagenumber" (use '.implode(', ', Checks::PDFME_TYPES).')',
+        ], Checks::pdfme($template([$field('client'), $field('low', 295), $field('odd', 285, 'pagenumber')])));
+    }
+
     public function test_assets_stash_and_restore(): void
     {
         $assets = new Assets;

@@ -93,6 +93,10 @@
         if (button) button.closest('.pt-alert').classList.add('pt-hidden');
     });
 </script>
+<script>
+    // Number format of the "number" filter in WYSIWYG text placeholders (browser preview), as in the HTML mode
+    window.ptNumberFormat = {{ Illuminate\Support\Js::from(['decimal' => (string) config('pdf-templates.html.decimal_separator', ','), 'thousands' => (string) config('pdf-templates.html.thousands_separator', ' ')]) }};
+</script>
 <script type="importmap">
     {
         "imports": {
@@ -100,10 +104,18 @@
             "@pdfme/schemas": "{{ $esm('schemas') }}",
             "@pdfme/generator": "{{ $esm('generator') }}",
             "@pdfme/ui": "{{ $esm('ui') }}",
+            "@pdfme/pdf-lib": "{{ $esm('pdf-lib') }}",
             "pdf-templates": "{{ $asset('helpers.js') }}",
             "pdf-templates/pdfme": "{{ $asset('pdfme.js') }}",
+            "pdf-templates/placeholders": "{{ $asset('placeholders.js') }}",
+            "pdf-templates/charts": "{{ $asset('charts.js') }}",
+            "pdf-templates/barcode": "{{ $asset('barcode.js') }}",
+            "pdf-templates/designer-tools": "{{ $asset('designer-tools.js') }}",
             "pdf-templates/ai": "{{ $asset('ai.js') }}",
-            "pdf-templates/images": "{{ $asset('images.js') }}"
+            "pdf-templates/images": "{{ $asset('images.js') }}",
+            "pdf-templates/visual": "{{ $asset('visual.js') }}",
+            "pdf-templates/visual-menu": "{{ $asset('visual-menu.js') }}",
+            "pdf-templates/html-tools": "{{ $asset('html-tools.js') }}"
         }
     }
 </script>

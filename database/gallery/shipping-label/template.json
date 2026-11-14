@@ -1,0 +1,410 @@
+{
+    "basePdf": {
+        "width": 105,
+        "height": 148,
+        "padding": [
+            6,
+            6,
+            6,
+            6
+        ]
+    },
+    "schemas": [
+        [
+            {
+                "name": "frame",
+                "type": "rectangle",
+                "position": {
+                    "x": 4,
+                    "y": 4
+                },
+                "width": 97,
+                "height": 140,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0.6,
+                "borderColor": "#18181b",
+                "color": "",
+                "readOnly": true,
+                "radius": 0,
+                "content": ""
+            },
+            {
+                "name": "label_from",
+                "type": "text",
+                "content": "FROM",
+                "position": {
+                    "x": 8,
+                    "y": 8
+                },
+                "width": 30,
+                "height": 4,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 6.5,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0.5,
+                "fontColor": "#71717a",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "sender",
+                "type": "text",
+                "content": "{{ sender.name }}\n{{ sender.address }}\n{{ sender.city }}",
+                "position": {
+                    "x": 8,
+                    "y": 12
+                },
+                "width": 60,
+                "height": 14,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 8,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#18181b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "service",
+                "type": "text",
+                "content": "{{ service|upper|default:STANDARD }}",
+                "position": {
+                    "x": 70,
+                    "y": 8
+                },
+                "width": 27,
+                "height": 10,
+                "rotate": 0,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 11,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#ffffff",
+                "backgroundColor": "#18181b",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "line_1",
+                "type": "line",
+                "position": {
+                    "x": 4,
+                    "y": 30
+                },
+                "width": 97,
+                "height": 0.3,
+                "rotate": 0,
+                "opacity": 1,
+                "color": "#18181b",
+                "readOnly": true,
+                "content": ""
+            },
+            {
+                "name": "label_to",
+                "type": "text",
+                "content": "TO",
+                "position": {
+                    "x": 8,
+                    "y": 34
+                },
+                "width": 30,
+                "height": 4,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 6.5,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0.5,
+                "fontColor": "#71717a",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "recipient",
+                "type": "text",
+                "content": "{{ recipient.name }}\n{{ recipient.address }}\n{{ recipient.postcode }} {{ recipient.city|upper }}\n{{ recipient.country|upper }}",
+                "position": {
+                    "x": 8,
+                    "y": 39
+                },
+                "width": 89,
+                "height": 30,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 13,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.25,
+                "characterSpacing": 0,
+                "fontColor": "#18181b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "phone",
+                "type": "text",
+                "content": "Tel. {{ recipient.phone }}",
+                "position": {
+                    "x": 8,
+                    "y": 70
+                },
+                "width": 89,
+                "height": 5,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 8,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 0,
+                "fontColor": "#52525b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true,
+                "showIf": "recipient.phone"
+            },
+            {
+                "name": "line_2",
+                "type": "line",
+                "position": {
+                    "x": 4,
+                    "y": 78
+                },
+                "width": 97,
+                "height": 0.3,
+                "rotate": 0,
+                "opacity": 1,
+                "color": "#18181b",
+                "readOnly": true,
+                "content": ""
+            },
+            {
+                "name": "tracking",
+                "type": "code128",
+                "content": "PKG1234567890",
+                "position": {
+                    "x": 8,
+                    "y": 82
+                },
+                "width": 89,
+                "height": 20,
+                "rotate": 0,
+                "opacity": 1,
+                "backgroundColor": "#ffffff",
+                "barColor": "#000000",
+                "textColor": "#000000",
+                "includetext": true
+            },
+            {
+                "name": "tracking_url",
+                "type": "qrcode",
+                "content": "https://track.example.com/PKG1234567890",
+                "position": {
+                    "x": 8,
+                    "y": 108
+                },
+                "width": 30,
+                "height": 30,
+                "rotate": 0,
+                "opacity": 1,
+                "backgroundColor": "#ffffff",
+                "barColor": "#000000"
+            },
+            {
+                "name": "details",
+                "type": "text",
+                "content": "Weight  {{ weight|number:1 }} kg\nParcels  {{ parcels|default:1 }}\nRef.  {{ reference }}",
+                "position": {
+                    "x": 42,
+                    "y": 110
+                },
+                "width": 55,
+                "height": 16,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "top",
+                "fontSize": 8.5,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.4,
+                "characterSpacing": 0,
+                "fontColor": "#18181b",
+                "backgroundColor": "",
+                "borderColor": "#000000",
+                "borderWidth": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true
+            },
+            {
+                "name": "fragile",
+                "type": "text",
+                "content": "FRAGILE",
+                "position": {
+                    "x": 42,
+                    "y": 128
+                },
+                "width": 55,
+                "height": 9,
+                "rotate": 0,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 13,
+                "textFormat": "plain",
+                "overflow": "visible",
+                "fontVariantFallback": "synthetic",
+                "lineHeight": 1.2,
+                "characterSpacing": 2,
+                "fontColor": "#dc2626",
+                "backgroundColor": "",
+                "borderColor": "#dc2626",
+                "borderWidth": {
+                    "top": 0.6,
+                    "right": 0.6,
+                    "bottom": 0.6,
+                    "left": 0.6
+                },
+                "padding": {
+                    "top": 0,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                },
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "readOnly": true,
+                "showIf": "fragile"
+            }
+        ]
+    ]
+}

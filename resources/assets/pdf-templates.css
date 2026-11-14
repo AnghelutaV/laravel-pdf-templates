@@ -1173,7 +1173,7 @@ body.pt-body,
 .pt-drawer {
   position: fixed;
   inset: 0 auto 0 0;
-  width: min(380px, 92vw);
+  width: min(520px, 94vw);
   height: 100%;
   max-height: 100%;
   margin: 0;
@@ -1231,18 +1231,60 @@ body.pt-body,
 .pt-drawer-title h1 {
   font-size: 18px;
 }
+/* Menu sections are blocks; a click on the title folds one (remembered per browser, see editorChrome) */
+.pt-drawer-section {
+  padding: 12px 14px 14px;
+  background: var(--pt-surface-2);
+  border: 1px solid var(--pt-border);
+  border-radius: 10px;
+}
 .pt-drawer-section + .pt-drawer-section {
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid var(--pt-border);
+  margin-top: 10px;
 }
 .pt-drawer-section h3 {
-  margin: 0 0 10px;
-  font-size: 11.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: var(--pt-text);
+}
+.pt-drawer-section h3[role="button"] {
+  cursor: pointer;
+  user-select: none;
+}
+.pt-drawer-section h3[role="button"]::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-right: 3px;
+  border-right: 1.5px solid var(--pt-muted);
+  border-bottom: 1.5px solid var(--pt-muted);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.15s;
+}
+.pt-drawer-section.pt-collapsed {
+  padding-bottom: 12px;
+}
+.pt-drawer-section.pt-collapsed h3 {
+  margin-bottom: 0;
   color: var(--pt-muted);
+}
+.pt-drawer-section.pt-collapsed h3::after {
+  transform: rotate(-45deg);
+}
+.pt-drawer-section.pt-collapsed > :not(h3) {
+  display: none;
+}
+/* Sub-title inside a block (Header / Footer texts) */
+.pt-drawer-section .pt-sub {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--pt-border);
 }
 .pt-stack {
   display: grid;
@@ -1259,6 +1301,205 @@ body.pt-body,
   margin: 0;
   font-size: 12px;
   line-height: 1.45;
+}
+/* Template list: category under the slug, a link that filters the list */
+.pt-table .pt-category {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--pt-muted);
+  text-decoration: none;
+}
+.pt-table .pt-category:hover {
+  color: var(--pt-text);
+  text-decoration: underline;
+}
+/* Template list: created / updated dates */
+.pt-table .pt-col-date {
+  white-space: nowrap;
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.pt-table .pt-col-date div + div,
+.pt-table .pt-col-date span {
+  color: var(--pt-muted);
+}
+.pt-table .pt-col-date span {
+  display: inline-block;
+  min-width: 58px;
+  font-size: 11.5px;
+}
+/* pdfme's zoom bar floats over the bottom of the page, right where a footer sits: see-through until hovered */
+.pt-designer .pdfme-ui-control-bar {
+  opacity: 0.3;
+  transition: opacity 0.15s;
+}
+.pt-designer .pdfme-ui-control-bar:hover,
+.pt-designer .pdfme-ui-control-bar:focus-within {
+  opacity: 1;
+}
+/* Designer: every field shows its box with a dashed outline (pdfme hides it for read-only fields, so fixed text,
+   images and shapes had no visible limits); solid while hovered. Only on screen, never in the PDF. */
+.pt-designer .selectable {
+  outline: 1px dashed #94a3b8 !important;
+}
+.pt-designer .selectable:hover {
+  outline: 1px solid var(--pt-primary) !important;
+}
+/* Trash button added to the rows of pdfme's Field List (fieldListDelete), shown on hover / keyboard focus */
+.pt-designer .pdfme-designer-list-view li {
+  position: relative;
+}
+.pt-field-delete {
+  position: absolute;
+  top: 50%;
+  right: 34px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #dc2626;
+  cursor: pointer;
+  opacity: 0;
+}
+.pdfme-designer-list-view li:hover > .pt-field-delete,
+.pt-field-delete:focus-visible {
+  opacity: 1;
+}
+.pt-field-delete:hover {
+  background: rgb(220 38 38 / 0.12);
+}
+/* Designer fields with a "Show only if" condition / with columns bound to data (designer-tools.js) */
+.pt-designer .selectable.pt-field-conditional {
+  outline: 1.5px dashed #f59e0b !important;
+  outline-offset: 1px;
+}
+.pt-designer .selectable.pt-field-bound::after {
+  content: "{ }";
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  padding: 0 4px;
+  font: 600 10px/1.5 ui-monospace, Consolas, monospace;
+  color: #fff;
+  background: #4f46e5;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.pt-field-data code {
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: #18181b;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.pt-props .pt-code-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+}
+/* Source of the selected image in pdfme's "Edit Field" panel (fieldImageSource) */
+.pt-field-source {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2px 8px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: #18181b;
+  background: #f4f4f5;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+}
+.pt-field-source-label {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #71717a;
+}
+.pt-field-source-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pt code.pt-field-source-value {
+  padding: 0;
+  color: #18181b;
+  background: none;
+  border: 0;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.pt-field-source-replace {
+  padding: 3px 10px;
+  font: inherit;
+  color: #18181b;
+  background: #fff;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.pt-field-source-replace:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+/* WYSIWYG page margins: four small number inputs (top, right, bottom, left) */
+.pt-margins {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.pt-margins label {
+  display: grid;
+  gap: 3px;
+  font-size: 11.5px;
+  color: var(--pt-muted);
+}
+.pt-margins .pt-input {
+  width: 100%;
+  min-width: 0;
+  padding-left: 6px;
+  padding-right: 4px;
+}
+/* Shown above the designer while the header / footer layer is edited instead of the pages */
+.pt-layer-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  background: var(--pt-surface-2);
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+}
+/* Header / footer view: amber edge, so it is clear the pages are not what is on screen */
+.pt-layer-bar.pt-layer-on {
+  border-left: 3px solid #f59e0b;
+}
+.pt-layer-bar .pt-layer-hint {
+  flex: 1;
+  min-width: 0;
+  color: var(--pt-muted);
+}
+.pt-layer-bar .pt-btn[aria-pressed="true"],
+.pt-btn-group > .pt-btn[aria-pressed="true"] {
+  background: var(--pt-primary);
+  border-color: var(--pt-primary);
+  color: var(--pt-primary-text);
+}
+@media (max-width: 900px) {
+  .pt-layer-bar .pt-layer-hint {
+    display: none;
+  }
 }
 
 .pt-settings {
@@ -1740,4 +1981,706 @@ body.pt-body,
 }
 .pt-images-action:hover {
   color: var(--pt-primary);
+}
+
+/* WYSIWYG "JSON" dialog: test data + raw template in tall code textareas */
+.pt-json-body {
+  padding: 12px;
+}
+.pt-json-body .pt-code {
+  width: 100%;
+  height: min(66vh, 720px);
+  resize: vertical;
+}
+.pt-json-body .pt-hint {
+  margin-top: 8px;
+}
+
+/* WYSIWYG menu: standard header / footer (label + font size, then left / center / right texts) */
+.pt-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+}
+.pt-band .pt-label {
+  margin: 0;
+}
+.pt-band .pt-select {
+  width: auto;
+  min-width: 78px;
+}
+.pt-margins.pt-band-slots {
+  grid-template-columns: repeat(3, 1fr);
+}
+.pt-var {
+  margin: 2px 2px 0 0;
+  padding: 1px 6px;
+  font: 11.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--pt-text);
+  background: var(--pt-code-bg);
+  border: 1px solid var(--pt-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.pt-var:hover {
+  border-color: var(--pt-primary);
+}
+
+/* HTML editor: Code | Visual switch above the HTML, and the visual editor (CKEditor 5) */
+.pt-html-mode {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+/* A PDF page is white paper, whatever the theme of the admin UI */
+.pt-visual {
+  color: #18181b;
+  --ck-color-base-background: #fff;
+  --ck-color-base-foreground: #fafafa;
+  --ck-color-toolbar-background: #fafafa;
+  --ck-color-text: #18181b;
+  --ck-color-button-default-background: transparent;
+  --ck-color-button-default-hover-background: #e4e4e7;
+  --ck-color-button-on-background: #e0e7ff;
+  --ck-color-list-background: #fff;
+  --ck-color-panel-background: #fff;
+  --ck-color-input-background: #fff;
+  --ck-color-input-text: #18181b;
+}
+.pt-visual .ck-editor__editable_inline {
+  min-height: 420px;
+  max-height: 72vh;
+  overflow: auto;
+  font-family: "DejaVu Sans", sans-serif;
+  font-size: 10pt;
+}
+/* Rows / cells that carry a loop or a condition ({#each}, {#if}… kept in data-pt-before / data-pt-after) */
+.pt-visual .ck-content [data-pt-before],
+.pt-visual .ck-content [data-pt-after] {
+  outline: 1px dashed #f59e0b;
+  outline-offset: -1px;
+}
+/* Header / footer layer: warning when the margins leave no room for it */
+#pt-static-margins {
+  display: block;
+  margin-top: 2px;
+  color: #b45309;
+}
+#pt-static-margins.pt-hidden {
+  display: none;
+}
+
+/* Visual editor: right-click menu (visual-menu.js) */
+.pt-ctx {
+  position: fixed;
+  z-index: 10000;
+}
+.pt-ctx-list {
+  min-width: 220px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--pt-surface);
+  color: var(--pt-text);
+  border: 1px solid var(--pt-border);
+  border-radius: 10px;
+  box-shadow: var(--pt-shadow-lg);
+  font-size: 13px;
+}
+.pt-ctx-list > li {
+  position: relative;
+}
+.pt-ctx-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pt-ctx-item:hover:not(:disabled),
+.pt-ctx-item:focus-visible,
+.pt-ctx-parent:hover > .pt-ctx-item {
+  background: var(--pt-primary-soft);
+  outline: none;
+}
+.pt-ctx-item:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.pt-ctx-danger {
+  color: var(--pt-danger);
+}
+.pt-ctx-checked::after,
+.pt-ctx-parent > .pt-ctx-item::after {
+  margin-left: auto;
+  padding-left: 16px;
+  color: var(--pt-muted);
+}
+.pt-ctx-checked::after {
+  content: "✓";
+}
+.pt-ctx-parent > .pt-ctx-item::after {
+  content: "›";
+}
+.pt-ctx-sub {
+  display: none;
+  position: absolute;
+  top: -5px;
+  left: 100%;
+}
+.pt-ctx-sub.pt-ctx-left {
+  left: auto;
+  right: 100%;
+}
+.pt-ctx-parent:hover > .pt-ctx-sub,
+.pt-ctx-parent:focus-within > .pt-ctx-sub {
+  display: block;
+}
+.pt-ctx-sep {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--pt-border);
+}
+.pt-ctx-hint {
+  padding: 4px 10px 2px;
+  font-size: 11.5px;
+  color: var(--pt-muted);
+}
+/* Properties dialog */
+.pt-props-body {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+.pt-props-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+}
+.pt-props-body .pt-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+.pt-props-body .pt-select {
+  width: 100%;
+}
+.pt-props-input {
+  display: flex;
+  gap: 6px;
+}
+.pt-props-input input[type="color"] {
+  width: 36px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius-sm);
+  background: var(--pt-surface);
+}
+.pt-props .pt-code {
+  min-height: 0;
+}
+@media (max-width: 560px) {
+  .pt-props-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pt-props-warn {
+  display: block;
+  margin-top: 4px;
+  color: #b45309;
+}
+
+/* Editor menu: history and font lists (label on the left, action on the right) */
+.pt-history {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.pt-history li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
+}
+.pt-history li > span {
+  display: grid;
+  min-width: 0;
+}
+.pt-history li .pt-muted {
+  font-size: 11.5px;
+}
+/* Custom header / footer HTML, upload a font: folded away until needed */
+.pt-band-custom summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--pt-muted);
+}
+.pt-band-custom .pt-code {
+  min-height: 0;
+  margin-top: 6px;
+  white-space: pre-wrap;
+}
+.pt-band > .pt-input {
+  flex: 1;
+  min-width: 0;
+}
+/* Admin → API page */
+.pt-api-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 1000px) {
+  .pt-api-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.pt-api-keyform {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.pt-api-keyform .pt-input {
+  flex: 1;
+}
+.pt-api-newkey {
+  margin-bottom: 16px;
+  border-color: var(--pt-primary);
+}
+.pt-api-key-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+.pt-api-key-row code {
+  flex: 1;
+  padding: 8px 10px;
+  overflow-x: auto;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.pt-code-block {
+  margin: 0 0 12px;
+  padding: 12px;
+  overflow-x: auto;
+  font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--pt-text);
+  background: var(--pt-code-bg);
+  border: 1px solid var(--pt-border);
+  border-radius: 8px;
+}
+.pt-code-block code {
+  padding: 0;
+  background: none;
+  border: 0;
+}
+.pt-api-options td:first-child {
+  white-space: nowrap;
+}
+.pt-api-stats {
+  align-items: center;
+}
+.pt-api-done {
+  color: var(--pt-success, #16a34a);
+}
+.pt-api-failed,
+.pt-badge-danger {
+  color: var(--pt-danger);
+}
+.pt-api-error {
+  max-width: 360px;
+  font-size: 12px;
+}
+/* "New template" dialog: start blank or from a gallery starter */
+#pt-new-dialog {
+  width: min(760px, 94vw);
+}
+.pt-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.pt-gallery-item {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--pt-border-strong);
+  border-radius: var(--pt-radius);
+  background: var(--pt-surface);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.pt-gallery-item:hover {
+  border-color: var(--pt-muted);
+}
+.pt-gallery-item input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.pt-gallery-item:has(input:checked) {
+  border-color: var(--pt-primary);
+  box-shadow: 0 0 0 3px var(--pt-primary-soft);
+}
+.pt-gallery-item:has(input:focus-visible) {
+  outline: 2px solid var(--pt-primary);
+  outline-offset: 2px;
+}
+.pt-gallery-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--pt-surface-2);
+  color: var(--pt-muted);
+}
+.pt-gallery-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  font-size: 13px;
+}
+.pt-gallery-text .pt-muted {
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+.pt-gallery-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+/* API page: tabs (server & keys / documentation / log) */
+.pt-api-shell {
+  margin-bottom: 16px;
+}
+.pt-api-shell .pt-api-grid {
+  margin-bottom: 0;
+}
+.pt-api-box {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--pt-border);
+  border-radius: var(--pt-radius);
+  background: var(--pt-surface);
+}
+.pt-api-box-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.pt-api-box-head h2,
+.pt-api-docs h2 {
+  margin: 0;
+  font-size: 15px;
+}
+.pt-api-box .pt-actions {
+  flex-wrap: wrap;
+  margin: 10px 0 8px;
+}
+.pt-api-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pt-danger);
+}
+.pt-api-dot.is-on {
+  background: #16a34a;
+}
+.pt-api-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 14px;
+  margin: 10px 0;
+  font-size: 13px;
+}
+.pt-api-facts dt {
+  color: var(--pt-muted);
+}
+.pt-api-facts dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.pt-alert-warning {
+  margin: 8px 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid color-mix(in srgb, #d97706 35%, transparent);
+  border-radius: var(--pt-radius);
+  background: color-mix(in srgb, #f59e0b 12%, transparent);
+}
+.pt-api-logbox summary {
+  margin-top: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--pt-muted);
+}
+.pt-api-logbox pre {
+  max-height: 260px;
+  margin-top: 8px;
+  white-space: pre-wrap;
+}
+/* Documentation */
+.pt-api-docs {
+  display: grid;
+  gap: 26px;
+  max-width: 1100px;
+}
+.pt-api-docs section {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  scroll-margin-top: 16px;
+}
+.pt-api-docs h3 {
+  margin: 4px 0 6px;
+  font-size: 13px;
+}
+.pt-api-docs p {
+  margin: 0;
+  line-height: 1.55;
+}
+.pt-api-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--pt-border);
+}
+.pt-api-toc a {
+  padding: 4px 10px;
+  font-size: 13px;
+  border: 1px solid var(--pt-border);
+  border-radius: 999px;
+  text-decoration: none;
+}
+.pt-api-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+@media (max-width: 900px) {
+  .pt-api-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.pt-api-json {
+  max-height: 340px;
+}
+.pt-api-fields td {
+  padding: 4px 8px;
+}
+.pt-api-pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pt-api-pick .pt-select {
+  max-width: 420px;
+}
+.pt-api-lang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pt-api-lang [aria-pressed="true"] {
+  border-color: var(--pt-primary);
+  color: var(--pt-primary);
+}
+.pt-api-method {
+  font: 600 11px/1.6 ui-monospace, Consolas, monospace;
+  color: #fff;
+  background: #4f46e5;
+  border-color: transparent;
+}
+.pt-api-method.is-get {
+  background: #0d9488;
+}
+/* API log: a row opens its details */
+.pt-api-row {
+  cursor: pointer;
+}
+.pt-api-row:hover td,
+.pt-api-row[aria-expanded="true"] td {
+  background: var(--pt-surface-2);
+}
+.pt-table .pt-col-date .pt-api-chevron {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  min-width: 0;
+  border-right: 1.5px solid var(--pt-muted);
+  border-bottom: 1.5px solid var(--pt-muted);
+  transform: translateY(-2px) rotate(-45deg);
+  transition: transform 0.15s;
+}
+.pt-api-row[aria-expanded="true"] .pt-col-date .pt-api-chevron {
+  transform: translateY(-3px) rotate(45deg);
+}
+.pt-api-details > td {
+  padding: 4px 16px 18px;
+  background: var(--pt-surface-2);
+}
+.pt-api-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 18px;
+}
+@media (max-width: 1000px) {
+  .pt-api-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.pt-api-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.pt-api-detail-data .pt-api-json {
+  max-height: 420px;
+  margin: 0;
+}
+.pt-api-error-full {
+  max-height: 200px;
+  white-space: pre-wrap;
+  color: var(--pt-danger);
+}
+/* Log details: the data sent, one block per line, coloured */
+.pt-json {
+  display: block;
+  min-width: max-content;
+}
+.pt-json-line {
+  display: block;
+  white-space: pre;
+}
+.pt-json-key { color: #1d4ed8; }
+.pt-json-string { color: #15803d; }
+.pt-json-number { color: #c2410c; }
+.pt-json-literal { color: #7e22ce; }
+html[data-pt-theme="dark"] .pt-json-key { color: #7aa2f7; }
+html[data-pt-theme="dark"] .pt-json-string { color: #9ece6a; }
+html[data-pt-theme="dark"] .pt-json-number { color: #ff9e64; }
+html[data-pt-theme="dark"] .pt-json-literal { color: #bb9af7; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-pt-theme="light"]) .pt-json-key { color: #7aa2f7; }
+  html:not([data-pt-theme="light"]) .pt-json-string { color: #9ece6a; }
+  html:not([data-pt-theme="light"]) .pt-json-number { color: #ff9e64; }
+  html:not([data-pt-theme="light"]) .pt-json-literal { color: #bb9af7; }
+}
+/* API keys: usage this month and the limits form */
+.pt-api-usage {
+  min-width: 180px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.pt-api-meter {
+  height: 5px;
+  margin: 4px 0;
+  overflow: hidden;
+  background: var(--pt-border);
+  border-radius: 3px;
+}
+.pt-api-meter span {
+  display: block;
+  height: 100%;
+  background: var(--pt-primary);
+}
+.pt-api-meter.is-full span {
+  background: var(--pt-danger);
+}
+.pt-api-limits {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.pt-api-limits label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.pt-api-limits .pt-input {
+  width: 84px;
+  padding: 4px 8px;
+}
+/* pdfme tool list (left): a thin scrollbar beside the icons, not over them */
+.pt-designer .pdfme-designer-left-sidebar {
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+/* Designer → code field: where its value comes from */
+.pt-field-data-hint {
+  grid-column: 1 / -1;
+  font-size: 11.5px;
+}
+/* HTML editor: flexbox / grid warning (dompdf has neither) */
+.pt-layout-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  color: var(--pt-warning, #b45309);
+  background: color-mix(in srgb, var(--pt-warning, #f59e0b) 12%, transparent);
+  border-radius: 6px;
+}
+.pt-layout-warning.pt-hidden {
+  display: none;
+}
+/* Designer → Value dialog: multi-line text and the {{ key }} buttons */
+.pt-value-text {
+  min-height: 84px;
+  resize: vertical;
+  font-family: var(--pt-mono);
+}
+.pt-value-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.pt-chip {
+  padding: 2px 8px;
+  font: 11.5px var(--pt-mono);
+  color: var(--pt-text);
+  cursor: pointer;
+  background: var(--pt-code-bg);
+  border: 1px solid var(--pt-border);
+  border-radius: 999px;
+}
+.pt-chip:hover {
+  border-color: var(--pt-primary);
 }

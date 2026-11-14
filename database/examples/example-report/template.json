@@ -1,0 +1,501 @@
+{
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [
+      32,
+      12,
+      24,
+      12
+    ],
+    "staticSchema": [
+      {
+        "name": "header_box",
+        "type": "rectangle",
+        "position": {
+          "x": 12,
+          "y": 8
+        },
+        "width": 186,
+        "height": 18,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.3,
+        "borderColor": "#1b3240",
+        "color": "",
+        "readOnly": true,
+        "radius": 0
+      },
+      {
+        "name": "header_company",
+        "type": "text",
+        "content": "Acme Studio",
+        "position": {
+          "x": 16,
+          "y": 11
+        },
+        "width": 100,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 15,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "header_tagline",
+        "type": "text",
+        "content": "Design & build · www.example.com",
+        "position": {
+          "x": 16,
+          "y": 19
+        },
+        "width": 100,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "header_title",
+        "type": "text",
+        "content": "{report_title}",
+        "position": {
+          "x": 116,
+          "y": 11
+        },
+        "width": 78,
+        "height": 7,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 11,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "header_date",
+        "type": "text",
+        "content": "Printed {date}",
+        "position": {
+          "x": 116,
+          "y": 19
+        },
+        "width": 78,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "top",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "content_box",
+        "type": "rectangle",
+        "position": {
+          "x": 12,
+          "y": 30
+        },
+        "width": 186,
+        "height": 245,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.2,
+        "borderColor": "#c5ced6",
+        "color": "",
+        "readOnly": true,
+        "radius": 0
+      },
+      {
+        "name": "footer_box",
+        "type": "rectangle",
+        "position": {
+          "x": 12,
+          "y": 279
+        },
+        "width": 186,
+        "height": 10,
+        "rotate": 0,
+        "opacity": 1,
+        "borderWidth": 0.3,
+        "borderColor": "#1b3240",
+        "color": "",
+        "readOnly": true,
+        "radius": 0
+      },
+      {
+        "name": "footer_note",
+        "type": "text",
+        "content": "Acme Studio Ltd · 1 Main Street · office@example.com",
+        "position": {
+          "x": 16,
+          "y": 281.5
+        },
+        "width": 120,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 8,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      },
+      {
+        "name": "footer_page",
+        "type": "text",
+        "content": "Page {currentPage} of {totalPages}",
+        "position": {
+          "x": 136,
+          "y": 281.5
+        },
+        "width": 58,
+        "height": 5,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "middle",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": true
+      }
+    ]
+  },
+  "schemas": [
+    [
+      {
+        "name": "report_title",
+        "type": "text",
+        "content": "Price list 2026",
+        "position": {
+          "x": 16,
+          "y": 35
+        },
+        "width": 178,
+        "height": 9,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 18,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#1b3240",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": false
+      },
+      {
+        "name": "intro",
+        "type": "text",
+        "content": "All prices in EUR, VAT not included.",
+        "position": {
+          "x": 16,
+          "y": 46
+        },
+        "width": 178,
+        "height": 6,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": false
+      },
+      {
+        "name": "items",
+        "type": "table",
+        "position": {
+          "x": 16,
+          "y": 56
+        },
+        "width": 178,
+        "height": 30,
+        "content": "[[\"1\",\"Wall plastering\",\"m²\",\"12.00\"],[\"2\",\"Painting, two coats\",\"m²\",\"6.50\"]]",
+        "showHead": true,
+        "repeatHead": true,
+        "head": [
+          "#",
+          "Service",
+          "Unit",
+          "Price €"
+        ],
+        "headWidthPercentages": [
+          8,
+          60,
+          14,
+          18
+        ],
+        "tableStyles": {
+          "borderColor": "#d5dde3",
+          "borderWidth": 0.2
+        },
+        "headStyles": {
+          "alignment": "left",
+          "verticalAlignment": "middle",
+          "fontSize": 9,
+          "lineHeight": 1,
+          "characterSpacing": 0,
+          "fontColor": "#ffffff",
+          "backgroundColor": "#1b3240",
+          "borderColor": "",
+          "borderWidth": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "padding": {
+            "top": 3,
+            "right": 3,
+            "bottom": 3,
+            "left": 3
+          }
+        },
+        "bodyStyles": {
+          "alignment": "left",
+          "verticalAlignment": "middle",
+          "fontSize": 9,
+          "lineHeight": 1,
+          "characterSpacing": 0,
+          "fontColor": "#000000",
+          "backgroundColor": "",
+          "borderColor": "#d5dde3",
+          "borderWidth": {
+            "top": 0.1,
+            "right": 0.1,
+            "bottom": 0.1,
+            "left": 0.1
+          },
+          "padding": {
+            "top": 2.5,
+            "right": 3,
+            "bottom": 2.5,
+            "left": 3
+          },
+          "alternateBackgroundColor": "#f4f6f8"
+        },
+        "columnStyles": {
+          "alignment": {
+            "0": "center",
+            "2": "center",
+            "3": "right"
+          }
+        }
+      },
+      {
+        "name": "notes",
+        "type": "text",
+        "content": "Prices are valid until the end of the year.",
+        "position": {
+          "x": 16,
+          "y": 92
+        },
+        "width": 178,
+        "height": 10,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 9,
+        "textFormat": "plain",
+        "overflow": "visible",
+        "fontVariantFallback": "synthetic",
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#5b6670",
+        "backgroundColor": "",
+        "borderColor": "#000000",
+        "borderWidth": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "readOnly": false
+      }
+    ]
+  ]
+}

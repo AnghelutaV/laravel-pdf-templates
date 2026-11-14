@@ -1,0 +1,71 @@
+<table class="head">
+    <tr>
+        <td>
+            <div class="brand">{{ company.name }}</div>
+            <div class="muted">{{ company.address }}<br>{{ company.phone }} · {{ company.email }}</div>
+        </td>
+        <td class="right">
+            <div class="doc">QUOTE</div>
+            <div class="muted">No. <strong>{{ number }}</strong><br>Date {{ date|date:d.m.Y }}<br>Valid until {{ valid_until|date:d.m.Y }}</div>
+        </td>
+    </tr>
+</table>
+
+<div class="client">
+    <div class="label">Prepared for</div>
+    <strong>{{ client.name }}</strong>
+    {% if client.contact %}<br>Attn. {{ client.contact }}{% endif %}
+    <br>{{ client.address|nl2br }}
+</div>
+
+{% if intro %}<p>{{ intro|nl2br }}</p>{% endif %}
+
+<table class="items">
+    <thead>
+        <tr><th class="n">#</th><th>Description</th><th class="r">Qty</th><th class="r">Unit price</th><th class="r">Amount</th></tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td class="n">{{ loop.index }}</td>
+            <td>
+                <strong>{{ item.name }}</strong>
+                {% if item.details %}<div class="muted">{{ item.details }}</div>{% endif %}
+            </td>
+            <td class="r">{{ item.qty }} {{ item.unit }}</td>
+            <td class="r">{{ item.price|number:2 }}</td>
+            <td class="r">{{ item.amount|number:2 }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="muted">No items.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<table class="totals">
+    <tr><td>Subtotal</td><td class="r">{{ subtotal|number:2 }} {{ currency }}</td></tr>
+    {% if discount > 0 %}
+    <tr class="discount"><td>Discount {{ discount_label }}</td><td class="r">−{{ discount|number:2 }} {{ currency }}</td></tr>
+    {% endif %}
+    <tr><td>VAT {{ vat_rate }}%</td><td class="r">{{ vat|number:2 }} {{ currency }}</td></tr>
+    <tr class="grand"><td>Total</td><td class="r">{{ total|number:2 }} {{ currency }}</td></tr>
+</table>
+
+{% if status == "accepted" %}
+<div class="badge ok">Accepted on {{ accepted_on|date:d.m.Y }}</div>
+{% elif status == "expired" %}
+<div class="badge warn">This quote has expired. Ask us for an updated offer.</div>
+{% endif %}
+
+<h3>Terms</h3>
+<ul class="terms">
+    {% for term in terms %}<li>{{ term }}</li>{% endfor %}
+    {% if delivery_weeks %}<li>Delivery within {{ delivery_weeks }} weeks of the order.</li>{% endif %}
+</ul>
+
+<table class="sign">
+    <tr>
+        <td>{{ company.name }}<br><span class="muted">{{ author.name }}, {{ author.role }}</span></td>
+        <td class="right">Accepted by {{ client.name }}<br><span class="muted">Signature and date</span></td>
+    </tr>
+</table>

@@ -1,0 +1,22 @@
+{
+    "number": "C-2026-017",
+    "place": "Springfield",
+    "date": "2026-11-14",
+    "provider": { "name": "Northwind Interiors LLC", "address": "8 Elm Street, Springfield", "registration": "J40/1234/2020", "vat": "RO12345678", "representative": "Tom Baker, Director" },
+    "client": { "name": "Müller & Søn GmbH", "address": "27 Harbour Road, 20457 Hamburg", "registration": "HRB 98765", "representative": "Anna Müller, Managing Director" },
+    "fee": 1250,
+    "fee_period": "month",
+    "currency": "€",
+    "payment_days": 14,
+    "deposit": 500,
+    "clauses": [
+        { "title": "Subject", "paragraphs": ["The provider maintains the client's office premises: cleaning, small repairs and the upkeep of the technical installations listed in Annex 1.", "Work outside this scope is done only on a written order and is invoiced separately."] },
+        { "title": "Duration", "paragraphs": ["The contract starts on the date of signature and runs for 12 months. It is extended by 12 months at a time unless one party gives written notice at least 60 days before the end."] },
+        { "title": "Obligations of the provider", "paragraphs": ["The provider carries out the work with due care, with qualified staff and its own tools and materials.", "The provider reports any damage or risk it notices on the premises without delay."] },
+        { "title": "Obligations of the client", "paragraphs": ["The client gives the provider's staff access to the premises during the agreed hours and names a contact person.", "The client pays the invoices within the term agreed below."] },
+        { "title": "Liability", "paragraphs": ["Each party is liable for damage caused by its own fault. The provider's liability is limited to the value of the fees paid in the last 12 months, except for intent or gross negligence."] },
+        { "title": "Confidentiality", "paragraphs": ["The parties keep confidential all information about the other party obtained under this contract, during the contract and for three years after its end."] },
+        { "title": "Termination", "paragraphs": ["Either party may end the contract with immediate effect if the other party seriously breaches its obligations and does not remedy the breach within 15 days of a written notice."] },
+        { "title": "Final provisions", "paragraphs": ["Changes to this contract are valid only in writing and signed by both parties. Disputes are settled amicably or, failing that, by the competent courts at the provider's seat.", "This contract is signed in two originals, one for each party."] }
+    ]
+}

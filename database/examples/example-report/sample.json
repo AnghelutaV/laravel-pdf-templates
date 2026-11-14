@@ -1,0 +1,427 @@
+{
+  "report_title": "Price list 2026",
+  "intro": "All prices in EUR, VAT not included. The table continues on the next pages; header and footer repeat on each.",
+  "items": [
+    [
+      "1",
+      "Wall plastering",
+      "m²",
+      "4.00"
+    ],
+    [
+      "2",
+      "Painting, two coats",
+      "m²",
+      "7.70"
+    ],
+    [
+      "3",
+      "Self-levelling screed",
+      "m²",
+      "11.40"
+    ],
+    [
+      "4",
+      "Laminate installation",
+      "m²",
+      "15.10"
+    ],
+    [
+      "5",
+      "MDF skirting",
+      "m",
+      "18.80"
+    ],
+    [
+      "6",
+      "Ceramic tiling",
+      "m²",
+      "22.50"
+    ],
+    [
+      "7",
+      "Drywall partition",
+      "m²",
+      "26.20"
+    ],
+    [
+      "8",
+      "Suspended ceiling",
+      "m²",
+      "6.90"
+    ],
+    [
+      "9",
+      "Door installation",
+      "pc",
+      "10.60"
+    ],
+    [
+      "10",
+      "Window sill fitting",
+      "pc",
+      "14.30"
+    ],
+    [
+      "11",
+      "Wall plastering (variant 2)",
+      "m²",
+      "18.00"
+    ],
+    [
+      "12",
+      "Painting, two coats (variant 2)",
+      "m²",
+      "21.70"
+    ],
+    [
+      "13",
+      "Self-levelling screed (variant 2)",
+      "m²",
+      "25.40"
+    ],
+    [
+      "14",
+      "Laminate installation (variant 2)",
+      "m²",
+      "6.10"
+    ],
+    [
+      "15",
+      "MDF skirting (variant 2)",
+      "m",
+      "9.80"
+    ],
+    [
+      "16",
+      "Ceramic tiling (variant 2)",
+      "m²",
+      "13.50"
+    ],
+    [
+      "17",
+      "Drywall partition (variant 2)",
+      "m²",
+      "17.20"
+    ],
+    [
+      "18",
+      "Suspended ceiling (variant 2)",
+      "m²",
+      "20.90"
+    ],
+    [
+      "19",
+      "Door installation (variant 2)",
+      "pc",
+      "24.60"
+    ],
+    [
+      "20",
+      "Window sill fitting (variant 2)",
+      "pc",
+      "5.30"
+    ],
+    [
+      "21",
+      "Wall plastering (variant 3)",
+      "m²",
+      "9.00"
+    ],
+    [
+      "22",
+      "Painting, two coats (variant 3)",
+      "m²",
+      "12.70"
+    ],
+    [
+      "23",
+      "Self-levelling screed (variant 3)",
+      "m²",
+      "16.40"
+    ],
+    [
+      "24",
+      "Laminate installation (variant 3)",
+      "m²",
+      "20.10"
+    ],
+    [
+      "25",
+      "MDF skirting (variant 3)",
+      "m",
+      "23.80"
+    ],
+    [
+      "26",
+      "Ceramic tiling (variant 3)",
+      "m²",
+      "4.50"
+    ],
+    [
+      "27",
+      "Drywall partition (variant 3)",
+      "m²",
+      "8.20"
+    ],
+    [
+      "28",
+      "Suspended ceiling (variant 3)",
+      "m²",
+      "11.90"
+    ],
+    [
+      "29",
+      "Door installation (variant 3)",
+      "pc",
+      "15.60"
+    ],
+    [
+      "30",
+      "Window sill fitting (variant 3)",
+      "pc",
+      "19.30"
+    ],
+    [
+      "31",
+      "Wall plastering (variant 4)",
+      "m²",
+      "23.00"
+    ],
+    [
+      "32",
+      "Painting, two coats (variant 4)",
+      "m²",
+      "26.70"
+    ],
+    [
+      "33",
+      "Self-levelling screed (variant 4)",
+      "m²",
+      "7.40"
+    ],
+    [
+      "34",
+      "Laminate installation (variant 4)",
+      "m²",
+      "11.10"
+    ],
+    [
+      "35",
+      "MDF skirting (variant 4)",
+      "m",
+      "14.80"
+    ],
+    [
+      "36",
+      "Ceramic tiling (variant 4)",
+      "m²",
+      "18.50"
+    ],
+    [
+      "37",
+      "Drywall partition (variant 4)",
+      "m²",
+      "22.20"
+    ],
+    [
+      "38",
+      "Suspended ceiling (variant 4)",
+      "m²",
+      "25.90"
+    ],
+    [
+      "39",
+      "Door installation (variant 4)",
+      "pc",
+      "6.60"
+    ],
+    [
+      "40",
+      "Window sill fitting (variant 4)",
+      "pc",
+      "10.30"
+    ],
+    [
+      "41",
+      "Wall plastering (variant 5)",
+      "m²",
+      "14.00"
+    ],
+    [
+      "42",
+      "Painting, two coats (variant 5)",
+      "m²",
+      "17.70"
+    ],
+    [
+      "43",
+      "Self-levelling screed (variant 5)",
+      "m²",
+      "21.40"
+    ],
+    [
+      "44",
+      "Laminate installation (variant 5)",
+      "m²",
+      "25.10"
+    ],
+    [
+      "45",
+      "MDF skirting (variant 5)",
+      "m",
+      "5.80"
+    ],
+    [
+      "46",
+      "Ceramic tiling (variant 5)",
+      "m²",
+      "9.50"
+    ],
+    [
+      "47",
+      "Drywall partition (variant 5)",
+      "m²",
+      "13.20"
+    ],
+    [
+      "48",
+      "Suspended ceiling (variant 5)",
+      "m²",
+      "16.90"
+    ],
+    [
+      "49",
+      "Door installation (variant 5)",
+      "pc",
+      "20.60"
+    ],
+    [
+      "50",
+      "Window sill fitting (variant 5)",
+      "pc",
+      "24.30"
+    ],
+    [
+      "51",
+      "Wall plastering (variant 6)",
+      "m²",
+      "5.00"
+    ],
+    [
+      "52",
+      "Painting, two coats (variant 6)",
+      "m²",
+      "8.70"
+    ],
+    [
+      "53",
+      "Self-levelling screed (variant 6)",
+      "m²",
+      "12.40"
+    ],
+    [
+      "54",
+      "Laminate installation (variant 6)",
+      "m²",
+      "16.10"
+    ],
+    [
+      "55",
+      "MDF skirting (variant 6)",
+      "m",
+      "19.80"
+    ],
+    [
+      "56",
+      "Ceramic tiling (variant 6)",
+      "m²",
+      "23.50"
+    ],
+    [
+      "57",
+      "Drywall partition (variant 6)",
+      "m²",
+      "4.20"
+    ],
+    [
+      "58",
+      "Suspended ceiling (variant 6)",
+      "m²",
+      "7.90"
+    ],
+    [
+      "59",
+      "Door installation (variant 6)",
+      "pc",
+      "11.60"
+    ],
+    [
+      "60",
+      "Window sill fitting (variant 6)",
+      "pc",
+      "15.30"
+    ],
+    [
+      "61",
+      "Wall plastering (variant 7)",
+      "m²",
+      "19.00"
+    ],
+    [
+      "62",
+      "Painting, two coats (variant 7)",
+      "m²",
+      "22.70"
+    ],
+    [
+      "63",
+      "Self-levelling screed (variant 7)",
+      "m²",
+      "26.40"
+    ],
+    [
+      "64",
+      "Laminate installation (variant 7)",
+      "m²",
+      "7.10"
+    ],
+    [
+      "65",
+      "MDF skirting (variant 7)",
+      "m",
+      "10.80"
+    ],
+    [
+      "66",
+      "Ceramic tiling (variant 7)",
+      "m²",
+      "14.50"
+    ],
+    [
+      "67",
+      "Drywall partition (variant 7)",
+      "m²",
+      "18.20"
+    ],
+    [
+      "68",
+      "Suspended ceiling (variant 7)",
+      "m²",
+      "21.90"
+    ],
+    [
+      "69",
+      "Door installation (variant 7)",
+      "pc",
+      "25.60"
+    ],
+    [
+      "70",
+      "Window sill fitting (variant 7)",
+      "pc",
+      "6.30"
+    ]
+  ],
+  "notes": "Prices are valid until 31.12.2026.\nTravel outside the city is charged separately."
+}

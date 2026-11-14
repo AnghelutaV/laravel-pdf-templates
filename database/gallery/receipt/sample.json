@@ -1,0 +1,35 @@
+{
+    "store": {
+        "name": "Corner Café",
+        "address": "12 Market Street, Springfield",
+        "website": "cornercafe.example"
+    },
+    "number": "R-2026-0142",
+    "date": "14.11.2026",
+    "customer": {
+        "name": "Jane Doe",
+        "email": "jane@example.com"
+    },
+    "currency": "€",
+    "vat_rate": 19,
+    "paid": true,
+    "due_date": "",
+    "note": "Loyalty card: 3 stamps left until a free coffee.",
+    "items": [
+        {
+            "name": "Espresso",
+            "qty": 2,
+            "price": 3.2
+        },
+        {
+            "name": "Croissant",
+            "qty": 1,
+            "price": 2.8
+        },
+        {
+            "name": "Orange juice",
+            "qty": 1,
+            "price": 4.5
+        }
+    ]
+}

@@ -32,7 +32,34 @@ return [
         'enabled' => true,
         'prefix' => 'api/pdf-templates',
         'middleware' => ['api', 'throttle:60,1'],
+        // Master key (sees every render). Keys per client are created in the admin UI → API, or with
+        // php artisan pdf-templates:api-key "Client name"
         'key' => env('PDF_TEMPLATES_API_KEY'),
+        // output=url and async renders: where the file is kept, and for how long (minutes) its signed link works
+        'disk' => env('PDF_TEMPLATES_API_DISK'),
+        'path' => 'pdf-templates/renders',
+        'files_ttl' => 1440,
+        // POST {prefix}/batch: most items (PDFs) in one ZIP
+        'batch_max' => 100,
+        // Log rows (no data, only who / what / how long) are deleted after this many days; 0 = kept.
+        // Schedule php artisan pdf-templates:prune daily to delete them and the expired files.
+        'log_days' => 30,
+        // Keep the JSON each API render was sent, for the log details and "Render again" (up to log_data_kb).
+        // It can hold customer data: false keeps only who / what / how long.
+        'log_data' => (bool) env('PDF_TEMPLATES_LOG_DATA', true),
+        'log_data_kb' => 512,
+        // async=1: the queue connection / queue of the render jobs (null = the app's default)
+        'queue_connection' => env('PDF_TEMPLATES_QUEUE_CONNECTION'),
+        'queue' => env('PDF_TEMPLATES_QUEUE'),
+        // Webhooks get the render as JSON; with a secret, X-Signature = HMAC-SHA256 of the body.
+        // Private / local addresses are refused unless webhook_private is true.
+        'webhook_secret' => env('PDF_TEMPLATES_WEBHOOK_SECRET'),
+        'webhook_private' => false,
+        // format=png / jpg: resolution (2 = 144 dpi) and JPG quality
+        'image_scale' => 2,
+        'jpg_quality' => 90,
+        'keys_table' => 'pdf_template_api_keys',
+        'renders_table' => 'pdf_template_renders',
     ],
 
     // Layout the admin pages extend. null = the package's own standalone layout.
@@ -50,12 +77,26 @@ return [
 
     // WYSIWYG mode runs pdfme in the browser; server-side generation (API) goes through the Node renderer
     // shipped in vendor/anghelutav/laravel-pdf-templates/renderer (php artisan pdf-templates:renderer)
+    // Chrome engine for HTML templates (optional): printed by a headless Chrome / Edge / Chromium through the Node
+    // renderer, so flexbox, grid, position: absolute and web fonts work as in a browser. Off: every template uses
+    // dompdf. On: each template picks its engine (editor menu → page setup → Engine). path = the browser binary;
+    // empty = Chrome / Edge / Chromium found in the usual places.
+    'chrome' => [
+        'enabled' => (bool) env('PDF_TEMPLATES_CHROME', false),
+        'path' => env('PDF_TEMPLATES_CHROME_PATH'),
+    ],
+
     'pdfme' => [
         'version' => '6.2.8',
         'cdn' => 'https://esm.sh',
         'renderer_url' => env('PDFME_RENDERER_URL'),
         'renderer_token' => env('PDFME_RENDERER_TOKEN'),
         'timeout' => 60,
+        // Start / stop buttons on the admin API page, for a renderer on this machine (127.0.0.1 / localhost).
+        // In production prefer Supervisor / systemd / pm2 (they restart it after a crash or a reboot).
+        'manage' => (bool) env('PDFME_RENDERER_MANAGE', true),
+        // Node binary used by those buttons, when "node" is not on the web server's PATH
+        'node' => env('PDF_TEMPLATES_NODE', 'node'),
     ],
 
     // Image library (editor menu → Images): logos, stamps, signatures uploaded once and used in any template
@@ -99,6 +140,38 @@ return [
         'thousands_separator' => ' ',
         // Directories dompdf may read files from (images, fonts). public_path() is always allowed.
         'chroot' => [],
+        // Remote https:// images (in the template or from the data): fetched when rendering, public hosts only, and
+        // cached for remote_images_ttl minutes (0 = no cache). false = only library images, data: URIs and public/ files.
+        'remote_images' => (bool) env('PDF_TEMPLATES_REMOTE_IMAGES', true),
+        'remote_images_ttl' => 60,
+        // Fonts added in the editor menu (uploaded .ttf files, Google Fonts): a local directory, since dompdf
+        // reads font files from disk. null = storage/app/pdf-templates/fonts. Upload limit in KB.
+        'font_dir' => null,
+        'font_max_kb' => 4096,
+        // {date} / {dateTime} in the header and footer set in the editor menu
+        'date_format' => 'd.m.Y',
+        // Visual (rich text) editing in the HTML editor: CKEditor 5, loaded when "Visual" is opened.
+        // CKEditor 5 is GPL 2+ (used here with the "GPL" licence key); a closed-source product needs a commercial
+        // licence from CKSource, or set enabled to false. The GPL key only works with the npm build (jsDelivr
+        // below, or your own copy of ckeditor5/dist/browser); CKSource's own CDN (cdn.ckeditor.com) refuses it.
+        'editor' => [
+            'enabled' => (bool) env('PDF_TEMPLATES_VISUAL_EDITOR', true),
+            'url' => 'https://cdn.jsdelivr.net/npm/ckeditor5@49.1.0/dist/browser/ckeditor5.js',
+            'css' => 'https://cdn.jsdelivr.net/npm/ckeditor5@49.1.0/dist/browser/ckeditor5.css',
+        ],
+    ],
+
+    // Template history: the state before each save that changes a template is kept and can be restored
+    // from the editor menu. keep = versions kept per template (0 = no history).
+    'history' => [
+        'keep' => 50,
+        'table' => 'pdf_template_versions',
+    ],
+
+    // "New template" dialog: starters offered next to "Blank". Your own folders come first (same layout as
+    // pdf-templates:export, e.g. resource_path('pdf-templates/gallery')), then the package's gallery and examples.
+    'gallery' => [
+        'paths' => [],
     ],
 
 ];

@@ -1,0 +1,22 @@
+{
+    "sender": {
+        "name": "Acme Store",
+        "address": "1 Warehouse Road",
+        "city": "10115 Berlin"
+    },
+    "recipient": {
+        "name": "Jane Doe",
+        "address": "27 Harbour Road, Unit 4",
+        "postcode": "20457",
+        "city": "Hamburg",
+        "country": "Germany",
+        "phone": "+49 40 1234567"
+    },
+    "service": "express",
+    "tracking": "PKG1234567890",
+    "tracking_url": "https://track.example.com/PKG1234567890",
+    "weight": 2.35,
+    "parcels": 1,
+    "reference": "ORD-88213",
+    "fragile": true
+}

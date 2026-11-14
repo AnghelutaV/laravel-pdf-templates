@@ -10,7 +10,7 @@ class ExamplesCommand extends Command
 {
     protected $signature = 'pdf-templates:examples {--force : Overwrite examples that already exist}';
 
-    protected $description = 'Add the example PDF templates (invoice, certificate, HTML starter)';
+    protected $description = 'Add the example PDF templates (invoice, certificate, report with header & footer, HTML starter)';
 
     public function handle(TemplateFiles $files): int
     {

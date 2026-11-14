@@ -11,7 +11,9 @@
     },
     "dependencies": {
         "@pdfme/common": "6.2.8",
+        "@pdfme/converter": "6.2.8",
         "@pdfme/generator": "6.2.8",
-        "@pdfme/schemas": "6.2.8"
+        "@pdfme/schemas": "6.2.8",
+        "puppeteer-core": "^24.43.1"
     }
 }

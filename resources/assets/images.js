@@ -121,6 +121,9 @@ export function imageLibrary({ t, insert }) {
     });
 
     request(listUrl).then((data) => render(data.images)).catch((e) => notify(e.message, 'danger'));
+
+    // render(images): show a list that came from another request (import of external images)
+    return { render };
 }
 
 // Image → natural size, to keep the aspect ratio when it is placed on a pdfme page

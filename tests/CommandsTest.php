@@ -24,7 +24,7 @@ class CommandsTest extends TestCase
     public function test_examples_are_added_once(): void
     {
         $this->artisan('pdf-templates:examples')->assertSuccessful();
-        $this->assertEqualsCanonicalizing(['example-invoice', 'example-certificate', 'example-html'], PdfTemplate::pluck('slug')->all());
+        $this->assertEqualsCanonicalizing(['example-invoice', 'example-certificate', 'example-report', 'example-html'], PdfTemplate::pluck('slug')->all());
 
         PdfTemplate::where('slug', 'example-html')->update(['name' => 'Edited']);
         $this->artisan('pdf-templates:examples')->assertSuccessful();

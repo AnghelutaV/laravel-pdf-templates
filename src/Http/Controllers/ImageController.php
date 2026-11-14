@@ -44,6 +44,31 @@ class ImageController extends Controller
         ]);
     }
 
+    // External images of a template (e.g. copied from another service) → library images: {url: "pdf-asset:name"}
+    public function import(Request $request, ImageLibrary $images)
+    {
+        $inputs = $request->validate([
+            'urls' => 'required|array|max:30',
+            'urls.*' => 'required|string|max:2000',
+        ]);
+
+        $imported = [];
+        $failed = [];
+        foreach (array_unique($inputs['urls']) as $url) {
+            try {
+                $imported[$url] = ImageLibrary::PREFIX.$images->download($url);
+            } catch (\InvalidArgumentException $e) {
+                $failed[$url] = $e->getMessage();
+            }
+        }
+
+        return response()->json([
+            'imported' => (object) $imported,
+            'failed' => (object) $failed,
+            'images' => $this->withUrls($images->all()),
+        ]);
+    }
+
     public function destroy(string $name, ImageLibrary $images)
     {
         abort_unless($images->delete($name), 404);

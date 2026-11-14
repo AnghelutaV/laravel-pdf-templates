@@ -1,0 +1,6 @@
+{
+    "name": "Shipping label",
+    "mode": "wysiwyg",
+    "category": "Logistics",
+    "description": "A6 parcel label: sender, recipient, Code 128 barcode and QR code from the data, FRAGILE only when needed"
+}

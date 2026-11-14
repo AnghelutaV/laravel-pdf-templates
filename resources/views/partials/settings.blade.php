@@ -14,7 +14,7 @@
 @endunless
     <div class="{{ $stacked ? '' : 'pt-settings-body' }}">
         <div class="pt-grid">
-            <div class="{{ $stacked ? 'pt-col-12' : 'pt-col-4' }}">
+            <div class="{{ $stacked ? 'pt-col-12' : 'pt-col-3' }}">
                 <label class="pt-label" for="pt-name">{{ __('pdf-templates::ui.name') }}</label>
                 <input type="text" class="pt-input" id="pt-name" name="name" value="{{ old('name', $template->name) }}" required>
             </div>
@@ -22,7 +22,18 @@
                 <label class="pt-label" for="pt-slug">{{ __('pdf-templates::ui.slug') }} <span class="pt-muted">{{ __('pdf-templates::ui.slug_hint') }}</span></label>
                 <input type="text" class="pt-input" id="pt-slug" name="slug" value="{{ old('slug', $template->slug) }}" required>
             </div>
-            <div class="{{ $stacked ? 'pt-col-12' : 'pt-col-4' }}">
+            <div class="{{ $stacked ? 'pt-col-12' : 'pt-col-2' }}">
+                {{-- Optional free text; the categories already in use are suggested --}}
+                <label class="pt-label" for="pt-category">{{ __('pdf-templates::ui.category') }}</label>
+                <input type="text" class="pt-input" id="pt-category" name="category" maxlength="100" list="pt-categories"
+                    value="{{ old('category', $template->category) }}" placeholder="{{ __('pdf-templates::ui.category_placeholder') }}">
+                <datalist id="pt-categories">
+                    @foreach (\AnghelutaV\PdfTemplates\Models\PdfTemplate::categories() as $category)
+                        <option value="{{ $category }}"></option>
+                    @endforeach
+                </datalist>
+            </div>
+            <div class="{{ $stacked ? 'pt-col-12' : 'pt-col-3' }}">
                 <label class="pt-label" for="pt-description">{{ __('pdf-templates::ui.description') }}</label>
                 <input type="text" class="pt-input" id="pt-description" name="description" value="{{ old('description', $template->description) }}">
             </div>

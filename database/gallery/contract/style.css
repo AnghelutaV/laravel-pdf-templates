@@ -1,0 +1,13 @@
+body { font-family: "DejaVu Serif", serif; font-size: 10pt; color: #111827; line-height: 1.5; }
+h1 { font-size: 18pt; text-align: center; margin: 0 0 1mm; letter-spacing: 1pt; }
+h2 { font-size: 11pt; margin: 6mm 0 2mm; }
+p { margin: 0 0 2mm; text-align: justify; }
+.center { text-align: center; }
+.muted { color: #6b7280; font-size: 9pt; }
+.label { font-family: "DejaVu Sans", sans-serif; font-size: 7pt; text-transform: uppercase; letter-spacing: 1pt; color: #6b7280; margin-bottom: 1mm; }
+.parties { width: 100%; border-collapse: collapse; }
+.parties td { width: 50%; vertical-align: top; padding: 3mm; border: 0.5pt solid #d1d5db; font-size: 9pt; }
+.clause { page-break-inside: avoid; }
+.sign { width: 100%; margin-top: 20mm; border-collapse: collapse; page-break-inside: avoid; }
+.sign td { width: 50%; padding-top: 16mm; border-top: 0.5pt solid #6b7280; vertical-align: top; }
+.sign td + td { padding-left: 12mm; }

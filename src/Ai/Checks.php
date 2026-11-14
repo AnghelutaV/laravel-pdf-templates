@@ -42,15 +42,24 @@ class Checks
         $errors = [];
         $names = [];
 
+        // Header / footer fields (basePdf.staticSchema, drawn on every page) are checked like one more page
+        $groups = [];
         foreach ($template['schemas'] as $p => $fields) {
+            $groups['Page '.($p + 1)] = $fields;
+        }
+        if ($page && array_key_exists('staticSchema', $page)) {
+            $groups['Header/footer (staticSchema)'] = $page['staticSchema'];
+        }
+
+        foreach ($groups as $group => $fields) {
             if (! is_array($fields) || ! array_is_list($fields)) {
-                $errors[] = 'Page '.($p + 1).': must be an array of fields';
+                $errors[] = $group.': must be an array of fields';
 
                 continue;
             }
             foreach ($fields as $i => $field) {
                 $name = is_array($field) ? ($field['name'] ?? null) : null;
-                $label = 'Page '.($p + 1).' field '.($name ?? "#{$i}");
+                $label = $group.' field '.($name ?? "#{$i}");
 
                 if (! is_string($name) || $name === '') {
                     $errors[] = "{$label}: missing name";

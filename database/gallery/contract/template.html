@@ -1,0 +1,44 @@
+<h1>Service contract</h1>
+<p class="center muted">No. {{ number }} · signed in {{ place }} on {{ date|date:d.m.Y }}</p>
+
+<h2>Parties</h2>
+<table class="parties">
+    <tr>
+        <td>
+            <div class="label">Provider</div>
+            <strong>{{ provider.name }}</strong><br>
+            {{ provider.address }}<br>
+            Reg. no. {{ provider.registration }} · VAT {{ provider.vat }}<br>
+            represented by {{ provider.representative }}
+        </td>
+        <td>
+            <div class="label">Client</div>
+            <strong>{{ client.name }}</strong><br>
+            {{ client.address }}<br>
+            {% if client.registration %}Reg. no. {{ client.registration }}<br>{% endif %}
+            represented by {{ client.representative }}
+        </td>
+    </tr>
+</table>
+
+{% for clause in clauses %}
+<div class="clause">
+    <h2>{{ loop.index }}. {{ clause.title }}</h2>
+    {% for paragraph in clause.paragraphs %}
+    <p>{{ paragraph }}</p>
+    {% endfor %}
+</div>
+{% endfor %}
+
+<div class="clause">
+    <h2>Price and payment</h2>
+    <p>The client pays <strong>{{ fee|number:2 }} {{ currency }}</strong>{% if fee_period %} per {{ fee_period }}{% endif %}, plus VAT, within {{ payment_days }} days of each invoice.</p>
+    {% if deposit > 0 %}<p>A deposit of {{ deposit|number:2 }} {{ currency }} is due on signature.</p>{% endif %}
+</div>
+
+<table class="sign">
+    <tr>
+        <td><div class="label">Provider</div>{{ provider.name }}<br><span class="muted">{{ provider.representative }}</span></td>
+        <td><div class="label">Client</div>{{ client.name }}<br><span class="muted">{{ client.representative }}</span></td>
+    </tr>
+</table>

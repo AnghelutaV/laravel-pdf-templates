@@ -1,0 +1,6 @@
+{
+    "name": "Receipt",
+    "mode": "wysiwyg",
+    "category": "Sales",
+    "description": "A5 receipt: {{ placeholders }}, VAT and totals computed from the items, a PAID stamp shown only when paid"
+}

@@ -4,7 +4,10 @@ namespace AnghelutaV\PdfTemplates\Http\Controllers;
 
 use AnghelutaV\PdfTemplates\Exceptions\RendererUnavailableException;
 use AnghelutaV\PdfTemplates\Exceptions\RenderException;
+use AnghelutaV\PdfTemplates\Gallery;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
+use AnghelutaV\PdfTemplates\Models\PdfTemplateVersion;
+use AnghelutaV\PdfTemplates\PageSetup;
 use AnghelutaV\PdfTemplates\PdfTemplates;
 use AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer;
 use Illuminate\Http\Request;
@@ -20,19 +23,42 @@ class TemplateController extends Controller
         $request->validate([
             'q' => 'nullable|string',
             'mode' => ['nullable', Rule::in(PdfTemplate::MODES)],
+            'category' => 'nullable|string|max:100',
+            'sort' => ['nullable', Rule::in(array_keys(self::SORTS))],
         ]);
+
+        [$column, $direction] = self::SORTS[$request->input('sort') ?: 'name'];
 
         // Only the list columns: schema can hold a base64 background PDF (MBs), html/css/sample_data are big too
         $templates = PdfTemplate::query()
-            ->select(['id', 'name', 'slug', 'mode', 'description', 'active', 'updated_at'])
+            ->select(['id', 'name', 'slug', 'mode', 'description', 'category', 'active', 'created_at', 'updated_at'])
             ->search($request->input('q'))
             ->when($request->input('mode'), fn ($q, $mode) => $q->where('mode', $mode))
-            ->orderBy('name')
+            ->when($request->input('category'), fn ($q, $category) => $q->where('category', $category))
+            ->orderBy($column, $direction)
+            ->orderBy('id')
             ->paginate(20)
             ->withQueryString();
 
-        return view('pdf-templates::index', ['templates' => $templates, 'version' => $this->version()]);
+        return view('pdf-templates::index', [
+            'templates' => $templates,
+            'categories' => PdfTemplate::categories(),
+            'sorts' => array_keys(self::SORTS),
+            'version' => $this->version(),
+            // "New template" dialog: start blank or from a starter (name, mode, category, description only)
+            'gallery' => array_map(
+                fn (array $starter) => array_intersect_key($starter, array_flip(['name', 'mode', 'category', 'description'])),
+                app(Gallery::class)->all(),
+            ),
+        ]);
     }
+
+    // List order (?sort=): name A–Z by default, or the most recently updated / created first
+    const SORTS = [
+        'name' => ['name', 'asc'],
+        'updated' => ['updated_at', 'desc'],
+        'created' => ['created_at', 'desc'],
+    ];
 
     // Footer: installed version, linked to its release (tag) or to the changelog (dev checkout)
     protected function version(): ?array
@@ -55,14 +81,19 @@ class TemplateController extends Controller
 
     public function store(Request $request)
     {
+        $gallery = app(Gallery::class);
         $inputs = $request->validate([
-            'name' => 'required|string|max:255',
-            'mode' => ['required', Rule::in(PdfTemplate::MODES)],
+            // From the gallery: the starter gives the mode, and its name when none is typed
+            'starter' => ['nullable', 'string', Rule::in(array_keys($gallery->all()))],
+            'name' => 'required_without:starter|nullable|string|max:255',
+            'mode' => ['required_without:starter', 'nullable', Rule::in(PdfTemplate::MODES)],
             'description' => 'nullable|string|max:255',
         ]);
 
-        $template = PdfTemplate::makeStarter($inputs['name'], $inputs['mode'], $inputs['description'] ?? null);
-        $template->save();
+        $template = ! empty($inputs['starter'])
+            ? $gallery->make($inputs['starter'], $inputs['name'] ?? null, $inputs['description'] ?? null)
+            : PdfTemplate::makeStarter($inputs['name'], $inputs['mode'], $inputs['description'] ?? null);
+        $template?->save();
 
         return redirect()->route($this->route('edit'), $template)->with('pdf-templates.status', __('pdf-templates::ui.created'));
     }
@@ -72,14 +103,28 @@ class TemplateController extends Controller
 
     public function edit(PdfTemplate $template)
     {
+        // History list: the small columns only
+        $versions = $template->versions()->select(['id', 'template_id', 'author', 'created_at'])
+            ->limit((int) config('pdf-templates.history.keep', 50))->get();
+
         if ($template->isHtml()) {
-            return view('pdf-templates::edit-html', compact('template'));
+            return view('pdf-templates::edit-html', compact('template', 'versions'));
         }
 
         $locale = substr(app()->getLocale(), 0, 2);
         $designerLang = in_array($locale, self::DESIGNER_LANGS, true) ? $locale : 'en';
 
-        return view('pdf-templates::edit-wysiwyg', compact('template', 'designerLang'));
+        return view('pdf-templates::edit-wysiwyg', compact('template', 'designerLang', 'versions'));
+    }
+
+    // Puts an earlier version back; the state before it is kept as a version too
+    public function restore(PdfTemplate $template, PdfTemplateVersion $version)
+    {
+        abort_unless($version->template_id === $template->id, 404);
+        $template->restore($version);
+
+        return redirect()->route($this->route('edit'), $template)
+            ->with('pdf-templates.status', __('pdf-templates::ui.version_restored', ['date' => $version->created_at?->format('d.m.Y H:i')]));
     }
 
     // Form submit (HTML mode) or JSON save (designer, test data)
@@ -89,6 +134,7 @@ class TemplateController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'slug' => ['sometimes', 'required', 'alpha_dash', 'max:255', Rule::unique($template->getTable())->ignore($template)],
             'description' => 'nullable|string|max:255',
+            'category' => 'nullable|string|max:100',
             'active' => 'sometimes|boolean',
             'schema' => 'sometimes|nullable|json',
             'html' => 'sometimes|nullable|string',
@@ -96,7 +142,7 @@ class TemplateController extends Controller
             'paper' => ['sometimes', Rule::in(PdfTemplate::PAPERS)],
             'orientation' => ['sometimes', Rule::in(PdfTemplate::ORIENTATIONS)],
             'sample_data' => 'sometimes|nullable|json',
-        ]);
+        ] + PageSetup::rules());
 
         $template->update($inputs);
 
@@ -151,7 +197,7 @@ class TemplateController extends Controller
     public function export(PdfTemplate $template)
     {
         $content = $template->isHtml()
-            ? json_encode($template->only(['name', 'mode', 'html', 'css', 'paper', 'orientation']), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+            ? json_encode($template->only(['name', 'mode', 'html', 'css', 'paper', 'orientation', 'settings']), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
             : $template->schema;
 
         return response($content, 200, [
@@ -169,6 +215,8 @@ class TemplateController extends Controller
             'css' => 'nullable|string',
             'paper' => ['nullable', Rule::in(PdfTemplate::PAPERS)],
             'orientation' => ['nullable', Rule::in(PdfTemplate::ORIENTATIONS)],
+            // Unsaved page setup, as JSON (the preview posts form data)
+            'settings' => 'nullable|json',
         ]);
 
         // Preview of unsaved edits: render a copy, never persist
@@ -176,6 +224,11 @@ class TemplateController extends Controller
             $request->only(['html', 'css', 'paper', 'orientation']),
             fn ($value) => $value !== null,
         ));
+        if ($request->filled('settings')) {
+            $settings = ['settings' => json_decode((string) $request->input('settings'), true)];
+            validator($settings, PageSetup::rules())->validate();
+            $preview->settings = $settings['settings'];
+        }
         $preview->slug = $template->slug;
 
         try {

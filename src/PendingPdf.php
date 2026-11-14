@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 /**
  * PdfTemplates::make('invoice', $data)
  *     ->filename('invoice-42')
+ *     ->watermark('DRAFT')               // or ['text' => 'COPY', 'opacity' => 0.1, 'color' => '#dc2626']
  *     ->save('invoices/42.pdf', 's3');   // or ->download(), ->inline(), ->content(), ->base64(), ->attachment()
  *
  * Returned from a controller it is shown inline. The PDF is generated once and reused.
@@ -21,6 +22,8 @@ class PendingPdf implements Responsable
     protected ?string $filename = null;
 
     protected ?string $content = null;
+
+    protected array $options = [];
 
     public function __construct(
         protected PdfTemplates $manager,
@@ -43,6 +46,15 @@ class PendingPdf implements Responsable
         return $this;
     }
 
+    // A diagonal text over every page; null removes it
+    public function watermark(string|array|null $watermark): static
+    {
+        $this->options['watermark'] = $watermark;
+        $this->content = null;
+
+        return $this;
+    }
+
     public function template(): PdfTemplate
     {
         return $this->template;
@@ -50,7 +62,13 @@ class PendingPdf implements Responsable
 
     public function content(): string
     {
-        return $this->content ??= $this->manager->render($this->template, $this->data);
+        return $this->content ??= $this->manager->render($this->template, $this->data, $this->options);
+    }
+
+    // One page as an image: ->image('png'), ->image('jpg', 2). Needs the Node renderer.
+    public function image(string $format = 'png', int $page = 1): string
+    {
+        return $this->manager->image($this->template, $this->data, $format, $page, $this->options);
     }
 
     public function base64(): string
