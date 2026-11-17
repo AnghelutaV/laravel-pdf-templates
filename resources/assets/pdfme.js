@@ -20,12 +20,58 @@ function chartNumber(value, decimals) {
     return (value < 0 ? '-' : '') + int.replace(/\B(?=(\d{3})+(?!\d))/g, thousands) + (frac ? decimal + frac : '');
 }
 
+/**
+ * pdfme 6.2.8 shows a table cell that is not being edited with its lines broken for the whole cell width, padding
+ * ignored (the PDF breaks them inside the padding): the text runs over the right border. The designer's cells get
+ * their own text back and let the browser wrap it inside the cell, as in the PDF and while editing.
+ */
+function tableCellsFix(plugin) {
+    const watched = new WeakSet();
+    const fix = (root, arg) => {
+        const originals = new Map();
+        let body = arg.value;
+        try {
+            body = typeof body === 'string' ? JSON.parse(body || '[]') : body;
+        } catch {
+            body = [];
+        }
+        [arg.schema?.head ?? [], ...(Array.isArray(body) ? body : [])].flat().forEach((cell) => {
+            if (typeof cell === 'string') originals.set(cell.replace(/\s+/g, ''), cell);
+        });
+        root.querySelectorAll('div[id^="text-"]').forEach((el) => {
+            if (el.isContentEditable || el.style.whiteSpace !== 'pre') return;
+            const original = originals.get(el.textContent.replace(/\s+/g, ''));
+            if (original === undefined) return;
+            if (el.textContent !== original) el.textContent = original;
+            el.style.whiteSpace = 'pre-wrap';
+            el.style.wordBreak = 'break-word';
+        });
+    };
+
+    return {
+        ...plugin,
+        async ui(arg) {
+            await plugin.ui(arg);
+            fix(arg.rootElement, arg);
+            // The table re-renders itself (a cell clicked, editing left) without going through here
+            if (!watched.has(arg.rootElement)) {
+                watched.add(arg.rootElement);
+                let latest = arg;
+                const observer = new MutationObserver(() => fix(arg.rootElement, latest));
+                observer.observe(arg.rootElement, { childList: true, subtree: true });
+                arg.rootElement.ptLatest = (next) => latest = next;
+            }
+            arg.rootElement.ptLatest?.(arg);
+        },
+    };
+}
+
 // Keep in sync with renderer/server.mjs
 export const plugins = {
     Text: text,
     'Multi-Variable Text': multiVariableText,
     List: list,
-    Table: table,
+    Table: tableCellsFix(table),
     Image: image,
     SVG: svg,
     Line: line,

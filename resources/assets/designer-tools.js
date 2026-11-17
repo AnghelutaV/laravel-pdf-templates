@@ -435,3 +435,35 @@ export function fieldDataBox(designer, container, { t, onChange, sample = () => 
     new MutationObserver(decorate).observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ['value'] });
     decorate();
 }
+
+/**
+ * New fields get pdfme's "field24"-style names; those become names that say what the field is (chart_1, barcode_1,
+ * table_2…), the data keys of the API. Only fields not seen before are renamed (`known`: their ids, updated here),
+ * so a field of the loaded template, or one the user names "field5", keeps its name.
+ * Returns the template with the new names, or null when nothing changed.
+ */
+export function logicalNames(template, known) {
+    const all = (t) => [...(t.schemas ?? []).flat(), ...(t.basePdf?.staticSchema ?? [])].filter(Boolean);
+    const key = (field) => field.id ?? field.name;
+    const fresh = all(template).filter((field) => !known.has(key(field)) && /^field\d+$/.test(field.name ?? ''));
+    all(template).forEach((field) => known.add(key(field)));
+    if (!fresh.length) return null;
+
+    const taken = new Set(all(template).map((field) => field.name));
+    const BASE = { multiVariableText: 'text', dateTime: 'datetime', radioGroup: 'radio', signature: 'signature' };
+    const renames = new Map();
+    fresh.forEach((field) => {
+        const base = BASE[field.type] ?? String(field.type || 'field').replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+        let n = 1;
+        while (taken.has(`${base}_${n}`)) n++;
+        taken.add(`${base}_${n}`);
+        renames.set(field, `${base}_${n}`);
+    });
+    const rename = (field) => (renames.has(field) ? { ...field, name: renames.get(field) } : field);
+
+    return {
+        ...template,
+        schemas: template.schemas.map((page) => page.map(rename)),
+        ...(Array.isArray(template.basePdf?.staticSchema) ? { basePdf: { ...template.basePdf, staticSchema: template.basePdf.staticSchema.map(rename) } } : {}),
+    };
+}

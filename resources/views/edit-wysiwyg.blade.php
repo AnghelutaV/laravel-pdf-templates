@@ -191,7 +191,7 @@
             codeTextarea
         } from 'pdf-templates';
         import { imageLibrary, imageSize } from 'pdf-templates/images';
-        import { designerMenu, fieldDataBox } from 'pdf-templates/designer-tools';
+        import { designerMenu, fieldDataBox, logicalNames } from 'pdf-templates/designer-tools';
 
         const fitDesigner = fillViewport(document.getElementById('pt-designer'), { gap: 0 });
 
@@ -250,7 +250,14 @@
         }
 
         const chrome = editorChrome({ save, t });
-        designer.onChangeTemplate(() => chrome.setDirty(true));
+        // A new field is named after what it is (chart_1, barcode_2…), not field24: its data key in the API
+        const knownFields = new Set();
+        logicalNames(designer.getTemplate(), knownFields);
+        designer.onChangeTemplate(() => {
+            chrome.setDirty(true);
+            const renamed = logicalNames(designer.getTemplate(), knownFields);
+            if (renamed) setTimeout(() => designer.updateTemplate(renamed));
+        });
         designer.onSaveTemplate(() => document.getElementById('pt-save').click());
         fields.forEach((el) => el.addEventListener('input', () => chrome.setDirty(true)));
 

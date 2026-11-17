@@ -149,9 +149,16 @@ class Chart
             // A plain list of numbers
             return [array_map(fn ($i) => (string) ($i + 1), array_keys($data)), [['name' => '', 'values' => array_map(fn ($v) => $this->number($v), $data)]]];
         }
+        // Keys set but not in the rows (a typo, or values typed in place of key names): the numeric keys of the rows;
+        // a label key not in the rows: their first text key
+        $numeric = fn ($key) => is_numeric($rows[0][$key] ?? null);
+        if ($label !== null && $label !== '' && ! array_filter($rows, fn ($row) => array_key_exists($label, $row))) {
+            $label = collect(array_keys($rows[0]))->first(fn ($key) => ! $numeric($key));
+        }
         $keys = $values !== null && trim($values) !== ''
-            ? array_map('trim', explode(',', $values))
-            : array_values(array_filter(array_keys($rows[0]), fn ($key) => $key !== $label && is_numeric($rows[0][$key])));
+            ? array_values(array_filter(array_map('trim', explode(',', $values)), fn ($key) => $key !== '' && array_filter($rows, fn ($row) => data_get($row, $key) !== null)))
+            : [];
+        $keys = $keys ?: array_values(array_filter(array_keys($rows[0]), fn ($key) => $key !== $label && $numeric($key)));
         $categories = array_map(fn ($row, $i) => $label !== null && isset($row[$label]) ? (string) $row[$label] : (string) ($i + 1), $rows, array_keys($rows));
 
         return [$categories, array_map(fn ($key) => [

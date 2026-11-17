@@ -7,8 +7,14 @@
             {{-- Config chrome.enabled: each template picks dompdf (fast, no browser) or Chrome (modern CSS) --}}
             <label class="pt-label" for="pt-engine">{{ __('pdf-templates::ui.engine') }}</label>
             <select class="pt-select" id="pt-engine" data-pt-setup="engine">
-                <option value="">{{ __('pdf-templates::ui.engine_dompdf') }}</option>
-                <option value="chrome">{{ __('pdf-templates::ui.engine_chrome') }}</option>
+                {{-- The default engine first: what a template without a choice uses (config chrome.default) --}}
+                @if (\AnghelutaV\PdfTemplates\Renderers\ChromeRenderer::isDefault())
+                    <option value="chrome">{{ __('pdf-templates::ui.engine_chrome') }}</option>
+                    <option value="dompdf">{{ __('pdf-templates::ui.engine_dompdf') }}</option>
+                @else
+                    <option value="dompdf">{{ __('pdf-templates::ui.engine_dompdf') }}</option>
+                    <option value="chrome">{{ __('pdf-templates::ui.engine_chrome') }}</option>
+                @endif
             </select>
             <p class="pt-muted pt-hint">{{ __('pdf-templates::ui.engine_hint') }}</p>
         @endif

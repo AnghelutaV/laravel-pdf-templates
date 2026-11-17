@@ -115,6 +115,7 @@
             "pdf-templates/images": "{{ $asset('images.js') }}",
             "pdf-templates/visual": "{{ $asset('visual.js') }}",
             "pdf-templates/visual-menu": "{{ $asset('visual-menu.js') }}",
+            "pdf-templates/page-view": "{{ $asset('page-view.js') }}",
             "pdf-templates/html-tools": "{{ $asset('html-tools.js') }}"
         }
     }

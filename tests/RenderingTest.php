@@ -5,6 +5,7 @@ namespace AnghelutaV\PdfTemplates\Tests;
 use AnghelutaV\PdfTemplates\Exceptions\RenderException;
 use AnghelutaV\PdfTemplates\Facades\PdfTemplates;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
+use AnghelutaV\PdfTemplates\PageSetup;
 use AnghelutaV\PdfTemplates\PendingPdf;
 use AnghelutaV\PdfTemplates\Renderers\HtmlRenderer;
 use AnghelutaV\PdfTemplates\Renderers\WysiwygRenderer;
@@ -359,5 +360,12 @@ class RenderingTest extends TestCase
                 && str_contains($request['footer'], '<span class="pageNumber"></span> of <span class="totalPages"></span> · Hi')
                 && $request['header'] === null && $request['chrome'] === 'C:/chrome.exe';
         });
+
+        // Chrome on: the default for a template that did not pick an engine; dompdf when picked or chrome.default off
+        $this->assertSame('chrome', PageSetup::from(null)->engine());
+        $this->assertSame('dompdf', PageSetup::from(['engine' => 'dompdf'])->engine());
+        config(['pdf-templates.chrome.default' => false]);
+        $this->assertSame('dompdf', PageSetup::from([])->engine());
+        $this->assertSame('chrome', PageSetup::from(['engine' => 'chrome'])->engine());
     }
 }

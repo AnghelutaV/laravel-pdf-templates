@@ -261,9 +261,10 @@ HTML templates are printed by dompdf: fast, no browser, but CSS 2.1 with a few C
 ```bash
 PDF_TEMPLATES_CHROME=true
 # PDF_TEMPLATES_CHROME_PATH="/usr/bin/chromium"   # optional: found in the usual places otherwise
+# PDF_TEMPLATES_CHROME_DEFAULT=false             # optional: templates without a choice stay on dompdf
 ```
 
-Then editor menu → page setup → **PDF engine** → Chrome, per template. It goes through the Node renderer (`POST /html`, `puppeteer-core`, installed with the rest), which drives the Chrome / Edge / Chromium of the server: one browser kept open, about 0.2 s per PDF after the first. Margins, header / footer (with `{currentPage}` / `{totalPages}`), watermark, images and fonts work as with dompdf; the page loads nothing from the network (PHP puts images and fonts in first). On Linux servers install Chromium (`apt install chromium`). Templates left on dompdf are not affected. The editor warns when a dompdf template uses flexbox, grid or `position: absolute`.
+With Chrome on, it is the engine of every template that did not pick one (`PDF_TEMPLATES_CHROME_DEFAULT=false` keeps those on dompdf); editor menu → page setup → **PDF engine** sets it per template. It goes through the Node renderer (`POST /html`, `puppeteer-core`, installed with the rest), which drives the Chrome / Edge / Chromium of the server: one browser kept open, about 0.2 s per PDF after the first. Margins, header / footer (with `{currentPage}` / `{totalPages}`), watermark, images and fonts work as with dompdf; the page loads nothing from the network (PHP puts images and fonts in first). On Linux servers install Chromium (`apt install chromium`). Templates left on dompdf are not affected. The editor warns when a dompdf template uses flexbox, grid or `position: absolute`.
 
 ### External images
 

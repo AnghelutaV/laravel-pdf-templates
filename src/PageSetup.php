@@ -93,7 +93,15 @@ class PageSetup
     // chrome when the template asks for it and the config allows it; dompdf otherwise
     public function engine(): string
     {
-        return ($this->settings['engine'] ?? null) === 'chrome' && Renderers\ChromeRenderer::enabled() ? 'chrome' : 'dompdf';
+        if (! Renderers\ChromeRenderer::enabled()) {
+            return 'dompdf';
+        }
+
+        return match ($this->settings['engine'] ?? null) {
+            'chrome' => 'chrome',
+            'dompdf' => 'dompdf',
+            default => Renderers\ChromeRenderer::isDefault() ? 'chrome' : 'dompdf',
+        };
     }
 
     /**

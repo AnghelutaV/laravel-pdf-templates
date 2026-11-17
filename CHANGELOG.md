@@ -4,15 +4,24 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-17
+
 ### Added
 
 - **Chrome engine** for HTML templates, optional (`PDF_TEMPLATES_CHROME=true`, `PDF_TEMPLATES_CHROME_PATH`): per template in the page setup (PDF engine: dompdf / Chrome). Printed by the server's Chrome / Edge / Chromium through the Node renderer (`POST /html`, `puppeteer-core`), so flexbox, grid, `position: absolute` and modern CSS work as in a browser (templates from APITemplate.io / CraftMyPDF). Margins, header / footer with page numbers, watermark, images and fonts supported; the page loads nothing from the network.
+- With Chrome on, it is the default engine of templates that did not pick one (`PDF_TEMPLATES_CHROME_DEFAULT`, true).
+- Visual tab of a Chrome-engine template: the page as Chrome prints it (paper size, margins, flexbox, grid, `position: absolute`, the template <head> CSS), text edited in place; a Page / Editor switch keeps CKEditor one click away. Visual is the first tab and opens with the editor.
+- New WYSIWYG fields are named after their type (`chart_1`, `barcode_1`, `table_2`…) instead of `field24`.
+- Editor: a Cancel button next to Save (back to the list; asks first when there are unsaved changes); notes and layout warnings as icons in the tab bar; tabs show icons only when the panel is narrow.
+- Template list: a Category column and an always-visible category filter.
+- Charts: value / label keys not found in the data fall back to the numeric / first text columns of the rows.
 - Remote `https://` images in HTML templates and their data (`<img src="{{ logo_url }}">`) are fetched when rendering (public hosts only, cached; `html.remote_images`, `html.remote_images_ttl`).
 - Visual editor looks like the PDF: dompdf's defaults instead of CKEditor's table styles, the template's `body` CSS and default font, the test data's images for `<img src="{{ key }}">`; a warning for flexbox / grid / `position: absolute` on dompdf.
 - WYSIWYG Edit Field panel: a **Value** row for every field with content (text, list, date, checkbox, QR / barcodes), with the data keys of the test data as `{{ key }}` buttons; **Chart data** for charts (used when the data has no key for the field).
 
 ### Fixed
 
+- WYSIWYG designer: table cells not being edited no longer run over their right border (pdfme 6.2.8 broke their lines without the padding; the PDF was right).
 - HTML (dompdf): `height: 100%` inside a table cell no longer pushes the table to the next page; sizes without a unit are px; `<th>` follows the text alignment of its table / row; CKEditor block images are centred and resized ones keep their width.
 
 - **Charts**: `{{ chart("bar", sales, "month", "total", "title='…'") }}` in HTML templates and a **Chart** tool in the WYSIWYG designer (type, label key, value keys, options). Bar, horizontal bar, stacked, line, area, pie, doughnut; title, colours, legend, values, prefix / suffix, decimals, min / max. Vector shapes, texts in the template's font.
@@ -165,7 +174,8 @@ Same code as 0.2.0 (tagged on the same commit).
 
 - Initial release: WYSIWYG (pdfme) and HTML/CSS templates filled with JSON, admin UI, test page, HTTP API, Node renderer, export / import commands.
 
-[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/AnghelutaV/laravel-pdf-templates/compare/v0.2.1...v0.2.2

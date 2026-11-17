@@ -45,9 +45,14 @@ function series(data, label, values) {
     const rows = data.filter((row) => row && typeof row === 'object' && !Array.isArray(row));
     if (!rows.length) return [data.map((_, i) => String(i + 1)), [{ name: '', values: data.map(num) }]];
 
-    const keys = values && String(values).trim() !== ''
-        ? String(values).split(',').map((key) => key.trim()).filter(Boolean)
-        : Object.keys(rows[0]).filter((key) => key !== label && Number.isFinite(Number(rows[0][key])) && typeof rows[0][key] !== 'boolean');
+    // Keys set but not in the rows (a typo, or values typed in place of key names): the numeric keys of the rows;
+    // a label key not in the rows: their first text key
+    const numeric = (key) => Number.isFinite(Number(rows[0][key])) && typeof rows[0][key] !== 'boolean' && rows[0][key] !== '';
+    if (label && !rows.some((row) => row[label] !== undefined)) label = Object.keys(rows[0]).find((key) => !numeric(key)) ?? '';
+    let keys = values && String(values).trim() !== ''
+        ? String(values).split(',').map((key) => key.trim()).filter((key) => key && rows.some((row) => getPath(row, key) !== undefined))
+        : [];
+    if (!keys.length) keys = Object.keys(rows[0]).filter((key) => key !== label && numeric(key));
     const categories = rows.map((row, i) => (label && row[label] !== undefined ? String(row[label]) : String(i + 1)));
 
     return [categories, keys.map((key) => ({ name: key, values: rows.map((row) => num(getPath(row, key))) }))];

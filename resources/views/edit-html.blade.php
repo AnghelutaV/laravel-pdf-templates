@@ -62,17 +62,32 @@
             <div class="pt-split pt-even pt-workspace" id="pt-workspace">
                 <div class="pt-card">
                     <div class="pt-tabs" id="pt-tabs" role="tablist">
-                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-html" id="pt-mode-code"><x-pdf-templates::icon name="code" :size="14" /> HTML</button>
                         @if (\AnghelutaV\PdfTemplates\Renderers\HtmlRenderer::editor()['enabled'])
                             {{-- Same panel as HTML: the visual editor (CKEditor 5, loaded on first use) in place of the code --}}
-                            <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-html" id="pt-mode-visual"><x-pdf-templates::icon name="pencil" :size="14" /> {{ __('pdf-templates::ui.mode_visual') }}</button>
+                            <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-html" id="pt-mode-visual" title="{{ __('pdf-templates::ui.mode_visual') }}"><x-pdf-templates::icon name="pencil" :size="14" /> <span class="pt-tab-label">{{ __('pdf-templates::ui.mode_visual') }}</span></button>
                         @endif
-                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-css"><x-pdf-templates::icon name="layout" :size="14" /> CSS</button>
-                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-data"><x-pdf-templates::icon name="braces" :size="14" /> {{ __('pdf-templates::ui.tab_data') }}</button>
-                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-syntax"><x-pdf-templates::icon name="file" :size="14" /> {{ __('pdf-templates::ui.tab_syntax') }}</button>
+                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-html" id="pt-mode-code" title="HTML"><x-pdf-templates::icon name="code" :size="14" /> <span class="pt-tab-label">HTML</span></button>
+                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-css" title="CSS"><x-pdf-templates::icon name="layout" :size="14" /> <span class="pt-tab-label">CSS</span></button>
+                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-data" title="{{ __('pdf-templates::ui.tab_data') }}"><x-pdf-templates::icon name="braces" :size="14" /> <span class="pt-tab-label">{{ __('pdf-templates::ui.tab_data') }}</span></button>
+                        <button type="button" class="pt-tab" role="tab" data-tab="pt-tab-syntax" title="{{ __('pdf-templates::ui.tab_syntax') }}" aria-label="{{ __('pdf-templates::ui.tab_syntax') }}"><x-pdf-templates::icon name="book" :size="15" /></button>
                         {{-- Preview controls live here so the preview gets the whole height --}}
                         <div class="pt-tabs-tools">
-                            <span class="pt-muted" id="pt-status"></span>
+                            @if (\AnghelutaV\PdfTemplates\Renderers\HtmlRenderer::editor()['enabled'])
+                                {{-- Chrome engine: the Visual tab shows the page (default) or CKEditor --}}
+                                <div class="pt-seg pt-hidden" id="pt-visual-kind">
+                                    <button type="button" data-kind="page" title="{{ __('pdf-templates::ui.visual_kind_page') }}: {{ __('pdf-templates::ui.visual_kind_page_tip') }}"><x-pdf-templates::icon name="monitor" :size="14" /></button>
+                                    <button type="button" data-kind="editor" title="{{ __('pdf-templates::ui.visual_kind_editor') }}: {{ __('pdf-templates::ui.visual_kind_editor_tip') }}"><x-pdf-templates::icon name="pencil" :size="14" /></button>
+                                </div>
+                                {{-- Notes as icons: the text opens on click instead of taking the editor space --}}
+                                <div class="pt-pop pt-hidden" id="pt-visual-note">
+                                    <button type="button" class="pt-pop-btn pt-muted" aria-label="{{ __('pdf-templates::ui.mode_visual') }}"><x-pdf-templates::icon name="info" :size="16" /></button>
+                                    <div class="pt-pop-panel">{{ __('pdf-templates::ui.visual_note') }}</div>
+                                </div>
+                                <div class="pt-pop pt-pop-warning pt-hidden" id="pt-layout-warning">
+                                    <button type="button" class="pt-pop-btn" aria-label="Layout"><x-pdf-templates::icon name="alert" :size="16" /></button>
+                                    <div class="pt-pop-panel"><span data-flex>{!! __('pdf-templates::ui.layout_warning') !!}</span> <span data-absolute>{!! __('pdf-templates::ui.layout_warning_absolute') !!}</span></div>
+                                </div>
+                            @endif
                             <label class="pt-check pt-muted" data-pt-tip="{{ __('pdf-templates::ui.preview') }}"><input type="checkbox" class="pt-switch" id="pt-auto" checked> {{ __('pdf-templates::ui.auto') }}</label>
                             <button type="button" class="pt-btn pt-btn-sm" id="pt-preview"><x-pdf-templates::icon name="play" :size="12" /> {{ __('pdf-templates::ui.generate') }}</button>
                         </div>
@@ -81,9 +96,8 @@
                         <div class="pt-panel" id="pt-tab-html">
                             @if (\AnghelutaV\PdfTemplates\Renderers\HtmlRenderer::editor()['enabled'])
                                 {{-- The textarea is always the source of truth; the Visual tab shows this editor in its place --}}
-                                <div class="pt-html-mode pt-hidden" id="pt-visual-note"><span class="pt-muted pt-hint">{{ __('pdf-templates::ui.visual_note') }}</span></div>
-                                <div class="pt-layout-warning pt-hidden" id="pt-layout-warning"><x-pdf-templates::icon name="alert" :size="14" /> <span><span data-flex>{!! __('pdf-templates::ui.layout_warning') !!}</span> <span data-absolute>{!! __('pdf-templates::ui.layout_warning_absolute') !!}</span></span></div>
                                 <div class="pt-visual pt-hidden" id="pt-visual"><div id="pt-visual-editor"></div></div>
+                                <div class="pt-hidden" id="pt-visual-page"></div>
                             @endif
                             <textarea class="pt-textarea pt-code" id="pt-html" name="html" spellcheck="false" aria-label="HTML">{{ old('html', $template->html) }}</textarea>
                         </div>
@@ -138,7 +152,12 @@
         const [html, css, sample, paper, orientation] = ['pt-html', 'pt-css', 'pt-sample', 'pt-paper', 'pt-orientation']
             .map((id) => document.getElementById(id));
         const fields = ['pt-name', 'pt-slug', 'pt-description', 'pt-active', 'pt-category'].map((id) => document.getElementById(id));
-        const status = document.getElementById('pt-status');
+        // Preview state on the Generate button: pulses while rendering, the time of the last PDF as its tooltip
+        const generate = document.getElementById('pt-preview');
+        const busy = (on, title = null) => {
+            generate.classList.toggle('pt-busy', on);
+            if (title !== null) generate.title = title;
+        };
         const errorBox = document.getElementById('pt-error');
         let timer;
         let seq = 0;
@@ -190,19 +209,19 @@
             lastRendered = key;
 
             const current = ++seq;
-            status.textContent = t.generating;
+            busy(true, t.generating);
             try {
                 const blob = await renderOnServer(renderUrl, fields);
                 if (current !== seq) return;
                 showPdf(document.getElementById('pt-frame'), blob);
                 errorBox.classList.add('pt-hidden');
-                status.textContent = new Date().toLocaleTimeString();
+                busy(false, t.generated_at.replace(':time', new Date().toLocaleTimeString()));
             } catch (e) {
                 if (current !== seq) return;
                 lastRendered = null; // a failed render may be retried with the same content
                 errorBox.querySelector('[data-pt-alert-text]').textContent = e.message;
                 errorBox.classList.remove('pt-hidden');
-                status.textContent = '';
+                busy(false, '');
             }
         }
 
@@ -238,9 +257,30 @@
         const visualFonts = {{ Illuminate\Support\Js::from($fontNames) }};
         const modeCode = document.getElementById('pt-mode-code');
         const modeVisual = document.getElementById('pt-mode-visual');
-        const visualBox = document.getElementById('pt-visual');
-        let visual = null;
+        let visual = null; // the editor shown: CKEditor (dompdf) or the page view (Chrome engine)
+        let ckeditor = null;
+        let pageEditor = null;
         let visualOn = false;
+        const chromeEngine = () => document.getElementById('pt-engine')?.value === 'chrome';
+        // Chrome engine: page view (default) or CKEditor, remembered in this browser
+        let visualKind = 'page';
+        try {
+            visualKind = localStorage.getItem('pt-visual-kind') === 'editor' ? 'editor' : 'page';
+        } catch {
+            // storage blocked
+        }
+        const usePage = () => chromeEngine() && visualKind === 'page';
+        const kindSwitch = document.getElementById('pt-visual-kind');
+        kindSwitch?.querySelectorAll('[data-kind]').forEach((button) => button.addEventListener('click', () => {
+            if (button.dataset.kind === visualKind) return;
+            visualKind = button.dataset.kind;
+            try {
+                localStorage.setItem('pt-visual-kind', visualKind);
+            } catch {
+                // storage blocked
+            }
+            if (visualOn) setVisual(true);
+        }));
         let fromVisual = false;
 
         // The template's CSS styles the editing area too, scoped to it (CSS nesting) so it cannot reach the admin UI
@@ -271,7 +311,7 @@
             .replace(/@page\b[^{]*\{[^}]*\}/gi, '')
             .replace(/(^|[{},;]\s*)(?:html|body)(?=\s*[{,.:#\[\s])/g, '$1&');
         const templateCss = () => scopedSource(`${styleBlocks()}\n${css.value}`);
-        const scopeCss = () => visualStyle.textContent = visualOn
+        const scopeCss = () => visualStyle.textContent = visualOn && visual === ckeditor
             ? `${atRules(`${styleBlocks()}\n${css.value}`)}
 .pt-visual .ck-content.ck-editor__editable[dir] { ${PDF_DEFAULTS}\n${cellPadding()} }
 .pt-visual.pt-visual.pt-visual.pt-visual .ck-content.ck-editor__editable[dir] { ${templateCss()} }
@@ -281,6 +321,17 @@ ${placeholderImages()}`
         // dompdf has no flexbox or grid (columns here, stacked in the PDF), and places position: absolute against the
         // page, not a table cell: the editor says so instead of showing a layout the PDF will not have
         const layoutWarning = document.getElementById('pt-layout-warning');
+        // Note / warning icons in the tab bar: click opens the text, a click elsewhere closes it
+        document.querySelectorAll('.pt-pop').forEach((pop) => pop.querySelector('.pt-pop-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.pt-pop.pt-open').forEach((other) => other === pop || other.classList.remove('pt-open'));
+            const box = pop.querySelector('.pt-pop-btn').getBoundingClientRect();
+            Object.assign(pop.querySelector('.pt-pop-panel').style, { top: `${box.bottom + 6}px`, right: `${Math.max(8, innerWidth - box.right)}px` });
+            pop.classList.toggle('pt-open');
+        }));
+        const closePops = () => document.querySelectorAll('.pt-pop.pt-open').forEach((pop) => pop.classList.remove('pt-open'));
+        document.addEventListener('click', (e) => e.target.closest('.pt-pop-panel') || closePops());
+        addEventListener('resize', closePops);
         const checkLayout = () => {
             const source = html.value + css.value;
             const flex = /display\s*:\s*(inline-)?(flex|grid)\b/i.test(source);
@@ -297,7 +348,7 @@ ${placeholderImages()}`
 
         // <img src="@{{ logo_url }}">: the editing area shows the image of the test data (CSS content: url(), the HTML
         // keeps the placeholder). URLs and data: URIs only; library images (pdf-asset:) come from the image route.
-        function placeholderImages() {
+        function placeholderImages(scope = '.pt-visual .ck-content ') {
             let data;
             try {
                 data = JSON.parse(sample.value || '{}');
@@ -311,29 +362,45 @@ ${placeholderImages()}`
                 if (typeof value !== 'string') continue;
                 const url = value.startsWith('pdf-asset:') ? @json($ptRoute('images.show', '__name__')).replace('__name__', encodeURIComponent(value.slice(10))) : value;
                 if (!/^(https?:|data:image\/)/i.test(url)) continue;
-                rules.add(`.pt-visual .ck-content img[src="${CSS.escape(src)}"] { content: url("${url.replace(/["\\\n]/g, encodeURIComponent)}"); }`);
+                rules.add(`${scope}img[src="${CSS.escape(src)}"] { content: url("${url.replace(/["\\\n]/g, encodeURIComponent)}"); }`);
             }
 
             return [...rules].join('\n');
         }
 
+        // Chrome engine: the page as Chrome prints it (flexbox, grid, absolute…), text edited in place
+        const pageSettings = () => ({ paper: paper.value, landscape: orientation.value === 'landscape', margins: setup.value()?.margins ?? null });
+        const visualChanged = () => {
+            fromVisual = true;
+            html.value = visual.getHtml();
+            html.dispatchEvent(new Event('input'));
+            fromVisual = false;
+        };
+
         async function setVisual(on) {
-            if (on && !visual) {
+            const element = document.getElementById('pt-visual-editor');
+            const pageMode = document.getElementById('pt-visual-page');
+            if (on && usePage() && !pageEditor) {
+                const { pageView } = await import('pdf-templates/page-view');
+                pageEditor = pageView({
+                    element: pageMode,
+                    page: pageSettings,
+                    extraCss: () => placeholderImages(''),
+                    labels: { ...t, default_font: defaultFont },
+                    onChange: visualChanged,
+                });
+            }
+            if (on && !usePage() && !ckeditor) {
                 modeVisual.disabled = true;
                 try {
                     const { visualEditor } = await import('pdf-templates/visual');
-                    visual = await visualEditor({
-                        element: document.getElementById('pt-visual-editor'),
+                    ckeditor = await visualEditor({
+                        element,
                         url: visualConfig.url,
                         css: visualConfig.css,
                         fonts: visualFonts,
                         labels: t,
-                        onChange() {
-                            fromVisual = true;
-                            html.value = visual.getHtml();
-                            html.dispatchEvent(new Event('input'));
-                            fromVisual = false;
-                        },
+                        onChange: visualChanged,
                     });
                 } catch (e) {
                     notify(t.visual_error.replace(':error', e.message), 'danger');
@@ -344,9 +411,15 @@ ${placeholderImages()}`
                     modeVisual.disabled = false;
                 }
             }
-            if (on) await visual.setHtml(html.value);
+            if (on) {
+                visual = usePage() ? pageEditor : ckeditor;
+                await visual.setHtml(html.value, css.value);
+            }
             visualOn = on;
-            visualBox.classList.toggle('pt-hidden', !on);
+            element.parentElement.classList.toggle('pt-hidden', !on || visual !== ckeditor);
+            pageMode.classList.toggle('pt-hidden', !on || visual !== pageEditor);
+            kindSwitch?.classList.toggle('pt-hidden', !on || !chromeEngine());
+            kindSwitch?.querySelectorAll('[data-kind]').forEach((button) => button.classList.toggle('pt-active', button.dataset.kind === visualKind));
             html.classList.toggle('pt-hidden', on);
             document.getElementById('pt-visual-note').classList.toggle('pt-hidden', !on);
             scopeCss();
@@ -358,7 +431,21 @@ ${placeholderImages()}`
             sample.addEventListener('input', scopeCss);
             html.addEventListener('input', scopeCss);
             // The HTML changed from outside (AI answer) while the visual editor is open
-            html.addEventListener('input', () => visualOn && !fromVisual && visual.setHtml(html.value));
+            html.addEventListener('input', () => visualOn && !fromVisual && visual.setHtml(html.value, css.value));
+            // The page view follows the CSS, the test data images, the paper and the margins
+            let pageTimer;
+            const refreshPage = () => {
+                if (!visualOn || visual !== pageEditor) return;
+                clearTimeout(pageTimer);
+                pageTimer = setTimeout(() => visual.refresh(css.value), 400);
+            };
+            [css, sample].forEach((el) => el.addEventListener('input', refreshPage));
+            [paper, orientation].forEach((el) => el.addEventListener('change', refreshPage));
+            document.querySelectorAll('[data-pt-setup^="margins"]').forEach((el) => el.addEventListener('input', refreshPage));
+            // Another engine: the other visual editor
+            document.getElementById('pt-engine')?.addEventListener('change', () => visualOn && setVisual(true));
+            // Visual is the first tab and opens with the editor
+            modeVisual.click();
         }
 
         // Image library: a click inserts <img src="pdf-asset:…"> at the cursor in the HTML (resolved on render)

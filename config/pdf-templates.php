@@ -84,6 +84,8 @@ return [
     'chrome' => [
         'enabled' => (bool) env('PDF_TEMPLATES_CHROME', false),
         'path' => env('PDF_TEMPLATES_CHROME_PATH'),
+        // With Chrome on, the engine of a template that did not pick one (dompdf when false)
+        'default' => (bool) env('PDF_TEMPLATES_CHROME_DEFAULT', true),
     ],
 
     'pdfme' => [

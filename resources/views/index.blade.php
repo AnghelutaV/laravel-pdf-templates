@@ -47,15 +47,14 @@
                             <option value="{{ $mode }}" @selected(request('mode') === $mode)>{{ __('pdf-templates::ui.mode_' . $mode) }}</option>
                         @endforeach
                     </select>
-                    @if ($categories)
+                    {{-- Always shown; categories are set per template (menu → Settings → Category) --}}
                         <select class="pt-select" name="category" aria-label="{{ __('pdf-templates::ui.category') }}"
-                            onchange="this.form.requestSubmit()">
+                            onchange="this.form.requestSubmit()" @disabled(! $categories && ! request('category')) title="{{ $categories ? '' : __('pdf-templates::ui.no_categories') }}">
                             <option value="">{{ __('pdf-templates::ui.all_categories') }}</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category }}" @selected(request('category') === $category)>{{ $category }}</option>
                             @endforeach
                         </select>
-                    @endif
                     <select class="pt-select" name="sort" aria-label="{{ __('pdf-templates::ui.sort') }}"
                         data-pt-tip="{{ __('pdf-templates::ui.sort') }}" onchange="this.form.requestSubmit()">
                         @foreach ($sorts as $sort)
@@ -96,6 +95,7 @@
                                 <th class="pt-col-id">ID</th>
                                 <th>{{ __('pdf-templates::ui.name') }}</th>
                                 <th>{{ __('pdf-templates::ui.slug') }}</th>
+                                <th>{{ __('pdf-templates::ui.category') }}</th>
                                 <th>{{ __('pdf-templates::ui.mode') }}</th>
                                 <th>{{ __('pdf-templates::ui.status') }}</th>
                                 <th>{{ __('pdf-templates::ui.updated_at') }} / {{ __('pdf-templates::ui.created_at') }}</th>
@@ -121,8 +121,12 @@
                                     </td>
                                     <td>
                                         <code>{{ $template->slug }}</code>
+                                    </td>
+                                    <td>
                                         @if ($template->category)
-                                            <div><a class="pt-category" href="{{ $ptRoute('index', ['category' => $template->category]) }}">{{ $template->category }}</a></div>
+                                            <a class="pt-category" href="{{ $ptRoute('index', ['category' => $template->category]) }}">{{ $template->category }}</a>
+                                        @else
+                                            <span class="pt-muted">—</span>
                                         @endif
                                     </td>
                                     <td>

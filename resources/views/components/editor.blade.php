@@ -32,6 +32,10 @@
             <x-pdf-templates::icon name="sparkles" :size="14" /> {{ __('pdf-templates::ui.ai_short') }}
         </button>
     @endif
+    {{-- Back to the template list; with unsaved changes the leave dialog asks first (save / discard / stay) --}}
+    <a class="pt-btn pt-btn-ghost pt-btn-sm" href="{{ $ptRoute('index') }}" data-pt-leave data-pt-tip="{{ __('pdf-templates::ui.discard_tip') }}">
+        <x-pdf-templates::icon name="x" :size="14" /> {{ __('pdf-templates::ui.cancel') }}
+    </a>
     <button type="button" class="pt-btn pt-btn-primary pt-btn-sm" id="pt-save" disabled data-pt-tip="Ctrl+S">
         <x-pdf-templates::icon name="save" :size="14" /> {{ __('pdf-templates::ui.save') }}
     </button>

@@ -20,6 +20,12 @@ class ChromeRenderer
         return (bool) config('pdf-templates.chrome.enabled', false);
     }
 
+    // On, and the engine of templates that did not pick one (PDF_TEMPLATES_CHROME_DEFAULT, true by default)
+    public static function isDefault(): bool
+    {
+        return self::enabled() && (bool) config('pdf-templates.chrome.default', true);
+    }
+
     /**
      * @param  array{paper?: string, landscape?: bool, margins?: ?array, header?: ?string, footer?: ?string}  $options
      */
