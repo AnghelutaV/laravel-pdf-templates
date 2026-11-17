@@ -52,6 +52,10 @@ class WysiwygRenderer
             throw new RendererUnavailableException(__('pdf-templates::ui.renderer_down', ['url' => $url]));
         }
 
+        // 503: the renderer is busy (its waiting line is full); a queued job retries later
+        if ($response->status() === 503) {
+            throw new RendererUnavailableException('Renderer busy: '.($response->json('error') ?? 'HTTP 503'));
+        }
         if ($response->failed()) {
             throw new RenderException('pdfme renderer: '.($response->json('error') ?? 'HTTP '.$response->status()));
         }
@@ -76,6 +80,10 @@ class WysiwygRenderer
             throw new RendererUnavailableException(__('pdf-templates::ui.renderer_down', ['url' => $url]));
         }
 
+        // 503: the renderer is busy (its waiting line is full); a queued job retries later
+        if ($response->status() === 503) {
+            throw new RendererUnavailableException('Renderer busy: '.($response->json('error') ?? 'HTTP 503'));
+        }
         if ($response->failed()) {
             throw new RenderException('pdfme renderer: '.($response->json('error') ?? 'HTTP '.$response->status()));
         }

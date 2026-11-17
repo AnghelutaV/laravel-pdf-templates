@@ -5,6 +5,8 @@
 //                "header": "<html>" | null, "footer": "<html>" | null, "chrome": "path" | null}  -> application/pdf (Chrome engine)
 //   GET  /health
 // Env: CHROME_PATH (Chrome / Edge / Chromium for /html; found by itself when unset), PORT (default 3311), HOST (default 127.0.0.1), PDFME_RENDERER_TOKEN (optional, checked against X-Renderer-Token),
+//      RENDERER_CONCURRENCY (renders at once, default 2), RENDERER_QUEUE_MAX (waiting before 503, default 50),
+//      RENDERER_BROWSER_RECYCLE (PDFs before Chrome is restarted, default 200),
 //      PDFME_DECIMAL_SEPARATOR / PDFME_THOUSANDS_SEPARATOR for {{ total|number:2 }} (default "," and " ")
 import http from 'node:http';
 import { readFileSync } from 'node:fs';
@@ -111,26 +113,52 @@ const BROWSERS = {
 };
 let browser = null;
 let browserPath = null;
+// One Chrome is kept open; it is closed (and opened again on the next PDF) after RENDERER_BROWSER_RECYCLE PDFs,
+// so a long-running renderer does not keep growing (Chrome leaks memory over thousands of pages)
+const RECYCLE = Math.max(1, Number(process.env.RENDERER_BROWSER_RECYCLE) || 200);
+let printed = 0;
+let openPages = 0;
+let launching = null;
 
 async function chrome(path) {
     const { existsSync } = await import('node:fs');
     const executable = path || process.env.CHROME_PATH || (BROWSERS[process.platform] ?? BROWSERS.linux).find((candidate) => existsSync(candidate));
     if (!executable) throw new Error('No Chrome, Edge or Chromium found for the Chrome engine: install one or set pdf-templates.chrome.path (PDF_TEMPLATES_CHROME_PATH).');
     if (browser?.connected && browserPath === executable) return browser;
-    await browser?.close().catch(() => {});
-    const puppeteer = (await import('puppeteer-core')).default;
-    browser = await puppeteer.launch({ executablePath: executable, headless: true, args: ['--no-sandbox', '--disable-gpu', '--font-render-hinting=none'] });
+    // Renders starting together share one launch instead of opening a Chrome each
+    if (launching && browserPath === executable) return launching;
     browserPath = executable;
-    browser.on('disconnected', () => { browser = null; });
+    launching = (async () => {
+        await browser?.close().catch(() => {});
+        const puppeteer = (await import('puppeteer-core')).default;
+        const launched = await puppeteer.launch({
+            executablePath: executable,
+            headless: true,
+            // --disable-dev-shm-usage: Docker gives /dev/shm 64 MB, too little for Chrome
+            args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--font-render-hinting=none'],
+        });
+        launched.on('disconnected', () => { if (browser === launched) browser = null; });
+        browser = launched;
+        printed = 0;
 
-    return browser;
+        return launched;
+    })();
+    try {
+        return await launching;
+    } finally {
+        launching = null;
+    }
 }
 
 const FORMATS = { a3: 'A3', a4: 'A4', a5: 'A5', a6: 'A6', letter: 'Letter', legal: 'Legal', tabloid: 'Tabloid' };
 
 async function htmlToPdf({ html, paper = 'a4', landscape = false, margins = null, header = null, footer = null, chrome: path = null }) {
-    const page = await (await chrome(path)).newPage();
+    // Counted before Chrome is asked for a page, so a recycle never closes it under a render that is starting
+    openPages++;
+    let page = null;
     try {
+        page = await (await chrome(path)).newPage();
+        page.setDefaultTimeout(60000);
         await page.setRequestInterception(true);
         page.on('request', (request) => (/^(data|about|blob):/i.test(request.url()) ? request.continue() : request.abort()));
         await page.setContent(String(html ?? ''), { waitUntil: 'load', timeout: 30000 });
@@ -148,7 +176,39 @@ async function htmlToPdf({ html, paper = 'a4', landscape = false, margins = null
 
         return Buffer.from(await page.pdf(options));
     } finally {
-        await page.close().catch(() => {});
+        await page?.close().catch(() => {});
+        openPages--;
+        printed++;
+        if (printed >= RECYCLE && openPages === 0 && browser) {
+            const old = browser;
+            browser = null;
+            await old.close().catch(() => {});
+        }
+    }
+}
+
+// At most RENDERER_CONCURRENCY renders at once (each one is CPU + memory, a Chrome page for the Chrome engine);
+// the next ones wait their turn, and past RENDERER_QUEUE_MAX waiting the request gets 503 (PHP retries later).
+const CONCURRENCY = Math.max(1, Number(process.env.RENDERER_CONCURRENCY) || 2);
+const QUEUE_MAX = Math.max(0, Number(process.env.RENDERER_QUEUE_MAX ?? 50));
+let running = 0;
+const waiting = [];
+
+class Busy extends Error {}
+
+async function limited(work) {
+    if (running >= CONCURRENCY) {
+        if (waiting.length >= QUEUE_MAX) throw new Busy(`Renderer busy: ${running} running, ${waiting.length} waiting`);
+        await new Promise((resolve) => waiting.push(resolve));
+    } else {
+        running++;
+    }
+    try {
+        return await work();
+    } finally {
+        const next = waiting.shift();
+        if (next) next(); // the slot goes straight to the next one
+        else running--;
     }
 }
 
@@ -164,7 +224,7 @@ function send(res, status, body, type = 'application/json') {
 
 const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/health') {
-        return send(res, 200, { ok: true });
+        return send(res, 200, { ok: true, running, waiting: waiting.length, concurrency: CONCURRENCY, chrome: !!browser });
     }
     const url = new URL(req.url, 'http://renderer');
     if (req.method !== 'POST' || !['/render', '/image', '/html'].includes(url.pathname)) {
@@ -191,17 +251,23 @@ const server = http.createServer((req, res) => {
             if (url.pathname === '/image') {
                 const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
                 const scale = Math.min(4, Math.max(0.5, Number(url.searchParams.get('scale')) || 2));
-                send(res, 200, await toPng(Buffer.concat(chunks), page, scale), 'image/png');
+                send(res, 200, await limited(() => toPng(Buffer.concat(chunks), page, scale)), 'image/png');
                 return;
             }
             if (url.pathname === '/html') {
-                send(res, 200, await htmlToPdf(JSON.parse(Buffer.concat(chunks).toString('utf8'))), 'application/pdf');
+                const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                send(res, 200, await limited(() => htmlToPdf(body)), 'application/pdf');
                 return;
             }
             const { template, inputs, watermark } = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-            const pdf = await render(template, inputs, watermark);
+            const pdf = await limited(() => render(template, inputs, watermark));
             send(res, 200, Buffer.from(pdf), 'application/pdf');
         } catch (e) {
+            if (e instanceof Busy) {
+                res.setHeader('Retry-After', '10');
+                send(res, 503, { error: e.message });
+                return;
+            }
             send(res, 422, { error: e.message });
         }
     });

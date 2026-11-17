@@ -4,6 +4,16 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 
 ## [Unreleased]
 
+### Added
+
+- `PdfTemplates::make(...)->queue($path, $disk, $context)`: the PDF is made by a queue worker (job `GeneratePdf`, queue `pdf`, config `queue.*`) and stored; events `PdfGenerating`, `PdfGenerated`, `PdfGenerationFailed` carry the context so an app keeps the status on its own model. The same file is never rendered twice at once; renderer down / busy → the job backs off.
+- Renderer limits: at most `RENDERER_CONCURRENCY` renders at once (default 2), a waiting line up to `RENDERER_QUEUE_MAX` (503 past it, retried by jobs), Chrome restarted after `RENDERER_BROWSER_RECYCLE` PDFs (default 200), 60 s page timeout; `/health` shows the load.
+- `renderer/Dockerfile` (Node + Chromium + fonts) and `.dockerignore`.
+
+### Fixed
+
+- Renderer: renders starting together share one Chrome launch instead of opening one each.
+
 ## [0.5.0] - 2026-11-17
 
 ### Added

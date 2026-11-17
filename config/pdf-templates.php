@@ -81,6 +81,16 @@ return [
     // renderer, so flexbox, grid, position: absolute and web fonts work as in a browser. Off: every template uses
     // dompdf. On: each template picks its engine (editor menu → page setup → Engine). path = the browser binary;
     // empty = Chrome / Edge / Chromium found in the usual places.
+    // PendingPdf::queue(): PDFs made by queue workers. A queue of their own, so the number of workers on it bounds
+    // how many PDFs (and Chrome pages) run at once: php artisan queue:work --queue=pdf --max-jobs=500 --max-time=3600
+    'queue' => [
+        'connection' => env('PDF_TEMPLATES_QUEUE_CONNECTION'),
+        'name' => env('PDF_TEMPLATES_QUEUE_NAME', 'pdf'),
+        // seconds; keep it below the connection's retry_after
+        'timeout' => 120,
+        'tries' => 3,
+    ],
+
     'chrome' => [
         'enabled' => (bool) env('PDF_TEMPLATES_CHROME', false),
         'path' => env('PDF_TEMPLATES_CHROME_PATH'),

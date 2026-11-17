@@ -97,6 +97,110 @@ public function attachments(): array
 }
 ```
 
+### Generating in a queue (many PDFs)
+
+`->queue()` renders in a queue worker instead of the request and stores the file; the request only saves and answers. Events tell your app how it went, so the status can live on your own model:
+
+```php
+use AnghelutaV\PdfTemplates\Facades\PdfTemplates;
+
+PdfTemplates::make('invoice', $invoice->toPdfData())
+    ->watermark($invoice->isDraft() ? 'DRAFT' : null)
+    ->queue("invoices/{$invoice->id}.pdf", 'local', ['invoice' => $invoice->id]);   // returns the dispatch: ->delay(), ->onQueue()…
+```
+
+The job (`AnghelutaV\PdfTemplates\Jobs\GeneratePdf`) runs on the queue `pdf` (config `queue.name`, `queue.connection`), with 3 tries (10 s, 30 s, 90 s apart) and a 120 s timeout (`queue.tries`, `queue.timeout`). The same file is never rendered twice at once (a double click waits for the first job), and while the Node renderer is down or busy the job backs off instead of using up its tries. It fires:
+
+| Event | Properties |
+|---|---|
+| `Events\PdfGenerating` | `path`, `disk`, `context`, `attempt` |
+| `Events\PdfGenerated` | `path`, `disk`, `bytes`, `durationMs`, `context` |
+| `Events\PdfGenerationFailed` | `path`, `disk`, `error`, `context` (all tries used) |
+
+<details>
+<summary>Complete example: invoice with a PDF status, a controller and polling</summary>
+
+```php
+// migration
+Schema::table('invoices', function (Blueprint $table) {
+    $table->string('pdf_status', 16)->default('pending')->index();   // pending | processing | completed | failed
+    $table->string('pdf_path')->nullable();
+    $table->text('pdf_error')->nullable();
+    $table->timestamp('pdf_generated_at')->nullable();
+});
+
+// app/Listeners/InvoicePdfStatus.php (auto-discovered, or Event::listen in a provider)
+use AnghelutaV\PdfTemplates\Events\{PdfGenerating, PdfGenerated, PdfGenerationFailed};
+
+class InvoicePdfStatus
+{
+    public function handle(PdfGenerating|PdfGenerated|PdfGenerationFailed $event): void
+    {
+        if (! isset($event->context['invoice'])) {
+            return;   // another document
+        }
+        Invoice::whereKey($event->context['invoice'])->update(match (true) {
+            $event instanceof PdfGenerating => ['pdf_status' => 'processing'],
+            $event instanceof PdfGenerated => ['pdf_status' => 'completed', 'pdf_path' => $event->path, 'pdf_error' => null, 'pdf_generated_at' => now()],
+            default => ['pdf_status' => 'failed', 'pdf_error' => $event->error],
+        });
+    }
+}
+
+// controller
+public function store(StoreInvoiceRequest $request)
+{
+    $invoice = Invoice::create($request->validated() + ['pdf_status' => 'pending']);
+    PdfTemplates::make('invoice', $invoice->toPdfData())->queue("invoices/{$invoice->id}.pdf", 'local', ['invoice' => $invoice->id]);
+
+    return response()->json(['id' => $invoice->id, 'status' => 'pending', 'status_url' => route('invoices.pdf.status', $invoice)], 202);
+}
+
+public function pdfStatus(Invoice $invoice)
+{
+    $this->authorize('view', $invoice);
+
+    return [
+        'status' => $invoice->pdf_status,
+        'error' => $invoice->pdf_error,
+        'download_url' => $invoice->pdf_status === 'completed' ? route('invoices.pdf', $invoice) : null,
+    ];
+}
+
+public function pdf(Invoice $invoice)
+{
+    $this->authorize('view', $invoice);
+    abort_unless($invoice->pdf_status === 'completed', 404);
+
+    return Storage::disk('local')->download($invoice->pdf_path, "invoice-{$invoice->number}.pdf");
+}
+```
+
+Livewire polls on its own until it is done:
+
+```blade
+@if (in_array($invoice->pdf_status, ['pending', 'processing']))
+    <span wire:poll.3s="$refresh">Generating PDF…</span>
+@elseif ($invoice->pdf_status === 'completed')
+    <a href="{{ route('invoices.pdf', $invoice) }}">Download PDF</a>
+@else
+    <span>PDF failed: {{ $invoice->pdf_error }}</span>
+@endif
+```
+
+Without Livewire: `fetch(status_url)` every 2–3 s until `status` is `completed` / `failed`. A WebSocket (Reverb) is not needed for this; if you already run one, broadcast from the listener.
+
+For big data, pass only the id: your own job loads the invoice and calls `PdfTemplates::make(...)->save($path)`; give it the same `$tries`, `$timeout` and `WithoutOverlapping("invoice-pdf:{$id}")`.
+</details>
+
+**Workers.** A queue of its own means the number of workers on it is the number of PDFs made at once (each is CPU and memory; with the Chrome engine, a Chrome page). Restart them regularly so memory cannot grow:
+
+```bash
+php artisan queue:work redis --queue=pdf --tries=3 --timeout=120 --max-jobs=500 --max-time=3600 --memory=256
+```
+
+Run 2 of them (Supervisor `numprocs=2`, or 2 containers) next to the worker of your other queues; the connection's `retry_after` must be longer than `--timeout` (e.g. 180). After a deploy: `php artisan queue:restart`. Two workers at about a second per PDF make thousands of PDFs an hour.
+
 ### Let users pick a template
 
 ```blade
@@ -335,6 +439,17 @@ PDFME_RENDERER_TOKEN=optional-shared-secret
 
 In production, run it under supervisor or systemd. You can also copy `vendor/anghelutav/laravel-pdf-templates/renderer` anywhere and run `npm install && npm start` (env: `HOST`, `PORT`, `PDFME_RENDERER_TOKEN`, `PDFME_DECIMAL_SEPARATOR`, `PDFME_THOUSANDS_SEPARATOR`).
 
+The renderer makes at most `RENDERER_CONCURRENCY` PDFs at once (default 2); the next requests wait their turn, and past `RENDERER_QUEUE_MAX` waiting (default 50) it answers 503, which queued jobs retry later. The Chrome it keeps open is restarted after `RENDERER_BROWSER_RECYCLE` PDFs (default 200), so its memory does not grow. `GET /health` shows `running`, `waiting` and whether Chrome is open.
+
+**Docker.** `renderer/Dockerfile` builds the renderer with Chromium and fonts (Debian), for a VPS or another server than your app:
+
+```bash
+docker build -f vendor/anghelutav/laravel-pdf-templates/renderer/Dockerfile -t pdf-renderer vendor/anghelutav/laravel-pdf-templates
+docker run -d --init --restart unless-stopped -p 127.0.0.1:3311:3000 -e PDFME_RENDERER_TOKEN=secret pdf-renderer
+```
+
+In docker compose, give it a service on the internal network (`PDFME_RENDERER_URL=http://renderer:3000`) and leave `PDF_TEMPLATES_CHROME_PATH` empty in the app (the image sets its own Chromium).
+
 The renderer also turns any PDF (HTML or WYSIWYG) into PNG pages (`POST /image`, PDFium in WebAssembly, no native dependencies): it is what `?format=png|jpg` and `PdfTemplates::image()` use. After updating the package, restart it (and run `npm install` there once, for `@pdfme/converter`).
 
 ## Images
@@ -464,7 +579,7 @@ PDF_TEMPLATES_CACHE_STORE=redis  # or file; not "database" (binary PDF bytes)
 
 Editing a template changes its content, so old entries are never served for it. Changing fonts or number separators in the config is not part of the key: clear the cache after that.
 
-**Many PDFs at once** (mass mailing, exports): generate them in queued jobs, not in the request, e.g. `PdfTemplates::make('invoice', $data)->save("invoices/{$id}.pdf")` inside a job.
+**Many PDFs at once** (mass mailing, exports, thousands a month): `->queue()` on a queue of its own with a few workers, see [Generating in a queue](#generating-in-a-queue-many-pdfs). Octane is not needed for this (it only speeds up HTTP requests; PDFs are made by queue workers); if you use it, the package keeps no state between requests.
 
 **Limits.** The API is throttled by `api.middleware` (`throttle:60,1`), admin renders by `routes.render_throttle`. Each render is a full PDF generation, so keep them sized to your server.
 

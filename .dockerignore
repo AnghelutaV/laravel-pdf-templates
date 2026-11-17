@@ -1,0 +1,11 @@
+# Build context of renderer/Dockerfile (the package root): only renderer/ and resources/assets are used
+.git
+.github
+.phpunit.cache
+vendor
+tests
+docs
+database
+renderer/node_modules
+renderer/package-lock.json
+*.log
