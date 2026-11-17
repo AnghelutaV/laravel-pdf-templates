@@ -10,6 +10,10 @@ All notable changes to `anghelutav/laravel-pdf-templates`. The format follows [K
 - Renderer limits: at most `RENDERER_CONCURRENCY` renders at once (default 2), a waiting line up to `RENDERER_QUEUE_MAX` (503 past it, retried by jobs), Chrome restarted after `RENDERER_BROWSER_RECYCLE` PDFs (default 200), 60 s page timeout; `/health` shows the load.
 - `renderer/Dockerfile` (Node + Chromium + fonts) and `.dockerignore`.
 
+### Changed
+
+- `laravel/ai` is optional (suggested): apps on an older laravel/ai (0.x, for their own agents) can install the package; the AI assistant shows only with laravel/ai 1.3+. Install it with `composer require laravel/ai` to keep the assistant.
+
 ### Fixed
 
 - Renderer: renders starting together share one Chrome launch instead of opening one each.

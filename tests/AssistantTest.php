@@ -30,6 +30,12 @@ class AssistantTest extends TestCase
         return $fields + ['reply' => 'Done', 'name' => '', 'html' => '', 'css' => '', 'sample_data' => '', 'paper' => '', 'orientation' => '', 'schema' => ''];
     }
 
+    public function test_the_assistant_needs_laravel_ai_1_3(): void
+    {
+        // laravel/ai ^1.3 is installed for the package tests (require-dev)
+        $this->assertTrue(Assistant::installed());
+    }
+
     public function test_text_format_for_small_models(): void
     {
         config(['pdf-templates.ai.format' => 'text']);

@@ -4,8 +4,10 @@ namespace AnghelutaV\PdfTemplates\Ai;
 
 use AnghelutaV\PdfTemplates\ImageLibrary;
 use AnghelutaV\PdfTemplates\Models\PdfTemplate;
+use Composer\InstalledVersions;
 use Illuminate\Http\UploadedFile;
 use InvalidArgumentException;
+use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Files\Document;
 use Laravel\Ai\Files\Image;
 use Laravel\Ai\Responses\StructuredAgentResponse;
@@ -21,7 +23,7 @@ class Assistant
 
     public static function enabled(): bool
     {
-        if (! config('pdf-templates.ai.enabled', true)) {
+        if (! config('pdf-templates.ai.enabled', true) || ! self::installed()) {
             return false;
         }
 
@@ -30,6 +32,22 @@ class Assistant
 
         // Local providers (Ollama) have no key
         return is_array($settings) && (! empty($settings['key']) || ($settings['driver'] ?? $provider) === 'ollama');
+    }
+
+    /**
+     * laravel/ai is optional: the assistant needs 1.3 or later. An app on an older laravel/ai (its own agents built on
+     * it) installs the package anyway, without the assistant.
+     */
+    public static function installed(): bool
+    {
+        if (! interface_exists(Agent::class) || ! class_exists(InstalledVersions::class)
+            || ! InstalledVersions::isInstalled('laravel/ai')) {
+            return false;
+        }
+        $version = (string) InstalledVersions::getVersion('laravel/ai');
+
+        // A dev branch (dev-main) is taken as recent
+        return str_starts_with($version, 'dev-') || version_compare($version, '1.3.0', '>=');
     }
 
     /**

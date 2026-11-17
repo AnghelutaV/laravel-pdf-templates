@@ -470,7 +470,7 @@ PDF_TEMPLATES_IMAGES_DISK=s3   # any disk from config/filesystems.php
 
 The editors have an **AI** button (Ctrl+I) that opens a chat panel on the right. Ask for a change ("add a footer with page numbers", "a QR code in the bottom right corner") or attach an image / PDF of a document to copy. The answer goes into the editor as **unsaved** changes: the preview refreshes, every answer can be undone, and nothing is stored until you press Save. In the list, the "New template" dialog can also **Generate with AI** from a description.
 
-It runs on [laravel/ai](https://laravel.com/docs/ai-sdk) (installed with the package) and is shown once the provider has a key:
+It runs on [laravel/ai](https://laravel.com/docs/ai-sdk) 1.3 or later (`composer require laravel/ai`; optional: without it, or in an app that stays on an older laravel/ai for its own agents, the assistant is simply hidden) and is shown once the provider has a key:
 
 ```dotenv
 ANTHROPIC_API_KEY=sk-ant-...
